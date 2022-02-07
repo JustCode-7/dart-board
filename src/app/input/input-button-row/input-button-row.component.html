@@ -1,41 +1,34 @@
 <div class="center extraButtonsDiv">
-  <button (click)="reduceBull(25)">Bull</button>
-  <button (click)="reduceBullsEye(50)">BullsEye</button>
-  <button (click)="reduceDartCounter()">Miss</button>
+  <button (click)="scorePoints(bull.value)">{{bull.text}}</button>
+  <button (click)="scorePoints(bullsEye.value)">{{bullsEye.text}}</button>
+  <!-- TODO remove reduceDartCounter() completely, replace it with the following:
+   <button (click)="scorePoints(miss.value)">{{miss.displayName}}</button>
+   -->
+  <button (click)="reduceDartCounter()">{{miss.text}}</button>
+  <!-- TODO end -->
 </div>
+
+<!--  TODO the following three parts can be extract into one parametrized component -->
 <div class="center rounded width-330 border-green">
   <div class="buttonDiv">
-    <button *ngFor="let num of arrayOf10; let i = index" (click)="reduceSingle(i + 1)">
-      {{i + 1}}
-    </button>
-  </div>
-  <div class="buttonDiv">
-    <button *ngFor="let num of arrayOf10; let i = index" (click)="reduceSingle(i + 11)">
-      {{i + 11}}
+    <button *ngFor="let single of singles" (click)="scorePoints(single.value)">
+      {{single.text}}
     </button>
   </div>
 </div>
+
 <div class="center rounded width-330 border-purple">
   <div class="buttonDiv">
-    <button *ngFor="let num of arrayOf10; let i = index" (click)="reduceDouble(i + 1)">
-      D {{i + 1}}
-    </button>
-  </div>
-  <div class="buttonDiv">
-    <button *ngFor="let num of arrayOf10; let i = index" (click)="reduceDouble(i + 11)">
-      D {{i + 11}}
+    <button *ngFor="let double of doubles" (click)="scorePoints(double.value)">
+      {{double.text}}
     </button>
   </div>
 </div>
+
 <div class="center rounded width-330 border-red">
   <div class="buttonDiv">
-    <button *ngFor="let num of arrayOf10; let i = index" (click)="reduceTriple(i + 1)">
-      T {{i + 1}}
-    </button>
-  </div>
-  <div class="buttonDiv">
-    <button *ngFor="let num of arrayOf10; let i = index" (click)="reduceTriple(i + 11)">
-      T {{i + 11}}
+    <button *ngFor="let triple of triples; let i = index" (click)="scorePoints(triple.value)">
+      {{triple.text}}
     </button>
   </div>
 </div>
