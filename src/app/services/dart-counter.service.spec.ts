@@ -1,6 +1,6 @@
-import { TestBed } from '@angular/core/testing';
+import {TestBed} from '@angular/core/testing';
 
-import { DartCounterService } from './dart-counter.service';
+import {DartCounterService} from './dart-counter.service';
 
 describe('DartCounterService', () => {
   let service: DartCounterService;

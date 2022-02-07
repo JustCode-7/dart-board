@@ -1,8 +1,6 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { InputButtonRowComponent } from './input-button-row/input-button-row.component';
-
-
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {InputButtonRowComponent} from './input-button-row/input-button-row.component';
 
 @NgModule({
   declarations: [
@@ -15,4 +13,5 @@ import { InputButtonRowComponent } from './input-button-row/input-button-row.com
     InputButtonRowComponent,
   ]
 })
-export class InputModule { }
+export class InputModule {
+}

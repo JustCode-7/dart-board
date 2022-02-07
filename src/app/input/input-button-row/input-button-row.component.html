@@ -1,41 +1,41 @@
 <div class="extraButtonsDiv">
-    <button (click)="reduceBull(25)">Bull</button>
-    <button (click)="reduceBullsEye(50)">BullsEye</button>
-    <button (click)="reduceDartCounter()">Miss</button>
+  <button (click)="reduceBull(25)">Bull</button>
+  <button (click)="reduceBullsEye(50)">BullsEye</button>
+  <button (click)="reduceDartCounter()">Miss</button>
 </div>
 <div class="SingleButtonGroup">
-<div class="buttonDiv">
+  <div class="buttonDiv">
     <button *ngFor="let num of arrayOf10; let i = index" (click)="reduceSingle(i + 1)">
-       {{i + 1}}
+      {{i + 1}}
     </button>
-</div>
-<div class="buttonDiv">
+  </div>
+  <div class="buttonDiv">
     <button *ngFor="let num of arrayOf10; let i = index" (click)="reduceSingle(i + 11)">
-         {{i + 11}}
-      </button>
-</div>
+      {{i + 11}}
+    </button>
+  </div>
 </div>
 <div class="DoubleButtonGroup">
-<div class="buttonDiv">
+  <div class="buttonDiv">
     <button *ngFor="let num of arrayOf10; let i = index" (click)="reduceDouble(i + 1)">
-       D {{i + 1}}
+      D {{i + 1}}
     </button>
-</div>
-<div class="buttonDiv">
+  </div>
+  <div class="buttonDiv">
     <button *ngFor="let num of arrayOf10; let i = index" (click)="reduceDouble(i + 11)">
-        D {{i + 11}}
-     </button>
-</div>
+      D {{i + 11}}
+    </button>
+  </div>
 </div>
 <div class="TripleButtonGroup">
-<div class="buttonDiv">
+  <div class="buttonDiv">
     <button *ngFor="let num of arrayOf10; let i = index" (click)="reduceTriple(i + 1)">
-        T {{i + 1}}
+      T {{i + 1}}
     </button>
-</div>
-<div class="buttonDiv">
+  </div>
+  <div class="buttonDiv">
     <button *ngFor="let num of arrayOf10; let i = index" (click)="reduceTriple(i + 11)">
-        T {{i + 11}}
+      T {{i + 11}}
     </button>
-</div>
+  </div>
 </div>

@@ -1,14 +1,12 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { OutputComponent } from './output/output.component';
-import { ScoreboardOverviewComponent } from './scoreboard-overview/scoreboard-overview.component';
-
-
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {OutputComponent} from './output/output.component';
+import {ScoreboardOverviewComponent} from './scoreboard-overview/scoreboard-overview.component';
 
 @NgModule({
   declarations: [
     OutputComponent,
-    ScoreboardOverviewComponent
+    ScoreboardOverviewComponent,
   ],
   imports: [
     CommonModule
@@ -17,4 +15,5 @@ import { ScoreboardOverviewComponent } from './scoreboard-overview/scoreboard-ov
     OutputComponent,
   ]
 })
-export class ScoreBoardModule { }
+export class ScoreBoardModule {
+}
