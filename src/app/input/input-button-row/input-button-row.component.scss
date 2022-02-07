@@ -1,6 +1,5 @@
 .extraButtonsDiv {
   width: 300px;
-  margin: 0 auto;
 
   button {
     margin-left: 5%;
@@ -24,23 +23,26 @@ button:hover {
   }
 }
 
-.SingleButtonGroup {
+.center {
   margin: 0 auto;
-  width: 328px;
+}
+
+.width-330 {
+  width: 330px;
+}
+
+.rounded {
   border-radius: 17%;
+}
+
+.border-green {
   border: solid green;
 }
 
-.DoubleButtonGroup {
-  margin: 0 auto;
-  width: 328px;
-  border-radius: 17%;
+.border-purple {
   border: solid #170080;
 }
 
-.TripleButtonGroup {
-  margin: 0 auto;
-  width: 328px;
-  border-radius: 17%;
+.border-red {
   border: solid #80002b;
 }

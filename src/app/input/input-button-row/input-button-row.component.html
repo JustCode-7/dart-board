@@ -1,9 +1,9 @@
-<div class="extraButtonsDiv">
+<div class="center extraButtonsDiv">
   <button (click)="reduceBull(25)">Bull</button>
   <button (click)="reduceBullsEye(50)">BullsEye</button>
   <button (click)="reduceDartCounter()">Miss</button>
 </div>
-<div class="SingleButtonGroup">
+<div class="center rounded width-330 border-green">
   <div class="buttonDiv">
     <button *ngFor="let num of arrayOf10; let i = index" (click)="reduceSingle(i + 1)">
       {{i + 1}}
@@ -15,7 +15,7 @@
     </button>
   </div>
 </div>
-<div class="DoubleButtonGroup">
+<div class="center rounded width-330 border-purple">
   <div class="buttonDiv">
     <button *ngFor="let num of arrayOf10; let i = index" (click)="reduceDouble(i + 1)">
       D {{i + 1}}
@@ -27,7 +27,7 @@
     </button>
   </div>
 </div>
-<div class="TripleButtonGroup">
+<div class="center rounded width-330 border-red">
   <div class="buttonDiv">
     <button *ngFor="let num of arrayOf10; let i = index" (click)="reduceTriple(i + 1)">
       T {{i + 1}}
