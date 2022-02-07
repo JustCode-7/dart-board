@@ -1,34 +1,28 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Subject } from 'rxjs';
-import { Player } from './player.model';
+import {Injectable} from '@angular/core';
+import {BehaviorSubject} from 'rxjs';
+import {Player} from './player.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DartCounterService {
 
-  private first: Player = { id: 1, playerName: 'Player 1', points: 501, dartCount: 3 };
+  private dummyPlayer: Player = {id: 1, playerName: 'Player 1', points: 501, dartCount: 3};
   private roundCount = 1;
   public points$: BehaviorSubject<number> = new BehaviorSubject(501);
   public dartCount$: BehaviorSubject<number> = new BehaviorSubject(3);
   public playerName$: BehaviorSubject<string> = new BehaviorSubject('Player 1');
   public roundCount$: BehaviorSubject<number> = new BehaviorSubject(1);
   private playerArr: Player[] = [];
-  public playerArr$$: BehaviorSubject<Player[]> = new BehaviorSubject([this.first]);
-  // `this.` is always required to access class members and functions
-  private currentPlayer= this.first;
+  public playerArr$$: BehaviorSubject<Player[]> = new BehaviorSubject([this.dummyPlayer]);
+  private currentPlayer = this.dummyPlayer;
 
-  //TODO: ÜberschussLogik 
+  //TODO: ÜberschussLogik
 
-  initPlayers(player: number) {
+  initPlayers(playerCount: number) {
     this.playerArr = [];
-    for (let i = 1; i <= player; i++) {
-      const player: Player = {
-        id: i,
-        playerName: 'Player ' + i,
-        points: 501,
-        dartCount: 3
-      }
+    for (let i = 1; i <= playerCount; i++) {
+      const player: Player = {id: i, playerName: 'Player ' + i, points: 501, dartCount: 3}
       this.playerArr.push(player);
     }
     this.currentPlayer = this.playerArr[0];
@@ -41,7 +35,7 @@ export class DartCounterService {
       this.reduceDartCount();
     }
     if ((this.currentPlayer.points - points) < 0) {
-      this.currentPlayer.points;
+      this.currentPlayer.points; // TODO whats going on here?
     }
     this.points$.next(this.currentPlayer.points);
   }
@@ -79,9 +73,9 @@ export class DartCounterService {
       }
     });
     if (this.currentPlayer.id == this.playerArr[0].id) {
-      this.roundCount$.next(this.roundCount += 1);
+      this.roundCount += 1
+      this.roundCount$.next(this.roundCount);
     }
-
   }
 
   winCheck() {
@@ -90,5 +84,5 @@ export class DartCounterService {
       this.playerName$.next(this.currentPlayer.playerName);
     }
   }
-  
+
 }
