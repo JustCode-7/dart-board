@@ -1,44 +1,46 @@
-.extraButtonsDiv{
-    width:300px;
-    margin:0 auto;
-    button{
-        margin-left:5%;
-        margin-right:5%;
-        width:70px;
-        height: 40px;
-        }
+.extraButtonsDiv {
+  width: 300px;
+  margin: 0 auto;
+
+  button {
+    margin-left: 5%;
+    margin-right: 5%;
+    width: 70px;
+    height: 40px;
+  }
 }
-button:hover{
-    background-color: red;
+
+button:hover {
+  background-color: red;
 }
-.buttonDiv{
-    width:300px;
-    margin: 4%;
-    margin-bottom:2%;
-    margin-top:2%;
-    button{
-        width:30px;
-        height: 40px;
-        }
+
+.buttonDiv {
+  width: 300px;
+  margin: 2% 4%;
+
+  button {
+    width: 30px;
+    height: 40px;
+  }
 }
-.SingleButtonGroup{
-    margin:0 auto;
-    width:328px;
-    border-radius: 17%;
-    border: solid;
-    border-color: green;
+
+.SingleButtonGroup {
+  margin: 0 auto;
+  width: 328px;
+  border-radius: 17%;
+  border: solid green;
 }
-.DoubleButtonGroup{
-    margin:0 auto;
-    width:328px;
-    border-radius: 17%;
-    border: solid;
-    border-color: rgb(23, 0, 128);
+
+.DoubleButtonGroup {
+  margin: 0 auto;
+  width: 328px;
+  border-radius: 17%;
+  border: solid #170080;
 }
-.TripleButtonGroup{
-    margin:0 auto;
-    width:328px;
-    border-radius: 17%;
-    border: solid;
-    border-color: rgb(128, 0, 43);
+
+.TripleButtonGroup {
+  margin: 0 auto;
+  width: 328px;
+  border-radius: 17%;
+  border: solid #80002b;
 }
