@@ -1,0 +1,64 @@
+{
+  "configVersion": 1,
+  "timestamp": 1721774400288,
+  "index": "/dart-board/index.html",
+  "assetGroups": [
+    {
+      "name": "app",
+      "installMode": "prefetch",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [
+        "/dart-board/chunk-B45CK2YF.js",
+        "/dart-board/chunk-KASR47CH.js",
+        "/dart-board/favicon.ico",
+        "/dart-board/index.html",
+        "/dart-board/main-J7V55RZW.js",
+        "/dart-board/polyfills-MB6D75FS.js",
+        "/dart-board/styles-252MMOF6.css"
+      ],
+      "patterns": []
+    },
+    {
+      "name": "assets",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [],
+      "patterns": []
+    }
+  ],
+  "dataGroups": [],
+  "hashTable": {
+    "/dart-board/chunk-B45CK2YF.js": "9f9ee422962d8028eda284e1416a6a4d46b45c0a",
+    "/dart-board/chunk-KASR47CH.js": "9b18df4a88780654beab47a655b14f3e3d6e7305",
+    "/dart-board/favicon.ico": "22f6a4a3bcaafafb0254e0f2fa4ceb89e505e8b2",
+    "/dart-board/index.html": "c1271ab17aa734d04fb828489f28dc0916eb6d1b",
+    "/dart-board/main-J7V55RZW.js": "4759be920bd6e7c99e17dd58c0a62c3f884f9563",
+    "/dart-board/polyfills-MB6D75FS.js": "3b7d0240109066aa8909a470e42d05d162a53c01",
+    "/dart-board/styles-252MMOF6.css": "df0e44d974ef645a53d5ee5e277ce2daaa6500f7"
+  },
+  "navigationUrls": [
+    {
+      "positive": true,
+      "regex": "^\\/.*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*\\.[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*\\/.*$"
+    }
+  ],
+  "navigationRequestStrategy": "performance"
+}
