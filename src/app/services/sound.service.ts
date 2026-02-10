@@ -5,33 +5,15 @@ export class SoundService {
 
   readonly isSoundEnabled = signal<boolean>(true);
 
-  private readonly VICTORY = 'assets/sounds/fanfare-trumpets.mp3'
+  private readonly VICTORY = 'assets/sounds/freesound_community-success-fanfare-trumpets-6185.mp3'
   private readonly EXPLOSION = 'assets/sounds/firework-explosion.mp3'
-  private readonly TRIPLE_BELL = 'assets/sounds/opening-bell-triple.mp3'
-  private readonly GOOD_RESULT = 'assets/sounds/good-result.mp3'
-  private readonly OH_YEAH = 'assets/sounds/oh-yeah.mp3'
 
-  public playVictory() {
+  public playVictorySound(): void {
     this.playSound(this.VICTORY)
   }
 
-  /**
-   * @deprecated
-   */
-  public playExplosion() {
+  public playExplosionSound(): void {
     this.playSound(this.EXPLOSION);
-  }
-
-  public playTripleBell() {
-    this.playSound(this.TRIPLE_BELL)
-  }
-
-  public playGoodResult() {
-    this.playSound(this.GOOD_RESULT)
-  }
-
-  public playOhYeah() {
-    this.playSound(this.OH_YEAH)
   }
 
   private playSound(file: string) {

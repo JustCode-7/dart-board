@@ -58,6 +58,6 @@ export class VictoryDialog implements OnInit {
       this.winner = this.currentPlayerService._currentPlayer.value.name
     }
     this.explosionAnimationService.showExplosion('WINNER: ' + this.winner);
-    this.soundService.playVictory();
+    this.soundService.playVictorySound();
   }
 }
