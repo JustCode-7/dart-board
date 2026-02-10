@@ -10,7 +10,6 @@ import {
 import {GameType} from "../../models/enum/GameType";
 import {wellFormedArray} from "../../shared/utils/util";
 import {DartService} from "../../services/dart.service";
-import {SoundService} from "../../services/sound.service";
 
 export interface VictoryDialogData {
   victoryByReachingRoundLimit: boolean;
@@ -44,10 +43,8 @@ export interface VictoryDialogData {
 export class VictoryDialog implements OnInit {
   public currentPlayerService: CurrentPlayerService = inject(CurrentPlayerService);
   @Inject(MAT_DIALOG_DATA) public data?: VictoryDialogData = inject(MAT_DIALOG_DATA);
-  private readonly explosionAnimationService = inject(ExplosionAnimationService)
+  private explosionAnimationService = inject(ExplosionAnimationService)
   private readonly dartService = inject(DartService);
-  private readonly soundService = inject(SoundService);
-
   protected winner: string | string[] | number = ''
 
   ngOnInit(): void {
@@ -58,6 +55,5 @@ export class VictoryDialog implements OnInit {
       this.winner = this.currentPlayerService._currentPlayer.value.name
     }
     this.explosionAnimationService.showExplosion('WINNER: ' + this.winner);
-    this.soundService.playVictorySound();
   }
 }

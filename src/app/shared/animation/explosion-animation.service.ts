@@ -1,12 +1,14 @@
-import {Injectable, Renderer2, RendererFactory2} from '@angular/core';
+import {Injectable, Renderer2, RendererFactory2, inject} from '@angular/core';
+import {SoundToggleService} from '../../services/sound-toggle.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ExplosionAnimationService {
-  private readonly renderer: Renderer2;
+  private renderer: Renderer2;
   private explosionElement: HTMLElement | null = null;
   tripleTwentyCounter: number = 0;
+  private readonly soundToggle = inject(SoundToggleService);
 
   constructor(rendererFactory: RendererFactory2) {
     this.renderer = rendererFactory.createRenderer(null, null);
@@ -59,6 +61,9 @@ export class ExplosionAnimationService {
     this.renderer.appendChild(container, explosion);
     this.renderer.appendChild(document.body, container);
 
+    // Soundeffekt abspielen (optional)
+    this.playExplosionSound();
+
     // Referenz speichern
     this.explosionElement = container;
 
@@ -72,6 +77,22 @@ export class ExplosionAnimationService {
     if (this.explosionElement && document.body.contains(this.explosionElement)) {
       this.renderer.removeChild(document.body, this.explosionElement);
       this.explosionElement = null;
+    }
+  }
+
+  private playExplosionSound(): void {
+    try {
+      const isOn = this.soundToggle.isSoundOn.getValue();
+      if (!isOn) return;
+
+      const audio = new Audio();
+      audio.src = 'assets/sounds/firework-explosion.mp3';
+      audio.volume = 0.5;
+      audio.play().catch(err => {
+        console.log('Audio konnte nicht abgespielt werden:', err);
+      });
+    } catch (error) {
+      console.log('Fehler beim Abspielen des Sounds:', error);
     }
   }
 }

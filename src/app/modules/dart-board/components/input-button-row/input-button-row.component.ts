@@ -6,7 +6,6 @@ import {ExplosionAnimationService} from "../../../../shared/animation/explosion-
 import {customRipple} from "../../../../shared/utils/util";
 import {MultiplierService} from "../../../../services/multiplier.service";
 import {CurrentPlayerService} from "../../../../services/current-player.service";
-import {SoundService} from "../../../../services/sound.service";
 
 
 export interface InputButton {
@@ -27,9 +26,8 @@ export class InputButtonRowComponent implements OnInit {
   protected badgeHandleService: BadgeHandleService = inject(BadgeHandleService)
   protected animationService = inject(ExplosionAnimationService)
   protected multiplierService = inject(MultiplierService);
-  private readonly cdr = inject(ChangeDetectorRef);
+  private cdr = inject(ChangeDetectorRef);
   protected currentPlayerService = inject(CurrentPlayerService);
-  protected soundService = inject(SoundService);
 
   public screenOrientation: OrientationType = window.screen.orientation.type;
   protected readonly customRipple = customRipple;
@@ -80,7 +78,6 @@ export class InputButtonRowComponent implements OnInit {
     this.setBadgeCount();
     this.dartService.score({value: 25, multiplier: 2});
     this.animationService.showExplosion('Bullseye');
-    this.soundService.playExplosionSound();
   }
 
   scoreWithMultiplier(inputButton: InputButton) {
@@ -95,14 +92,11 @@ export class InputButtonRowComponent implements OnInit {
         this.animationService.tripleTwentyCounter++
         if (this.animationService.tripleTwentyCounter === 3) {
           this.animationService.showExplosion('180');
-          this.soundService.playExplosionSound();
         } else {
           this.animationService.showExplosion('T' + inputButton.zahl.toString());
-          this.soundService.playExplosionSound();
         }
       } else {
         this.animationService.showExplosion('T' + inputButton.zahl.toString());
-        this.soundService.playExplosionSound();
       }
     }
   }
