@@ -27,7 +27,7 @@ export class GameInitializationResolver {
     if (gameType === GameType.Highscore && maxRounds) {
       this.roundCountService.setMaxRounds(Number(maxRounds));
     } else {
-      this.roundCountService.setMaxRounds(45);
+      this.roundCountService.setMaxRounds();
     }
 
     if (gameType === GameType.Cricket) {

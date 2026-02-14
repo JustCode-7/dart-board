@@ -12,13 +12,13 @@
       </div>
       <div class="d-flex flex-column-reverse hit-badge-wrapper">
           <span class="hit-badge badge bg-secondary me-1">
-          {{ currentPlayerService._last3History[0] ?? '-' }}
+          {{ currentPlayerService.last3HisSignal()[0] ?? '-' }}
         </span>
         <span class="hit-badge badge bg-secondary me-1">
-            {{ currentPlayerService._last3History[1] ?? '-' }}
+            {{ currentPlayerService.last3HisSignal()[1] ?? '-' }}
           </span>
         <span class="hit-badge badge bg-secondary me-1">
-            {{ currentPlayerService._last3History[2] ?? '-' }}
+            {{ currentPlayerService.last3HisSignal()[2] ?? '-' }}
           </span>
       </div>
     </mat-card>
@@ -28,19 +28,19 @@
     <div class="status-content">
       <div class="dart-buttons-vertical">
         <button
-          [color]="(currentPlayerService._remainingThrows >= 1) ? getProgressColor() : 'gray'"
+          [color]="(currentPlayerService.last3HisSignal().length >= 3) ? getProgressColor() : 'gray'"
           mat-mini-fab
           class="no-pointer"
         ><span>➶</span>
         </button>
         <button
-          [color]="(currentPlayerService._remainingThrows >= 2) ? getProgressColor() : 'gray'"
+          [color]="(currentPlayerService.last3HisSignal().length >= 2) ? getProgressColor() : 'gray'"
           mat-mini-fab
           class="no-pointer"
         ><span>➶</span>
         </button>
         <button
-          [color]="(currentPlayerService._remainingThrows >= 3) ? getProgressColor() : 'gray'"
+          [color]="(currentPlayerService.last3HisSignal().length >= 1) ? getProgressColor() : 'gray'"
           mat-mini-fab
           class="no-pointer"
         ><span>➶</span>
@@ -92,7 +92,11 @@
 
             <span class="mini-player-score fw-bold matcardpointer"
                   (click)="currentPlayerService.showHistory(player)">
-            {{ player.remainingPoints }}
+               @if (currentPlayerService._currentPlayer.value === player) {
+                 {{ currentPlayerService._remainingPointsToDisplay() }}
+               } @else {
+                 {{ player.remainingPoints }}
+               }
           </span>
           </div>
         </div>

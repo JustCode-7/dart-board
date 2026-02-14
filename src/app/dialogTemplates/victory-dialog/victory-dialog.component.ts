@@ -49,7 +49,7 @@ export class VictoryDialog implements OnInit {
 
   ngOnInit(): void {
 
-    if (this.dartService._gameType === GameType.Highscore) {
+    if (this.dartService._gameType === GameType.Highscore || this.dartService._gameType === GameType.Elimination301 || this.dartService._gameType === GameType.Cricket) {
       this.winner = wellFormedArray(this.currentPlayerService.getPlayersWithHighestPoints());
     } else {
       this.winner = this.currentPlayerService._currentPlayer.value.name

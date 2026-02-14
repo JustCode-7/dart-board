@@ -1,4 +1,4 @@
-import {inject, Injectable, signal} from '@angular/core';
+import {computed, effect, inject, Injectable, signal} from '@angular/core';
 import {PlayerService} from './player.service';
 import {DEFAULT_PLAYER, HistoryEntry, Player, Throw} from "../models/player/player.model";
 import {SwitchPlayerSnackComponent} from "../dialogTemplates/switch-player-snack/switch-player-snack.component";
@@ -12,6 +12,7 @@ import {ExplosionAnimationService} from "../shared/animation/explosion-animation
 import {GameType} from "../models/enum/GameType";
 import {GameStoreService} from "./game-store.service";
 import {Game} from "../models/game/game.model";
+import {VictoryDialog} from "../dialogTemplates/victory-dialog/victory-dialog.component";
 
 
 export const MAX_REMAINING_THROWS = 3;
@@ -24,13 +25,6 @@ export class CurrentPlayerService {
   private roundCountService = inject(RoundCountService);
   private gameStore = inject(GameStoreService);
   currentGameMode = ""
-
-  constructor(private playerService: PlayerService,
-              private snackbar: MatSnackBar,
-              private dialog: MatDialog,
-              private badgeHandleService: BadgeHandleService) {
-  }
-
   public _remainingThrows = MAX_REMAINING_THROWS;
   public _accumulatedPoints = 0;
   public _remainingPointsToDisplay = signal(0);
@@ -41,6 +35,35 @@ export class CurrentPlayerService {
   public _lastCricketHistory: Map<number, number> = new Map();
   protected animationService = inject(ExplosionAnimationService)
   public _history: HistoryEntry[] = [];
+
+  // undo - workaround
+  last3HisSignal = signal(this._last3History);
+  isTooLong = computed(() => this.last3HisSignal().length > 2);
+  private myEffect = effect(() => {
+    const shouldDisable = this.isTooLong();
+
+    this.updateButtonStates(shouldDisable);
+  });
+
+  constructor(private playerService: PlayerService,
+              private snackbar: MatSnackBar,
+              private dialog: MatDialog,
+              private badgeHandleService: BadgeHandleService) {
+  }
+
+  private updateButtonStates(disabled: boolean) {
+    const host = document.querySelector('app-dart-board');
+    if (!host) return;
+
+    const buttons = host.getElementsByTagName("button");
+
+    for (const btn of Array.from(buttons)) {
+      const text = btn.innerText.trim().toUpperCase();
+      if (text !== 'OK' && text !== 'REVERT') {
+        btn.disabled = disabled;
+      }
+    }
+  }
 
   init(player: Player) {
     this._currentPlayer.next(player);
@@ -90,6 +113,7 @@ export class CurrentPlayerService {
     this._currentPlayer.next(player);
     this.badgeHandleService.setPlayerId(player.id);
     this._last3History = [];
+    this.last3HisSignal.update(aktuellesArray => [...aktuellesArray = this._last3History])
     this._lastCricketHistory = new Map(this._currentPlayer.value.cricketMap);
     this._remainingPointsToDisplay.set(this._currentPlayer.value.remainingPoints);
     this._history = this._currentPlayer.value.history;
@@ -97,12 +121,30 @@ export class CurrentPlayerService {
 
     this.captureState();
 
-    this.snackbar.openFromComponent(SwitchPlayerSnackComponent, {
-      duration: 2300,
-      panelClass: ['app-shape-morph-snack'],
-      horizontalPosition: "center",
-      verticalPosition: "top"
-    });
+    if (this.roundCountService.getRemainingRounds() === 0) {
+      this.displayRoundCountNotification();
+    } else {
+      this.snackbar.openFromComponent(SwitchPlayerSnackComponent, {
+        duration: 2300,
+        panelClass: ['app-shape-morph-snack'],
+        horizontalPosition: "center",
+        verticalPosition: "top"
+      });
+    }
+  }
+
+  private displayRoundCountNotification() {
+    this.handleVictoryByReachingRoundLimit();
+  }
+
+  private handleVictoryByReachingRoundLimit() {
+    const winners = this.getPlayersWithHighestPoints();
+    const winner = this.playerService._players.find(p => p.name === winners[0]);
+    if (winner) {
+      this._currentPlayer.next(winner);
+    }
+
+    this.dialog.open(VictoryDialog, {data: {victoryByReachingRoundLimit: true}, disableClose: true});
   }
 
   private savePointsForStatistics() {
@@ -117,6 +159,7 @@ export class CurrentPlayerService {
     this.resetAccumulatedPoints();
     this.resetThrows();
     this._last3History = [];
+    this.last3HisSignal.update(aktuellesArray => [...aktuellesArray = this._last3History])
     this.badgeHandleService.resetBadges()
   }
 
@@ -144,6 +187,7 @@ export class CurrentPlayerService {
         this._remainingPointsToDisplay.update(value => value - points);
       }
       this._last3History.push(points);
+      this.last3HisSignal.update(aktuellesArray => [...aktuellesArray = this._last3History])
       this.accumulatePoints(points);
       this.decrementRemainingThrows();
     } else {
@@ -159,6 +203,7 @@ export class CurrentPlayerService {
       this.evaluateCricketPoints(_throw);
       this._remainingPointsToDisplay.set(this._currentPlayer.value.remainingPoints + this._accumulatedPoints);
       this._last3History.push(_throw.value * _throw.multiplier);
+      this.last3HisSignal.update(aktuellesArray => [...aktuellesArray = this._last3History])
       this.decrementRemainingThrows();
       // Wir setzen die ID erneut, um sicherzustellen, dass Badges richtig zugeordnet werden
       this.badgeHandleService.setPlayerId(this._currentPlayer.value.id);
@@ -195,16 +240,25 @@ export class CurrentPlayerService {
   }
 
   isOvershot(points: number): boolean {
-    const expectedRemainingPoints = this._currentPlayer.value.remainingPoints - this._accumulatedPoints - points;
-    if (this.currentGameMode === GameType.DoubleOut501) {
-      return expectedRemainingPoints < 0 || expectedRemainingPoints === 1;
+    if (this.currentGameMode === GameType.Highscore) {
+      return false;
     }
-    return expectedRemainingPoints < 0;
+    if (this.currentGameMode === GameType.Elimination301) {
+      const expectedRemainingPoints = this._currentPlayer.value.remainingPoints + this._accumulatedPoints + points;
+      return expectedRemainingPoints > 301;
+    } else {
+      const expectedRemainingPoints = this._currentPlayer.value.remainingPoints - this._accumulatedPoints - points;
+      if (this.currentGameMode === GameType.DoubleOut501) {
+        return expectedRemainingPoints < 0 || expectedRemainingPoints === 1;
+      }
+      return expectedRemainingPoints < 0;
+    }
   }
 
   applyPoints() {
     this._currentPlayer.value.lastScore = this._accumulatedPoints;
-    this._currentPlayer.value.last3History = [...this._last3History];
+    this._currentPlayer.value.last3History = this._last3History;
+    this.last3HisSignal.update(aktuellesArray => [...aktuellesArray = this._last3History])
     if (this.currentGameMode === GameType.Elimination301 || this.currentGameMode === GameType.Highscore) {
       // Punkte hinzufügen (Elimination / Highscore)
       this._currentPlayer.value.remainingPoints += this._accumulatedPoints;
@@ -220,7 +274,8 @@ export class CurrentPlayerService {
 
   applyCricketPoints() {
     this._currentPlayer.value.lastScore = this._accumulatedPoints;
-    this._currentPlayer.value.last3History = [...this._last3History];
+    this._currentPlayer.value.last3History = this._last3History;
+    this.last3HisSignal.update(aktuellesArray => [...aktuellesArray = this._last3History])
     this._currentPlayer.value.remainingPoints += this._accumulatedPoints;
     if (this._remainingThrows === 0) {
       this.savePointsForStatistics();
@@ -343,7 +398,8 @@ export class CurrentPlayerService {
     this._accumulatedPoints = state.accumulatedPoints;
     this._remainingPointsToDisplay.set(currentPlayer.remainingPoints);
     this._history = currentPlayer.history;
-    this._last3History = [...(currentPlayer.last3History || [])];
+    this._last3History = currentPlayer.last3History || [];
+    this.last3HisSignal.update(aktuellesArray => [...aktuellesArray = this._last3History])
     this._lastCricketHistory = new Map(currentPlayer.cricketMap);
     this.badgeHandleService.restoreBadgesFromHistory(this._last3History);
   }
@@ -360,5 +416,10 @@ export class CurrentPlayerService {
 
     const maxPoints = Math.max(...players.map(p => p.remainingPoints));
     return players.filter(p => p.remainingPoints === maxPoints).map(players => players.name);
+  }
+
+  hasReachedTargetPoints(targetPoints: number) {
+    const aggregatedRemainingPoints = this._currentPlayer.value.remainingPoints + this._accumulatedPoints;
+    return aggregatedRemainingPoints === targetPoints;
   }
 }

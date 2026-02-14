@@ -7,17 +7,23 @@ export const ROUND_LIMIT = 45
 })
 export class RoundCountService {
 
-  private readonly INITIAL_ROUND_COUNT = 1;
+  private readonly INITIAL_ROUND_COUNT = 2;
   public MAX_ROUND_COUNT = ROUND_LIMIT;
 
   roundCount: number = this.INITIAL_ROUND_COUNT;
 
-  setMaxRounds(max: number) {
-    this.MAX_ROUND_COUNT = max;
+  setMaxRounds(max?: number) {
+    if (max) {
+      this.MAX_ROUND_COUNT = max;
+    } else {
+      this.MAX_ROUND_COUNT = ROUND_LIMIT
+    }
+
   }
 
   getRemainingRounds(): number {
-    return this.MAX_ROUND_COUNT - this.roundCount
+    const decrementedRoundCount = this.MAX_ROUND_COUNT - this.roundCount;
+    return decrementedRoundCount < 0 ? 0 : decrementedRoundCount;
   }
 
   incrementRoundCount() {

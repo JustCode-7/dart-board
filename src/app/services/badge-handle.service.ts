@@ -70,7 +70,8 @@ export class BadgeHandleService {
         if (numericVal === 50) {
           this.matBadgeHiddenBullsEye = false;
           this.bullsEyeBadgeCount = badgeVal;
-        } else if (numericVal === 25) {
+        }
+        if (numericVal === 25) {
           this.matBadgeHiddenBull = false;
           this.bullBadgeCount = badgeVal;
         }
@@ -81,7 +82,7 @@ export class BadgeHandleService {
         let baseVal = numericVal;
         if (numericVal > 25) {
           if (numericVal % 3 === 0) baseVal = numericVal / 3;
-          else if (numericVal % 2 === 0) baseVal = numericVal / 2;
+          if (numericVal % 2 === 0) baseVal = numericVal / 2;
         }
         const btn = this.twentyButtons.find(b => b.zahl === baseVal);
         if (btn) {

@@ -63,27 +63,21 @@ export class DartService {
   score(_throw: Throw) {
     const points = _throw.value * _throw.multiplier;
 
-    if (this.roundCountService.getRemainingRounds() == 0 && this.currentPlayerService.hasNoThrowsRemaining() && this.isNewRound()) {
-      this.displayRoundCountNotification();
-      return;
-    }
-
-    if (this._gameType === GameType.Elimination301) {
-      this.scoreElimination(points);
-      return;
-    }
-
-    if (this._gameType === GameType.Highscore) {
-      this.scoreHighscore(points);
-      return;
-    }
-
     if (this.currentPlayerService.isOvershot(points)) {
       this.currentPlayerService.captureState();
       this.displayOvershotNotification().afterDismissed().subscribe(() => {
         this.switchPlayer();
       })
     } else {
+      if (this._gameType === GameType.Elimination301) {
+        this.scoreElimination(points);
+        return;
+      }
+
+      if (this._gameType === GameType.Highscore) {
+        this.scoreHighscore(points);
+        return;
+      }
       this.currentPlayerService.scoreDart(points);
       if (GameType.DoubleOut501 == this._gameType) {
         this.checksFor501DoubleOut(_throw.multiplier);
@@ -192,11 +186,6 @@ export class DartService {
     })
   }
 
-  private displayRoundCountNotification() {
-    this._hideAll = true;
-    this.handleVictoryByReachingRoundLimit();
-  }
-
   private handleVictoryByReachingRoundLimit() {
     const winners = this.currentPlayerService.getPlayersWithHighestPoints();
     const winner = this.playerService._players.find(p => p.name === winners[0]);
@@ -205,13 +194,11 @@ export class DartService {
     }
 
     this.dialog.open(VictoryDialog, {data: {victoryByReachingRoundLimit: true}, disableClose: true});
-    // TODO: Open PointsOverview as Option
   }
 
   private handleVictory() {
     this._hideAll = true;
     this.dialog.open(VictoryDialog, {disableClose: true});
-    // TODO: Open PointsOverview as Option
   }
 
   isNewRound() {

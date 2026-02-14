@@ -62,16 +62,12 @@ export class CricketService {
 
   // anpassen
   scoreCricketWithMultiplier(_throw: Throw) {
-    if (this.roundCountService.getRemainingRounds() === 0) {
-      this.displayRoundCountNotification();
-    } else {
-      this.currentPlayerService.scoreCricket(_throw);
-      this.currentPlayerService.applyCricketPoints();
-      if (this.cricketWinCheck()) {
-        this.handleVictory();
-      } else if (this.currentPlayerService.hasNoThrowsRemaining()) {
-        this.switchPlayer();
-      }
+    this.currentPlayerService.scoreCricket(_throw);
+    this.currentPlayerService.applyCricketPoints();
+    if (this.cricketWinCheck()) {
+      this.handleVictory();
+    } else if (this.currentPlayerService.hasNoThrowsRemaining()) {
+      this.switchPlayer();
     }
     this.currentPlayerService.sortMap();
   }
@@ -88,22 +84,6 @@ export class CricketService {
     this.setCurrentPlayerAsFristofList();
   }
 
-
-  private displayRoundCountNotification() {
-    this._hideAll = true;
-    this.handleVictoryByReachingRoundLimit();
-  }
-
-  private handleVictoryByReachingRoundLimit() {
-    const winners = this.currentPlayerService.getPlayersWithHighestPoints();
-    const winner = this.playerService._players.find(p => p.name === winners[0]);
-    if (winner) {
-      this.currentPlayerService._currentPlayer.next(winner);
-    }
-
-    this.dialog.open(VictoryDialog, {data: {victoryByReachingRoundLimit: true}, disableClose: true});
-    // TODO: Open PointsOverview as Option
-  }
 
   isNewRound() {
     return this.currentPlayerService._currentPlayer.value.name == this.playerNames[this.playerNames.length - 1];
