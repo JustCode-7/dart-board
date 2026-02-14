@@ -39,7 +39,8 @@ export class CurrentPlayerService {
   // undo - workaround
   last3HisSignal = signal(this._last3History);
   isTooLong = computed(() => this.last3HisSignal().length > 2);
-  private myEffect = effect(() => {
+
+  private updateButtonStatesEffect = effect(() => {
     const shouldDisable = this.isTooLong();
 
     this.updateButtonStates(shouldDisable);
@@ -396,6 +397,18 @@ export class CurrentPlayerService {
     this.roundCountService.roundCount = state.roundCount;
     this._remainingThrows = state.remainingThrows;
     this._accumulatedPoints = state.accumulatedPoints;
+    // Hier TODO: man muss eigentlich jeden eintrag von last3History einzeln abziehen, dann darf man aber auch nicht this._accumulatedPoints = state.accumulatedPoints;
+    // es braucht hier einen prozess die Punte einzeln wieder abzuziehen oder draufzurechnen
+    // folge deaktiviere Undo bis der Fix da ist
+    // die Komplette Undo-Mechanik muss überdacht werden
+    /* vielleicht ja sowas in der Art
+      // last3HisLength = computed(() => this.last3HisSignal().length);
+      // private last3HisChangedStatesEffect = effect(() => {
+      //   const last3HisChanged = this.last3HisLength();
+      //   this._remainingPointsToDisplay.update(value => value = this._currentPlayer.value.remainingPoints);
+      //   console.warn("geändert :", last3HisChanged)
+      // });
+     */
     this._remainingPointsToDisplay.set(currentPlayer.remainingPoints);
     this._history = currentPlayer.history;
     this._last3History = currentPlayer.last3History || [];

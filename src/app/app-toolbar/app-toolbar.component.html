@@ -8,9 +8,9 @@
         <mat-icon>arrow_back</mat-icon>
         Main Menu
       </button>
-      <button mat-menu-item (click)="undoLastAction()">
+      <button disabled mat-menu-item (click)="undoLastAction()">
         <mat-icon>undo</mat-icon>
-        rückgängig
+        rückgängig [in Wartung]
       </button>
       <button mat-menu-item (click)="setNextPlayerAsFirst()" [disabled]="!canChangeFirstPlayer">
         <mat-icon>swap_vert</mat-icon>
