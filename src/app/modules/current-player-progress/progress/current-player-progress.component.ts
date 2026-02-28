@@ -5,12 +5,22 @@ import {PlayerService} from "../../../services/player.service";
 import {GameType} from "../../../models/enum/GameType";
 import {MatDialog} from "@angular/material/dialog";
 import {HiddenPlayersDialog} from "../../../dialogTemplates/hidden-players-dialog/hidden-players-dialog.component";
+import {CommonModule} from "@angular/common";
+import {MatCardModule} from "@angular/material/card";
+import {MatIconModule} from "@angular/material/icon";
+import {MatButtonModule} from "@angular/material/button";
 
 @Component({
   selector: 'app-current-player-progress',
   templateUrl: './current-player-progress.component.html',
   styleUrls: ['./current-player-progress.component.scss'],
-  standalone: false,
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatCardModule,
+    MatIconModule,
+    MatButtonModule,
+  ],
 })
 export class CurrentPlayerProgressComponent {
   public playerService = inject(PlayerService);

@@ -29,6 +29,15 @@
       .player-name {
         font-size: 1rem;
         opacity: 0.8;
+        display: flex;
+        align-items: center;
+      }
+
+      .ai-icon {
+        font-size: 1.2rem;
+        width: 1.2rem;
+        height: 1.2rem;
+        margin-right: 4px;
       }
 
       .player-score {
@@ -143,7 +152,7 @@
         .mini-player-name {
           padding: 0.2rem;
           max-width: 100%;
-          min-width: 3rem;
+          min-width: 4.2rem;
           color: #80d8ff;
           font-weight: 500;
         }

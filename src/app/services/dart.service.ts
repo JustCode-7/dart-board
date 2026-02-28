@@ -15,11 +15,14 @@ export class DartService {
   _gameType: GameType | string = '';
   playerNames: string[] = [];
   public _hideAll: boolean = false;
+  private lastPlayerId: number = -1;
 
-  static createPlayer(name: string, id: number): Player {
+  static createPlayer(playerData: any, id: number): Player {
     return {
       id,
-      name,
+      name: (typeof playerData === 'string') ? playerData : playerData.name,
+      isAI: (typeof playerData === 'string') ? false : playerData.isAI,
+      difficulty: (typeof playerData === 'string') ? undefined : playerData.difficulty,
       remainingPoints: 501,
       lastScore: 0,
       history: [],
@@ -42,10 +45,10 @@ export class DartService {
     this.currentPlayerService.setCurrentGameMode(gameType);
   }
 
-  initPlayers(playerNames: string[]) {
+  initPlayers(players: any[]) {
     this.roundCountService.reset();
-    this.playerNames = playerNames;
-    this.playerService.setupDartPlayers(playerNames);
+    this.playerService.setupDartPlayers(players);
+    this.playerNames = players.map(p => typeof p === 'string' ? p : p.name);
 
     // Initialize starting points based on game type
     if (this._gameType === GameType.Elimination301 || this._gameType === GameType.Highscore) {
@@ -57,12 +60,12 @@ export class DartService {
     }
 
     this._hideAll = false;
+    this.lastPlayerId = this.playerService._players[this.playerService._players.length - 1].id;
     this.currentPlayerService.init(this.playerService.getFirstPlayer());
   }
 
   score(_throw: Throw) {
     const points = _throw.value * _throw.multiplier;
-
     if (this.currentPlayerService.isOvershot(points)) {
       this.currentPlayerService.captureState();
       this.displayOvershotNotification().afterDismissed().subscribe(() => {
@@ -78,37 +81,43 @@ export class DartService {
         this.scoreHighscore(points);
         return;
       }
-      this.currentPlayerService.scoreDart(points);
-      if (GameType.DoubleOut501 == this._gameType) {
+      if (this._gameType === GameType.DoubleOut501) {
+        this.currentPlayerService.score501(points);
         this.checksFor501DoubleOut(_throw.multiplier);
-      } else {
+        return;
+      }
+      if (this._gameType === GameType.Simple501) {
+        this.currentPlayerService.score501(points);
         this.checksFor501();
+        return;
       }
     }
   }
 
   private checksFor501() {
     if (this.currentPlayerService.hasReachedZeroPoints()) {
-      this.currentPlayerService.applyPoints();
+      this.currentPlayerService.finalizeTurn('subtract');
       this.handleVictory();
     } else if (this.currentPlayerService.hasNoThrowsRemaining()) {
+      this.currentPlayerService.finalizeTurn('subtract');
       this.switchPlayer();
     }
   }
 
   private scoreHighscore(points: number) {
-    this.currentPlayerService.scoreDart(points);
+    this.currentPlayerService.scoreHighscore(points);
     if (this.roundCountService.getRemainingRounds() == 0 && this.isNewRound() && this.currentPlayerService.hasNoThrowsRemaining()) {
-      this.currentPlayerService.applyPoints();
+      this.currentPlayerService.finalizeTurn('add');
       this.handleVictoryByReachingRoundLimit();
     } else if (this.currentPlayerService.hasNoThrowsRemaining()) {
+      this.currentPlayerService.finalizeTurn('add');
       this.switchPlayer();
     }
   }
 
   private scoreElimination(points: number) {
     // Add points for current throw to the display/accumulator
-    this.currentPlayerService.scoreDart(points);
+    this.currentPlayerService.scoreElimination(points);
 
     // Determine target based on elimination mode
     const target = 301;
@@ -128,7 +137,7 @@ export class DartService {
 
     // Check immediate win at target or overshoot
     if (potentialTotal == target) {
-      this.currentPlayerService.applyPoints();
+      this.currentPlayerService.finalizeTurn('add');
       this.handleVictory();
       return;
     }
@@ -142,6 +151,7 @@ export class DartService {
 
     // End of turn handling
     if (this.currentPlayerService.hasNoThrowsRemaining()) {
+      this.currentPlayerService.finalizeTurn('add');
       this.switchPlayer();
     }
   }
@@ -149,7 +159,7 @@ export class DartService {
   private checksFor501DoubleOut(multiplier: number) {
     if (this.currentPlayerService.hasReachedZeroPoints()) {
       if (this.currentPlayerService.isDoubleOut(multiplier)) {
-        this.currentPlayerService.applyPoints();
+        this.currentPlayerService.finalizeTurn('subtract');
         this.handleVictory();
       } else {
         this.currentPlayerService.captureState();
@@ -158,14 +168,16 @@ export class DartService {
         })
       }
     } else if (this.currentPlayerService.hasNoThrowsRemaining()) {
+      this.currentPlayerService.finalizeTurn('subtract');
       this.switchPlayer();
     }
   }
 
   private switchPlayer() {
+    const newRound = this.isNewRound()
     this.currentPlayerService.switchPlayer(
       this.playerService.getNextPlayer(this.currentPlayerService._currentPlayer.value),
-      this.isNewRound());
+      newRound);
     this.setCurrentPlayerAsFristofList();
   }
 
@@ -202,7 +214,9 @@ export class DartService {
   }
 
   isNewRound() {
-    return this.currentPlayerService._currentPlayer.value.name == this.playerNames[this.playerNames.length - 1];
+    const players = this.playerService._players;
+    if (players.length === 0) return false;
+    return this.currentPlayerService._currentPlayer.value.id === this.lastPlayerId;
   }
 
   setCurrentPlayerAsFristofList() {

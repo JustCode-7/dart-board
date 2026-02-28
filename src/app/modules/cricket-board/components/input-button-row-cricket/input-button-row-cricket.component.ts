@@ -1,5 +1,9 @@
 import {ChangeDetectorRef, Component, HostListener, inject, OnInit} from '@angular/core';
-import {ThemePalette} from "@angular/material/core";
+import {MatButtonModule} from "@angular/material/button";
+import {MatBadgeModule} from "@angular/material/badge";
+import {MatRippleModule, ThemePalette} from "@angular/material/core";
+import {CommonModule} from "@angular/common";
+import {ShapeMorphDirective} from "../../../../shared/directive/shape-morph.directive";
 import {CricketService} from 'src/app/services/cricket.service';
 import {CurrentPlayerService} from 'src/app/services/current-player.service';
 import {PlayerService} from "../../../../services/player.service";
@@ -12,7 +16,14 @@ import {MultiplierService} from "../../../../services/multiplier.service";
   selector: 'app-input-button-row-cricket',
   templateUrl: './input-button-row-cricket.component.html',
   styleUrls: ['./input-button-row-cricket.component.scss'],
-  standalone: false,
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatButtonModule,
+    MatBadgeModule,
+    MatRippleModule,
+    ShapeMorphDirective,
+  ],
 })
 export class InputButtonRowCricketComponent implements OnInit {
   protected readonly customRipple = customRipple;
@@ -35,7 +46,7 @@ export class InputButtonRowCricketComponent implements OnInit {
     return 'primary';
   }
 
-  @HostListener('window:resize', ['$event'])
+  @HostListener('window:resize')
   onResize() {
     this.updateOrientation();
     this.cdr.detectChanges();
@@ -47,11 +58,13 @@ export class InputButtonRowCricketComponent implements OnInit {
 
   scoreBull() {
     this.cricketService.scoreCricketWithMultiplier({value: 25, multiplier: 1})
+    this.cdr.detectChanges();
   }
 
   scoreBullsEye() {
     this.cricketService.scoreCricketWithMultiplier({value: 25, multiplier: 2})
     this.animationService.showExplosion('Bullseye');
+    this.cdr.detectChanges();
   }
 
   scoreHit(value: number) {
@@ -71,6 +84,7 @@ export class InputButtonRowCricketComponent implements OnInit {
       }
     }
     this.cricketService.scoreCricketWithMultiplier({value, multiplier});
+    this.cdr.detectChanges();
   }
 
   getBadgeCountValue(primaryNumber: number) {

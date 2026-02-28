@@ -1,10 +1,16 @@
 import {Component, HostListener, inject, OnInit} from '@angular/core';
 import {PwaInstallService} from './services/pwa-install.service';
+import {AppToolbarComponent} from "./app-toolbar/app-toolbar.component";
+import {RouterOutlet} from "@angular/router";
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  standalone: false,
+  standalone: true,
+  imports: [
+    AppToolbarComponent,
+    RouterOutlet,
+  ],
 })
 export class AppComponent implements OnInit {
 

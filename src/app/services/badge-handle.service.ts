@@ -16,7 +16,7 @@ export class BadgeHandleService {
    * auf den Badges anzuzeigen (1, 2 oder 3). Er wird bei jedem Wurf inkrementiert und
    * beim Spielerwechsel oder Undo zurückgesetzt bzw. aus der Historie wiederhergestellt.
    */
-  tempBadgeValue: number = 1
+  tempBadgeValue: number = 0
   matBadgeHiddenBull: boolean = true;
   matBadgeHiddenBullsEye: boolean = true;
   bullBadgeCount: string | number | undefined | null;
@@ -36,24 +36,23 @@ export class BadgeHandleService {
   resetBadges() {
     this.badgeCount.next(1);
     this.badgeVisibility.next(true);
-    this.tempBadgeValue = 1;
+    this.tempBadgeValue = 0;
     this.matBadgeHiddenBull = true;
     this.matBadgeHiddenBullsEye = true;
     this.matBadgeHiddenMiss = true;
-    this.bullBadgeCount = undefined;
-    this.bullsEyeBadgeCount = undefined;
-    this.missBadgeCount = undefined;
+    // Hinweis: Wir setzen bullBadgeCount, bullsEyeBadgeCount, missBadgeCount und badgeValue
+    // NICHT auf undefined, um "ExpressionChangedAfterItHasBeenCheckedError" zu vermeiden.
+    // Das Ausblenden erfolgt zuverlässig über die Hidden-Flags oben.
     this.twentyButtons.forEach(input => {
       input.badge = true;
-      input.badgeValue = undefined;
     });
   }
 
   scoreMiss() {
+    this.tempBadgeValue++;
     if (this.matBadgeHiddenMiss) {
       this.matBadgeHiddenMiss = false;
       this.missBadgeCount = this.tempBadgeValue;
-      this.tempBadgeValue++;
     }
   }
 
@@ -90,7 +89,7 @@ export class BadgeHandleService {
           btn.badgeValue = badgeVal;
         }
       }
-      this.tempBadgeValue = badgeVal + 1;
+      this.tempBadgeValue = badgeVal;
     });
   }
 

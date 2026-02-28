@@ -12,13 +12,12 @@ import {
   MiniPlayerOverview
 } from "../../modules/current-player-progress/progress/mini-player-overview/mini-player-overview";
 import {GameType} from "../../models/enum/GameType";
-import {CurrentPlayerProgressModule} from "../../modules/current-player-progress/current-player-progress.module";
 import {wellFormedArray} from "../../shared/utils/util";
 
 @Component({
   selector: 'app-switch-player-snack',
   templateUrl: './switch-player-snack.component.html',
-  imports: [MatCardModule, MatButtonModule, CommonModule, MatProgressBarModule, MiniPlayerOverview, CurrentPlayerProgressModule],
+  imports: [MatCardModule, MatButtonModule, CommonModule, MatProgressBarModule, MiniPlayerOverview],
   standalone: true,
 })
 export class SwitchPlayerSnackComponent implements OnInit, OnDestroy {
@@ -48,11 +47,12 @@ export class SwitchPlayerSnackComponent implements OnInit, OnDestroy {
 
 
   startTimer() {
-    setInterval(() => {
+    const intervalId = setInterval(() => {
       if (this.timeLeft > 0) {
         this.timeLeft--;
       } else {
-        return
+        clearInterval(intervalId);
+        this.snackBarRef.dismiss();
       }
     }, 1000);
   }

@@ -6,12 +6,12 @@ import {Router} from "@angular/router";
   template: `
     <div class="container text-center mt-lg-5">
       <h1><code>
-        {{router.url}}<br>
+        {{ router.url }}<br>
         404 not found</code></h1>
     </div>
   `,
   styles: [],
-  standalone: false,
+  standalone: true,
 })
 export class PageNotFoundComponent {
 

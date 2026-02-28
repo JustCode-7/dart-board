@@ -15,6 +15,14 @@ export interface Player {
   cricketMap: Map<number, number>,
   average: number;
   last3History: number[];
+  isAI?: boolean;
+  difficulty?: Difficulty;
+}
+
+export enum Difficulty {
+  Easy = 'Easy',
+  Medium = 'Medium',
+  Hard = 'Hard'
 }
 
 export interface Throw {
@@ -30,5 +38,5 @@ export const DEFAULT_PLAYER: Player = {
   history: [],
   cricketMap: new Map<number, number>(),
   average: 0,
-  last3History: [-1],
+  last3History: [],
 };

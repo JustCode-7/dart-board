@@ -23,37 +23,54 @@
       </div>
 
     </div>
-    <div class="d-flex flex-colum my-3">
+    <div class="d-flex flex-row my-3">
       <button mat-raised-button color="accent" type="button" (click)="addPlayerName()">
         <mat-icon>
           add
         </mat-icon>
         Player
       </button>
+      <button mat-raised-button color="primary" type="button" class="ms-2" (click)="addAIPlayer()">
+        <mat-icon>
+          smart_toy
+        </mat-icon>
+        +KI-Player
+      </button>
     </div>
 
     <div formArrayName="playerNames" cdkDropList (cdkDropListDropped)="drop($event)">
-      <div *ngFor="let playerName of playerNames.controls; let i=index" cdkDrag>
-        <mat-form-field appearance="fill">
-          <mat-label>Player {{ i + 1 }}</mat-label>
-          <div class="d-flex flex-row">
-            <input #nameInput matInput id="playerName-{{ i }}" type="text"
-                   [formControlName]="i" value="{{playerName}}">
-            <button mat-mini-fab class="ms-2 mb-1" type="button" color="warn" (click)="removePlayerName(i)">
-              <mat-icon>close</mat-icon>
-            </button>
-          </div>
-          @if (nameInput.value === '') {
-            <mat-hint class="text-bg-danger">
-              fill with name please!
-            </mat-hint>
-          }
-        </mat-form-field>
-        <button mat-icon-button (click)="$event.preventDefault()">
-          <mat-icon>
-            reorder
-          </mat-icon>
-        </button>
+      <div *ngFor="let playerNameGroup of playerNames.controls; let i=index" cdkDrag [formGroupName]="i">
+        <div class="d-flex flex-row align-items-center">
+          <mat-form-field appearance="fill" *ngIf="playerNameGroup.get('isAI')?.value" class="difficulty-select ms-2">
+            <mat-label>Difficulty</mat-label>
+            <mat-select formControlName="difficulty">
+              <mat-option [value]="difficulty.Easy">Leicht</mat-option>
+              <mat-option [value]="difficulty.Medium">Mittel</mat-option>
+              <mat-option [value]="difficulty.Hard">Schwer</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill">
+            <mat-label>Player {{ i + 1 }}</mat-label>
+            <div class="d-flex flex-row">
+              <input #nameInput matInput id="playerName-{{ i }}" type="text"
+                     formControlName="name">
+              <button mat-mini-fab class="ms-2 mb-1" type="button" color="warn" (click)="removePlayerName(i)">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+            @if (nameInput.value === '') {
+              <mat-hint class="text-bg-danger">
+                fill with name please!
+              </mat-hint>
+            }
+          </mat-form-field>
+          <button mat-icon-button (click)="$event.preventDefault()">
+            <mat-icon>
+              reorder
+            </mat-icon>
+          </button>
+        </div>
       </div>
 
     </div>
@@ -61,6 +78,11 @@
     <div class="d-flex justify-content-start">
       <button mat-raised-button color="accent" type="submit" [disabled]="!validateGameStart(playerNames)">Start
       </button>
+      @if (playerNames.length > 0 && !validateGameStart(playerNames)) {
+        <mat-hint class="ms-2 mt-2 text-danger">
+          Mindestens ein menschlicher Spieler wird benötigt.
+        </mat-hint>
+      }
       <button mat-raised-button class="ms-2" type="reset">Reset</button>
     </div>
   </form>

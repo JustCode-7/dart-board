@@ -24,12 +24,15 @@ export class CricketService {
   playerNames: string[] = [];
   public _gameType: GameType | string = '';
   public _hideAll: boolean = false;
+  private lastPlayerId: number = -1;
 
 
-  static createPlayer(name: string, id: number): Player {
+  static createPlayer(playerData: any, id: number): Player {
     return {
       id,
-      name,
+      name: (typeof playerData === 'string') ? playerData : playerData.name,
+      isAI: (typeof playerData === 'string') ? false : playerData.isAI,
+      difficulty: (typeof playerData === 'string') ? undefined : playerData.difficulty,
       remainingPoints: 0,
       lastScore: 0,
       history: [],
@@ -52,21 +55,22 @@ export class CricketService {
     this.currentPlayerService.setCurrentGameMode(gameType);
   }
 
-  initPlayers(playerNames: string[]) {
+  initPlayers(players: any[]) {
     this.roundCountService.reset();
-    this.playerNames = playerNames;
-    this.playerService.setupCricketPlayers(playerNames);
+    this.playerService.setupCricketPlayers(players);
     this._hideAll = false;
+    this.lastPlayerId = this.playerService._players[this.playerService._players.length - 1].id;
     this.currentPlayerService.init(this.playerService.getFirstPlayer());
   }
 
   // anpassen
   scoreCricketWithMultiplier(_throw: Throw) {
     this.currentPlayerService.scoreCricket(_throw);
-    this.currentPlayerService.applyCricketPoints();
     if (this.cricketWinCheck()) {
+      this.currentPlayerService.finalizeTurn('add', this.currentPlayerService._remainingThrows === 0);
       this.handleVictory();
     } else if (this.currentPlayerService.hasNoThrowsRemaining()) {
+      this.currentPlayerService.finalizeTurn('add', this.currentPlayerService._remainingThrows === 0);
       this.switchPlayer();
     }
     this.currentPlayerService.sortMap();
@@ -86,7 +90,7 @@ export class CricketService {
 
 
   isNewRound() {
-    return this.currentPlayerService._currentPlayer.value.name == this.playerNames[this.playerNames.length - 1];
+    return this.currentPlayerService._currentPlayer.value.id == this.lastPlayerId;
   }
 
   setCurrentPlayerAsFristofList() {

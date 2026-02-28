@@ -21,8 +21,16 @@ export class GameInitializationResolver {
 
   resolve(route: ActivatedRouteSnapshot, _unused: RouterStateSnapshot): Observable<boolean> {
     const gameType = <GameType>route.queryParamMap.get('gameType')!;
-    const playerNames = route.queryParamMap.getAll('playerNames');
+    const playersParam = route.queryParamMap.get('players');
+    const playerNamesLegacy = route.queryParamMap.getAll('playerNames'); // Support for old way
     const maxRounds = route.queryParamMap.get('maxRounds');
+
+    let players: any[] = [];
+    if (playersParam) {
+      players = JSON.parse(playersParam);
+    } else if (playerNamesLegacy && playerNamesLegacy.length > 0) {
+      players = playerNamesLegacy;
+    }
 
     if (gameType === GameType.Highscore && maxRounds) {
       this.roundCountService.setMaxRounds(Number(maxRounds));
@@ -32,12 +40,10 @@ export class GameInitializationResolver {
 
     if (gameType === GameType.Cricket) {
       this.cricketService.setGameType(GameType.Cricket);
-      this.dartService.playerNames = playerNames
-      this.cricketService.initPlayers(playerNames);
+      this.cricketService.initPlayers(players);
     } else {
       this.dartService.setGameType(gameType);
-      this.dartService.playerNames = playerNames
-      this.dartService.initPlayers(playerNames);
+      this.dartService.initPlayers(players);
     }
     this.currentplayerService.currentGameMode = gameType;
     return of(true);

@@ -1,4 +1,4 @@
-import {Component, inject, Inject, OnDestroy, OnInit} from '@angular/core';
+import {Component, inject, OnDestroy, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MAT_SNACK_BAR_DATA, MatSnackBarRef} from '@angular/material/snack-bar';
@@ -37,11 +37,11 @@ export class ShapeMorphHoldSnackComponent implements OnInit, OnDestroy {
   currentPlayerService = inject(CurrentPlayerService)
   roundCountService = inject(RoundCountService)
 
-  constructor(
-    @Inject(MAT_SNACK_BAR_DATA) data: HoldSnackData,
-    private snackRef: MatSnackBarRef<ShapeMorphHoldSnackComponent>
-  ) {
-    this.duration = Math.max(1, data?.duration ?? 1000);
+  private readonly data: HoldSnackData = inject<HoldSnackData>(MAT_SNACK_BAR_DATA);
+  private readonly snackRef = inject<MatSnackBarRef<ShapeMorphHoldSnackComponent>>(MatSnackBarRef);
+
+  constructor() {
+    this.duration = Math.max(1, this.data?.duration ?? 1000);
   }
 
   ngOnInit(): void {

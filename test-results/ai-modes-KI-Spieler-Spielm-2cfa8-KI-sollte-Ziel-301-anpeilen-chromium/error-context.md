@@ -1,0 +1,106 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - generic [ref=e4]:
+    - button [ref=e5] [cursor=pointer]:
+      - img [ref=e6]: menu
+    - generic [ref=e9]:
+      - text: Elimination
+      - button "question_mark" [ref=e10] [cursor=pointer]:
+        - generic [ref=e12]: question_mark
+      - img [ref=e15]: volume_up
+    - generic [ref=e16]:
+      - code [ref=e17]: DartBoard
+      - generic [ref=e18]:
+        - img [ref=e19]: linear_scale
+        - text: "v: 0.8.6--dev"
+  - generic [ref=e21]:
+    - generic [ref=e23]:
+      - generic [ref=e26] [cursor=pointer]:
+        - generic [ref=e27]: Human
+        - generic [ref=e28]: "0"
+        - generic [ref=e29]: ⌀ 0
+      - generic [ref=e31]:
+        - generic [ref=e32]:
+          - button "➶":
+            - generic: ➶
+          - button "➶":
+            - generic: ➶
+          - button "➶":
+            - generic: ➶
+        - generic [ref=e33]:
+          - generic [ref=e34]: Runde
+          - generic [ref=e35]: 1/45
+          - button [ref=e36] [cursor=pointer]:
+            - img [ref=e37]: groups
+      - generic [ref=e41]:
+        - generic [ref=e42]:
+          - generic [ref=e44]: Human
+          - generic [ref=e46] [cursor=pointer]: "0"
+        - generic [ref=e47]:
+          - generic [ref=e49]: KI-Cortana
+          - generic [ref=e51] [cursor=pointer]: "0"
+    - generic [ref=e52]:
+      - generic [ref=e57]:
+        - generic [ref=e58]:
+          - button "Bull" [ref=e59] [cursor=pointer]:
+            - generic [ref=e60]: Bull
+          - button "BullsEye" [ref=e63] [cursor=pointer]:
+            - generic [ref=e64]: BullsEye
+        - generic [ref=e67]:
+          - generic [ref=e68]:
+            - button "1" [ref=e70] [cursor=pointer]:
+              - generic [ref=e71]: "1"
+            - button "2" [ref=e75] [cursor=pointer]:
+              - generic [ref=e76]: "2"
+            - button "3" [ref=e80] [cursor=pointer]:
+              - generic [ref=e81]: "3"
+            - button "4" [ref=e85] [cursor=pointer]:
+              - generic [ref=e86]: "4"
+            - button "5" [ref=e90] [cursor=pointer]:
+              - generic [ref=e91]: "5"
+          - generic [ref=e94]:
+            - button "6" [ref=e96] [cursor=pointer]:
+              - generic [ref=e97]: "6"
+            - button "7" [ref=e101] [cursor=pointer]:
+              - generic [ref=e102]: "7"
+            - button "8" [ref=e106] [cursor=pointer]:
+              - generic [ref=e107]: "8"
+            - button "9" [ref=e111] [cursor=pointer]:
+              - generic [ref=e112]: "9"
+            - button "10" [ref=e116] [cursor=pointer]:
+              - generic [ref=e117]: "10"
+          - generic [ref=e120]:
+            - button "11" [ref=e122] [cursor=pointer]:
+              - generic [ref=e123]: "11"
+            - button "12" [ref=e127] [cursor=pointer]:
+              - generic [ref=e128]: "12"
+            - button "13" [ref=e132] [cursor=pointer]:
+              - generic [ref=e133]: "13"
+            - button "14" [ref=e137] [cursor=pointer]:
+              - generic [ref=e138]: "14"
+            - button "15" [ref=e142] [cursor=pointer]:
+              - generic [ref=e143]: "15"
+          - generic [ref=e146]:
+            - button "16" [ref=e148] [cursor=pointer]:
+              - generic [ref=e149]: "16"
+            - button "17" [ref=e153] [cursor=pointer]:
+              - generic [ref=e154]: "17"
+            - button "18" [ref=e158] [cursor=pointer]:
+              - generic [ref=e159]: "18"
+            - button "19" [ref=e163] [cursor=pointer]:
+              - generic [ref=e164]: "19"
+            - button "20" [ref=e168] [cursor=pointer]:
+              - generic [ref=e169]: "20"
+      - generic [ref=e172]:
+        - radiogroup [ref=e175]:
+          - radio "Single" [checked] [ref=e176] [cursor=pointer]:
+            - generic [ref=e177]: Single
+          - radio "Double" [ref=e178] [cursor=pointer]:
+            - generic [ref=e179]: Double
+          - radio "Triple" [ref=e180] [cursor=pointer]:
+            - generic [ref=e181]: Triple
+        - button "Miss" [active] [ref=e184] [cursor=pointer]:
+          - generic [ref=e185]: Miss
+```

@@ -6,6 +6,7 @@ import {CommonModule} from "@angular/common";
 
 @Component({
   selector: 'app-mini-player-overview',
+  standalone: true,
   imports: [CommonModule
   ],
   templateUrl: './mini-player-overview.html',

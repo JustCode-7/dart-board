@@ -1,4 +1,4 @@
-import {Component, inject} from '@angular/core';
+import {ChangeDetectorRef, Component, inject} from '@angular/core';
 import {MatButton} from "@angular/material/button";
 import {CurrentPlayerService} from "../../../services/current-player.service";
 import {DartService} from "../../../services/dart.service";
@@ -25,6 +25,7 @@ export class MissBtn {
   private cricketService = inject(CricketService);
   protected badgeHandleService = inject(BadgeHandleService);
   protected readonly customRipple = customRipple;
+  private cdr = inject(ChangeDetectorRef);
 
   scoreMiss() {
     if (this.currentPlayerService.currentGameMode === 'Cricket') {
@@ -33,5 +34,6 @@ export class MissBtn {
       this.badgeHandleService.scoreMiss();
       this.dartService.score({value: 0, multiplier: 1});
     }
+    this.cdr.detectChanges();
   }
 }

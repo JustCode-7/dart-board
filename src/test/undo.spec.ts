@@ -53,7 +53,7 @@ describe('Undo Functionality', () => {
     const initialPoints = currentPlayerService._remainingPointsToDisplay();
     expect(initialPoints).toBe(501);
 
-    currentPlayerService.scoreDart(20);
+    currentPlayerService.score501(20);
     expect(currentPlayerService._remainingPointsToDisplay()).toBe(481);
     expect(currentPlayerService._last3History).toEqual([20]);
 
@@ -61,7 +61,7 @@ describe('Undo Functionality', () => {
     expect(currentPlayerService._remainingPointsToDisplay()).toBe(501);
     expect(currentPlayerService._last3History).toEqual([]);
 
-    currentPlayerService.scoreDart(25);
+    currentPlayerService.score501(25);
     expect(currentPlayerService._last3History).toEqual([25]);
   });
 
@@ -82,7 +82,7 @@ describe('Undo Functionality', () => {
     currentPlayerService.setCurrentGameMode(GameType.Simple501);
     currentPlayerService.init(players[0]);
 
-    currentPlayerService.scoreDart(10);
+    currentPlayerService.score501(10);
     expect(currentPlayerService._last3History).toEqual([10]);
 
     currentPlayerService.undoLastPlayerActions();
@@ -137,7 +137,7 @@ describe('Undo Functionality', () => {
     currentPlayerService.setCurrentGameMode(GameType.Elimination301);
     currentPlayerService.init(players[0]);
 
-    currentPlayerService.scoreDart(50);
+    currentPlayerService.scoreElimination(50);
     expect(currentPlayerService._remainingPointsToDisplay()).toBe(50);
 
     currentPlayerService.undoLastPlayerActions();
@@ -161,7 +161,7 @@ describe('Undo Functionality', () => {
     currentPlayerService.setCurrentGameMode(GameType.Highscore);
     currentPlayerService.init(players[0]);
 
-    currentPlayerService.scoreDart(60);
+    currentPlayerService.scoreHighscore(60);
     expect(currentPlayerService._remainingPointsToDisplay()).toBe(60);
 
     currentPlayerService.undoLastPlayerActions();

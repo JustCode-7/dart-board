@@ -10,11 +10,11 @@ export class PlayerService {
 
   public _players: Player[] = [];
 
-  setupDartPlayers(playerNames: string[]) {
-    if (playerNames.length == 0) {
+  setupDartPlayers(players: any[]) {
+    if (players.length == 0) {
       throw new Error('Provided array must not be empty');
     }
-    this._players = playerNames.map(DartService.createPlayer);
+    this._players = players.map((p, i) => DartService.createPlayer(p, i));
   }
 
   updatePlayer(updated: Player): void {
@@ -26,11 +26,11 @@ export class PlayerService {
     }
   }
 
-  setupCricketPlayers(playerNames: string[]) {
-    if (playerNames.length == 0) {
+  setupCricketPlayers(players: any[]) {
+    if (players.length == 0) {
       throw new Error('Provided array must not be empty');
     }
-    this._players = playerNames.map(CricketService.createPlayer);
+    this._players = players.map((p, i) => CricketService.createPlayer(p, i));
   }
 
   getFirstPlayer(): Player {

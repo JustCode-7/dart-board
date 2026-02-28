@@ -2,17 +2,17 @@ import {computed, effect, inject, Injectable, signal} from '@angular/core';
 import {PlayerService} from './player.service';
 import {DEFAULT_PLAYER, HistoryEntry, Player, Throw} from "../models/player/player.model";
 import {SwitchPlayerSnackComponent} from "../dialogTemplates/switch-player-snack/switch-player-snack.component";
-import {BehaviorSubject} from "rxjs";
+import {BehaviorSubject, Subject} from "rxjs";
 import {HistoryDialog, HistoryDialogData} from "../dialogTemplates/history-dialog/history-dialog.component";
 import {RoundCountService} from "./round-count.service";
-import {MatDialog} from "@angular/material/dialog";
-import {MatSnackBar} from "@angular/material/snack-bar";
 import {BadgeHandleService} from "./badge-handle.service";
 import {ExplosionAnimationService} from "../shared/animation/explosion-animation.service";
 import {GameType} from "../models/enum/GameType";
 import {GameStoreService} from "./game-store.service";
 import {Game} from "../models/game/game.model";
 import {VictoryDialog} from "../dialogTemplates/victory-dialog/victory-dialog.component";
+import {MatSnackBar} from "@angular/material/snack-bar";
+import {MatDialog} from "@angular/material/dialog";
 
 
 export const MAX_REMAINING_THROWS = 3;
@@ -36,6 +36,9 @@ export class CurrentPlayerService {
   protected animationService = inject(ExplosionAnimationService)
   public _history: HistoryEntry[] = [];
 
+  private aiTurnSubject = new Subject<void>();
+  public aiTurn$ = this.aiTurnSubject.asObservable();
+
   // undo - workaround
   last3HisSignal = signal(this._last3History);
   isTooLong = computed(() => this.last3HisSignal().length > 2);
@@ -52,8 +55,37 @@ export class CurrentPlayerService {
               private badgeHandleService: BadgeHandleService) {
   }
 
+  public isUIBlocked(): boolean {
+    return !!document.querySelector('.mat-mdc-dialog-container') ||
+      !!document.querySelector('.mat-mdc-snack-bar-container');
+  }
+
+  private triggerAIIfActive() {
+    const player = this._currentPlayer.value;
+    // Check if player is AI and it's actually their turn (not in the middle of a player switch)
+    const isSnackOpen = !!document.querySelector('.mat-mdc-snack-bar-container');
+    const isDialogOpen = !!document.querySelector('.mat-mdc-dialog-container');
+
+    if (player && player.isAI && this.hasThrowsRemaining()) {
+      if (isSnackOpen || isDialogOpen) {
+        console.warn("KI trigger postponed: UI blocked (dialog/snack open) for ", player.name);
+        return;
+      }
+      // Ensure we don't trigger AI if a snackbar is about to open or just closed
+      setTimeout(() => {
+        const isSnackOpenLater = !!document.querySelector('.mat-mdc-snack-bar-container');
+        const isDialogOpenLater = !!document.querySelector('.mat-mdc-dialog-container');
+        // Re-check after a short delay
+        if (isSnackOpenLater || isDialogOpenLater) {
+          return;
+        }
+        this.aiTurnSubject.next();
+      }, 500); // Increased delay for stability
+    }
+  }
+
   private updateButtonStates(disabled: boolean) {
-    const host = document.querySelector('app-dart-board');
+    const host = document.querySelector('app-dart-board') || document.querySelector('app-cricket-component');
     if (!host) return;
 
     const buttons = host.getElementsByTagName("button");
@@ -69,12 +101,16 @@ export class CurrentPlayerService {
   init(player: Player) {
     this._currentPlayer.next(player);
     this.badgeHandleService.setPlayerId(player.id);
-    this._remainingPointsToDisplay.set(this._currentPlayer.value.remainingPoints);
-    this._lastCricketHistory = new Map(this._currentPlayer.value.cricketMap);
+    this._remainingPointsToDisplay.set(player.remainingPoints);
+    this._lastCricketHistory = new Map(player.cricketMap);
+    this._last3History = [];
+    this.last3HisSignal.set([]);
     this.reset();
 
     // Initialen Snapshot im Store speichern
     this.gameStore.initGame(this.currentGameMode as GameType, this.playerService._players);
+
+    this.triggerAIIfActive();
   }
 
   getCurrentGameState(): Game {
@@ -97,7 +133,6 @@ export class CurrentPlayerService {
   }
 
   switchPlayer(player: Player, isNewRound: boolean) {
-    // Workflow-Optimierung: Sofortiger Wechsel im Zustand, Snackbar nur zur Info
     if (isNewRound) {
       this.roundCountService.incrementRoundCount();
     }
@@ -107,17 +142,13 @@ export class CurrentPlayerService {
     this._lastTurnSum = this.getLast3HistorySum();
     this._lastTurnHits = [...this._last3History];
 
-    if (this.currentGameMode !== GameType.Cricket) {
-      this.applyPoints();
-    }
-
     this._currentPlayer.next(player);
     this.badgeHandleService.setPlayerId(player.id);
     this._last3History = [];
-    this.last3HisSignal.update(aktuellesArray => [...aktuellesArray = this._last3History])
-    this._lastCricketHistory = new Map(this._currentPlayer.value.cricketMap);
-    this._remainingPointsToDisplay.set(this._currentPlayer.value.remainingPoints);
-    this._history = this._currentPlayer.value.history;
+    this.last3HisSignal.set([]);
+    this._lastCricketHistory = new Map(player.cricketMap);
+    this._remainingPointsToDisplay.set(player.remainingPoints);
+    this._history = player.history;
     this.reset();
 
     this.captureState();
@@ -125,12 +156,18 @@ export class CurrentPlayerService {
     if (this.roundCountService.getRemainingRounds() === 0) {
       this.displayRoundCountNotification();
     } else {
-      this.snackbar.openFromComponent(SwitchPlayerSnackComponent, {
+      const snackRef = this.snackbar.openFromComponent(SwitchPlayerSnackComponent, {
         duration: 2300,
         panelClass: ['app-shape-morph-snack'],
         horizontalPosition: "center",
         verticalPosition: "top"
       });
+      snackRef.afterDismissed().subscribe(() => {
+        // Double check we are still on the same player and it's an AI
+        this.triggerAIIfActive();
+      });
+      // Important for first player AI or when switching to AI
+      this.triggerAIIfActive();
     }
   }
 
@@ -160,7 +197,7 @@ export class CurrentPlayerService {
     this.resetAccumulatedPoints();
     this.resetThrows();
     this._last3History = [];
-    this.last3HisSignal.update(aktuellesArray => [...aktuellesArray = this._last3History])
+    this.last3HisSignal.set([]);
     this.badgeHandleService.resetBadges()
   }
 
@@ -172,25 +209,58 @@ export class CurrentPlayerService {
     this._remainingThrows = MAX_REMAINING_THROWS;
   }
 
-  scoreDart(points: number) {
+  scoreElimination(points: number) {
     if (this.hasThrowsRemaining()) {
       this.calcAverage();
       const currentPlayer = this._currentPlayer.value;
-      this._currentPlayer.value.last3History = [...this._last3History];
       this.captureState();
-      // Sicherstellen, dass die Referenz im Signal-ähnlichen BehaviorSubject erhalten bleibt
-      this._currentPlayer.next(currentPlayer);
-
       // Nur zum Anzeigen der aktuellen Punktzahl
-      if (this.currentGameMode === GameType.Elimination301 || this.currentGameMode === GameType.Highscore) {
-        this._remainingPointsToDisplay.update(value => value + points);
-      } else {
-        this._remainingPointsToDisplay.update(value => value - points);
-      }
+      this._remainingPointsToDisplay.update(value => value + points);
       this._last3History.push(points);
-      this.last3HisSignal.update(aktuellesArray => [...aktuellesArray = this._last3History])
+      currentPlayer.last3History = [...this._last3History];
+      this.last3HisSignal.update(() => [...this._last3History]);
       this.accumulatePoints(points);
       this.decrementRemainingThrows();
+      // Sicherstellen, dass die Referenz im Signal-ähnlichen BehaviorSubject erhalten bleibt
+      this._currentPlayer.next(currentPlayer);
+    } else {
+      throw new Error('Unable to reduce below 0');
+    }
+  }
+
+  scoreHighscore(points: number) {
+    if (this.hasThrowsRemaining()) {
+      this.calcAverage();
+      const currentPlayer = this._currentPlayer.value;
+      this.captureState();
+      // Nur zum Anzeigen der aktuellen Punktzahl
+      this._remainingPointsToDisplay.update(value => value + points);
+      this._last3History.push(points);
+      currentPlayer.last3History = [...this._last3History];
+      this.last3HisSignal.update(() => [...this._last3History]);
+      this.accumulatePoints(points);
+      this.decrementRemainingThrows();
+      // Sicherstellen, dass die Referenz im Signal-ähnlichen BehaviorSubject erhalten bleibt
+      this._currentPlayer.next(currentPlayer);
+    } else {
+      throw new Error('Unable to reduce below 0');
+    }
+  }
+
+  score501(points: number) {
+    if (this.hasThrowsRemaining()) {
+      this.calcAverage();
+      const currentPlayer = this._currentPlayer.value;
+      this.captureState();
+      // Nur zum Anzeigen der aktuellen Punktzahl
+      this._remainingPointsToDisplay.update(value => value - points);
+      this._last3History.push(points);
+      currentPlayer.last3History = [...this._last3History];
+      this.last3HisSignal.update(() => [...this._last3History]);
+      this.accumulatePoints(points);
+      this.decrementRemainingThrows();
+      // Sicherstellen, dass die Referenz im Signal-ähnlichen BehaviorSubject erhalten bleibt
+      this._currentPlayer.next(currentPlayer);
     } else {
       throw new Error('Unable to reduce below 0');
     }
@@ -199,21 +269,22 @@ export class CurrentPlayerService {
   scoreCricket(_throw: Throw) {
     if (this.hasThrowsRemaining()) {
       this.calcAverage();
-      this._currentPlayer.value.last3History = [...this._last3History];
+      const currentPlayer = this._currentPlayer.value;
       this.captureState();
       this.evaluateCricketPoints(_throw);
-      this._remainingPointsToDisplay.set(this._currentPlayer.value.remainingPoints + this._accumulatedPoints);
       this._last3History.push(_throw.value * _throw.multiplier);
-      this.last3HisSignal.update(aktuellesArray => [...aktuellesArray = this._last3History])
+      currentPlayer.last3History = [...this._last3History];
+      this.last3HisSignal.update(() => [...this._last3History]);
+      this._remainingPointsToDisplay.set(currentPlayer.remainingPoints + this._accumulatedPoints);
       this.decrementRemainingThrows();
       // Wir setzen die ID erneut, um sicherzustellen, dass Badges richtig zugeordnet werden
-      this.badgeHandleService.setPlayerId(this._currentPlayer.value.id);
+      this.badgeHandleService.setPlayerId(currentPlayer.id);
     } else {
       throw new Error('Unable to reduce throws below 0');
     }
   }
 
-  private hasThrowsRemaining(): boolean {
+  public hasThrowsRemaining(): boolean {
     return this._remainingThrows > 0;
   }
 
@@ -227,8 +298,12 @@ export class CurrentPlayerService {
     }
   }
 
-  private decrementRemainingThrows() {
+  decrementRemainingThrows() {
     this._remainingThrows -= 1;
+    // We always check if we should trigger AI after a throw.
+    // triggerAIIfActive handles the logic if it's currently AI's turn
+    // and if we should skip because it was the last throw (via switchPlayer snackbar callback)
+    this.triggerAIIfActive();
   }
 
   hasNoThrowsRemaining(): boolean {
@@ -256,33 +331,30 @@ export class CurrentPlayerService {
     }
   }
 
-  applyPoints() {
-    this._currentPlayer.value.lastScore = this._accumulatedPoints;
-    this._currentPlayer.value.last3History = this._last3History;
-    this.last3HisSignal.update(aktuellesArray => [...aktuellesArray = this._last3History])
-    if (this.currentGameMode === GameType.Elimination301 || this.currentGameMode === GameType.Highscore) {
-      // Punkte hinzufügen (Elimination / Highscore)
-      this._currentPlayer.value.remainingPoints += this._accumulatedPoints;
+  public finalizeTurn(operation: 'add' | 'subtract', shouldSaveStatistics: boolean = true) {
+    const player = this._currentPlayer.value;
+    player.lastScore = this._accumulatedPoints;
+    player.last3History = this._last3History;
+    this.last3HisSignal.update(aktuellesArray => [...aktuellesArray = this._last3History]);
+
+    if (operation === 'add') {
+      player.remainingPoints += this._accumulatedPoints;
     } else {
-      // Hier werden die Punkte tatsächlich vom Spieler abgezogen (501)
-      this._currentPlayer.value.remainingPoints -= this._accumulatedPoints;
+      player.remainingPoints -= this._accumulatedPoints;
     }
-    this._remainingPointsToDisplay.set(this._currentPlayer.value.remainingPoints);
-    this.savePointsForStatistics();
+
+    this._remainingPointsToDisplay.set(player.remainingPoints);
+
+    if (shouldSaveStatistics) {
+      this.savePointsForStatistics();
+    }
 
     this.captureState();
   }
 
   applyCricketPoints() {
-    this._currentPlayer.value.lastScore = this._accumulatedPoints;
-    this._currentPlayer.value.last3History = this._last3History;
-    this.last3HisSignal.update(aktuellesArray => [...aktuellesArray = this._last3History])
-    this._currentPlayer.value.remainingPoints += this._accumulatedPoints;
-    if (this._remainingThrows === 0) {
-      this.savePointsForStatistics();
-    }
-
-    this.captureState();
+    // Statistiken bei Cricket nur speichern, wenn der Turn (alle Würfe) beendet ist
+    this.finalizeTurn('add', this._remainingThrows === 0);
   }
 
   /**

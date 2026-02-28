@@ -14,13 +14,10 @@ export class ShapeMorphDirective {
 
   // Long-press handling
   private pressTimer: any = null;
-  private pressStartTime: number = 0;
   private holdDuration = 1000; // ms
   private clickCount = 0;
   private clickResetTimer: any = null;
-  private suppressNextNativeClick = false;
   private holdSucceeded = false;
-  private awaitingRelease = false;
   private defaultHoldDuration = this.holdDuration;
   // Snack handling for hold progress
   private holdSnackRef: MatSnackBarRef<ShapeMorphHoldSnackComponent> | null = null;
@@ -29,10 +26,11 @@ export class ShapeMorphDirective {
 
   private readonly drunkToggleService = inject(DrunkToggleService)
 
+  private readonly snackBar: MatSnackBar = inject(MatSnackBar);
+
   constructor(
     private el: ElementRef,
     private renderer: Renderer2,
-    private snackBar: MatSnackBar
   ) {
     // Speichere die ursprüngliche Hintergrundfarbe
     this.originalBackgroundColor = window.getComputedStyle(this.el.nativeElement).backgroundColor;
@@ -172,7 +170,7 @@ export class ShapeMorphDirective {
 
   // Touch: Finger runter / hoch
   @HostListener('touchstart', ['$event'])
-  onTouchStart(ev: TouchEvent) {
+  onTouchStart() {
     this.beginPress();
   }
 
@@ -192,10 +190,20 @@ export class ShapeMorphDirective {
     if (this.isMissBtn(ev.target as HTMLButtonElement)) {
       this.holdDuration === 0 ? this.holdDuration = 0 : this.holdDuration = 300
     }
+
     ev.preventDefault();
     ev.stopImmediatePropagation();
+
     if (this.holdDuration > 0) {
-      this.openHintIfNeeded();
+      if (!ev.isTrusted) { // prevent double emit as human player
+        this.shapeMorphClick.emit();
+      } else {
+        this.openHintIfNeeded();
+      }
+    } else {
+      if (!ev.isTrusted) { // prevent double emit as human player
+        this.shapeMorphClick.emit();
+      }
     }
   }
 
@@ -211,9 +219,7 @@ export class ShapeMorphDirective {
     if (this.pressTimer) return;
     this.vibrateOnClick(200);
     this.changeBtnBgColor()
-    this.pressStartTime = Date.now();
     this.startProgressFill();
-    this.awaitingRelease = true;
     this.holdSucceeded = false;
 
     this.pressTimer = setTimeout(() => {
@@ -236,19 +242,12 @@ export class ShapeMorphDirective {
     if (success && this.holdSucceeded) {
       // Aktion erst beim Loslassen ausführen
       this.shapeMorphClick.emit();
-      this.suppressNextNativeClick = true;
-      setTimeout(() => {
-        const event = new MouseEvent('click', {bubbles: true, cancelable: true});
-        (event as any).syntheticLongPress = true;
-        this.el.nativeElement.dispatchEvent(event);
-      }, 0);
       this.vibrateOnClick(400)
       this.clickCount = 0
     }
 
     // Reset States
     this.holdSucceeded = false;
-    this.awaitingRelease = false;
   }
 
   private perfromButtonShapeMorph() {

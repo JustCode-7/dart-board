@@ -1,22 +1,22 @@
 <div class="d-flex flex-column">
   <mat-progress-bar [color]="'accent'" [value]="(timeLeft )*50"></mat-progress-bar>
   <h5>
-    ∑ {{ this.currentPlayerService._lastTurnSum }} | ➶ {{ wellFormedArray(this.currentPlayerService._lastTurnHits) }}
+    NEXT Player: {{ this.nextPlayer.name }}
   </h5>
   @if (this.cricketService._gameType === '') {
     <div class="d-flex flex-column">
       <app-mini-player-overview></app-mini-player-overview>
     </div>
   } @else {
-
-    <h5>
-      Points: {{ this.nextPlayer.remainingPoints }}
-    </h5>
     <div class="d-flex flex-column">
       <app-mini-player-overview></app-mini-player-overview>
     </div>
   }
-  <h3><strong>NEXT Player: {{ this.nextPlayer.name }}</strong></h3>
+  <h3><strong>
+    ∑ {{ this.currentPlayerService._lastTurnSum }} | ➶ {{ wellFormedArray(this.currentPlayerService._lastTurnHits) }}
+    <br>
+    Points: {{ this.currentPlayerService._currentPlayer.value.remainingPoints }}
+  </strong></h3>
   <div class="d-flex flex-row justify-content-between">
     <button mat-raised-button color="accent" (click)="this.snackBarRef.dismiss()">OK</button>
   </div>

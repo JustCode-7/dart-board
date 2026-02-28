@@ -1,12 +1,15 @@
 import {ChangeDetectorRef, Component, HostListener, inject, OnInit} from '@angular/core';
-import {ThemePalette} from "@angular/material/core";
+import {MatButtonModule} from "@angular/material/button";
+import {MatBadgeModule} from "@angular/material/badge";
+import {MatRippleModule, ThemePalette} from "@angular/material/core";
+import {CommonModule} from "@angular/common";
+import {ShapeMorphDirective} from "../../../../shared/directive/shape-morph.directive";
 import {DartService} from "../../../../services/dart.service";
 import {BadgeHandleService} from "../../../../services/badge-handle.service";
 import {ExplosionAnimationService} from "../../../../shared/animation/explosion-animation.service";
 import {customRipple} from "../../../../shared/utils/util";
 import {MultiplierService} from "../../../../services/multiplier.service";
 import {CurrentPlayerService} from "../../../../services/current-player.service";
-
 
 export interface InputButton {
   zahl: number;
@@ -18,7 +21,14 @@ export interface InputButton {
   selector: 'app-input-button-row',
   templateUrl: './input-button-row.component.html',
   styleUrls: ['./input-button-row.component.scss'],
-  standalone: false,
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatButtonModule,
+    MatBadgeModule,
+    MatRippleModule,
+    ShapeMorphDirective,
+  ],
 })
 export class InputButtonRowComponent implements OnInit {
 
@@ -41,7 +51,7 @@ export class InputButtonRowComponent implements OnInit {
     return 'primary';
   }
 
-  @HostListener('window:resize', ['$event'])
+  @HostListener('window:resize')
   onResize() {
     this.updateOrientation();
     this.cdr.detectChanges();
@@ -70,6 +80,7 @@ export class InputButtonRowComponent implements OnInit {
     this.badgeHandleService.bullBadgeCount = this.getBadgeCountValue();
     this.setBadgeCount();
     this.dartService.score({value: 25, multiplier: 1});
+    this.cdr.detectChanges();
   }
 
   scoreBullsEye() {
@@ -78,6 +89,7 @@ export class InputButtonRowComponent implements OnInit {
     this.setBadgeCount();
     this.dartService.score({value: 25, multiplier: 2});
     this.animationService.showExplosion('Bullseye');
+    this.cdr.detectChanges();
   }
 
   scoreWithMultiplier(inputButton: InputButton) {
@@ -87,6 +99,11 @@ export class InputButtonRowComponent implements OnInit {
       this.setBadgeCount(inputButton);
     }
     this.dartService.score({value: inputButton.zahl, multiplier: multiplier});
+    this.trippleMultiplierCheck(multiplier, inputButton);
+    this.cdr.detectChanges();
+  }
+
+  private trippleMultiplierCheck(multiplier: number, inputButton: InputButton) {
     if (multiplier === 3) {
       if (inputButton.zahl === 20) {
         this.animationService.tripleTwentyCounter++
@@ -102,11 +119,11 @@ export class InputButtonRowComponent implements OnInit {
   }
 
   private setBadgeCount(inputButton?: InputButton) {
+    this.badgeHandleService.tempBadgeValue++;
     if (inputButton) {
       inputButton.badgeValue = this.getBadgeCountValue();
       inputButton.badge = false;
     }
-    this.badgeHandleService.tempBadgeValue = this.badgeHandleService.tempBadgeValue + 1
   }
 
   getBadgeCountValue() {
