@@ -169,7 +169,7 @@ export class ShapeMorphDirective {
   }
 
   // Touch: Finger runter / hoch
-  @HostListener('touchstart', ['$event'])
+  @HostListener('touchstart')
   onTouchStart() {
     this.beginPress();
   }
