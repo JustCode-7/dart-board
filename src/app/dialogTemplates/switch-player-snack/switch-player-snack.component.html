@@ -1,8 +1,10 @@
 <div class="d-flex flex-column">
   <mat-progress-bar [color]="'accent'" [value]="progress()"></mat-progress-bar>
-  <h5>
-    NEXT Player: {{ this.nextPlayer.name }}
-  </h5>
+  <div class="player-name">
+    <h5 class="text-truncate">
+      {{ 'NEXT Player: ' + this.nextPlayer.name }}
+    </h5>
+  </div>
   @if (this.cricketService._gameType === '') {
     <div class="d-flex flex-column">
       <app-mini-player-overview></app-mini-player-overview>

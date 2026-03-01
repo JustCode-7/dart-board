@@ -4,7 +4,7 @@
       <ng-container *ngFor="let player of playerService._players">
         <div class="mini-player-row">
           <div class="mini-player-main-info">
-            <div class="mini-player-name">{{ player.name }}</div>
+            <div class="mini-player-name player-name text-wrap text-truncate">{{ player.name }}</div>
             <div
               *ngIf="(currentPlayerService.currentGameMode === GameType.Highscore || currentPlayerService.currentGameMode === GameType.Elimination301)"
               class="diff-score small ms-1">

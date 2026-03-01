@@ -19,6 +19,13 @@ import {wellFormedArray} from "../../shared/utils/util";
   templateUrl: './switch-player-snack.component.html',
   imports: [MatCardModule, MatButtonModule, CommonModule, MatProgressBarModule, MiniPlayerOverview],
   standalone: true,
+  styles: [`
+    .player-name {
+      min-width: 50%;
+      max-width: 75%;
+      display: inline-block;
+    }
+  `]
 })
 export class SwitchPlayerSnackComponent implements OnInit, OnDestroy {
   protected readonly wellFormedArray = wellFormedArray;

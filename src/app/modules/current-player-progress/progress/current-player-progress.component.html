@@ -4,19 +4,12 @@
     <mat-card class="matcardpointer h-100 w-100 d-flex flex-row"
               (click)="currentPlayerService.showHistory(currentPlayerService._currentPlayer.value)">
       <div class="info-card">
-        <div class="player-name text-truncate">
+        <div class="player-name text-wrap text-truncate w-50">
           <mat-icon *ngIf="currentPlayerService._currentPlayer.value.isAI" class="ai-icon">smart_toy</mat-icon>
           {{ currentPlayerService._currentPlayer.value.name || 'Spieler' }}
         </div>
         <div class="player-score">{{ this.currentPlayerService._remainingPointsToDisplay() }}</div>
         <div class="player-avg small">⌀ {{ currentPlayerService._currentPlayer.value.average }}</div>
-      </div>
-      <div class="d-flex flex-column-reverse hit-badge-wrapper">
-        @for (hit of currentPlayerService.last3HisSignal(); track $index) {
-          <span class="hit-badge badge bg-secondary me-1">
-            {{ hit }}
-          </span>
-        }
       </div>
     </mat-card>
   </div>
@@ -28,19 +21,19 @@
           [color]="(currentPlayerService.last3HisSignal().length >= 3) ? getProgressColor() : 'gray'"
           mat-mini-fab
           class="no-pointer"
-        ><span>➶</span>
+        ><span>{{ currentPlayerService.last3HisSignal()[2] ?? '➶' }}</span>
         </button>
         <button
           [color]="(currentPlayerService.last3HisSignal().length >= 2) ? getProgressColor() : 'gray'"
           mat-mini-fab
           class="no-pointer"
-        ><span>➶</span>
+        ><span>{{ currentPlayerService.last3HisSignal()[1] ?? '➶' }}</span>
         </button>
         <button
           [color]="(currentPlayerService.last3HisSignal().length >= 1) ? getProgressColor() : 'gray'"
           mat-mini-fab
           class="no-pointer"
-        ><span>➶</span>
+        ><span>{{ currentPlayerService.last3HisSignal()[0] ?? '➶' }}</span>
         </button>
       </div>
       <div class="round-info small text-nowrap">
@@ -58,8 +51,8 @@
     <div class="mini-scoreboard">
       <ng-container *ngFor="let player of playerService._players">
         <div class="mini-player-row" [class.active-player]="player.id === currentPlayerService._currentPlayer.value.id">
-          <div class="mini-player-main-info">
-            <div class="mini-player-name">{{ player.name }}</div>
+          <div>
+            <div class="mini-player-name player-name text-wrap text-truncate">{{ player.name }}</div>
             @if ((currentPlayerService._currentPlayer.value !== player &&
               currentPlayerService._currentPlayer.value.remainingPoints < player.remainingPoints
               && currentPlayerService.currentGameMode === GameType.Elimination301)) {

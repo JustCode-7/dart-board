@@ -29,7 +29,6 @@
       .player-name {
         font-size: 1rem;
         opacity: 0.8;
-        display: flex;
         align-items: center;
       }
 
@@ -47,22 +46,6 @@
       }
 
     }
-  }
-
-  .hit-badge-wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    align-items: center;
-    justify-content: center;
-    background-color: #0d860d;
-
-    .hit-badge {
-      font-size: 0.7rem;
-      padding: 0.2rem 0.4rem;
-      min-width: 1.7rem;
-    }
-
   }
 
   .dart-status {
@@ -151,7 +134,7 @@
 
         .mini-player-name {
           padding: 0.2rem;
-          max-width: 100%;
+          max-width: 4.2rem;
           min-width: 4.2rem;
           color: #80d8ff;
           font-weight: 500;
