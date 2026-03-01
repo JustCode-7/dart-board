@@ -42,9 +42,10 @@ export class CurrentPlayerService {
   // undo - workaround
   last3HisSignal = signal(this._last3History);
   isTooLong = computed(() => this.last3HisSignal().length > 2);
+  public isAITurn = signal(false);
 
   private updateButtonStatesEffect = effect(() => {
-    const shouldDisable = this.isTooLong();
+    const shouldDisable = this.isTooLong() || this.isAITurn();
 
     this.updateButtonStates(shouldDisable);
   });
@@ -105,9 +106,10 @@ export class CurrentPlayerService {
     this._lastCricketHistory = new Map(player.cricketMap);
     this._last3History = [];
     this.last3HisSignal.set([]);
+    this.isAITurn.set(player.isAI ?? false);
     this.reset();
 
-    // Initialen Snapshot im Store speichern
+    // Initialen Snapshot im Store speicherns
     this.gameStore.initGame(this.currentGameMode as GameType, this.playerService._players);
 
     this.triggerAIIfActive();
@@ -137,6 +139,8 @@ export class CurrentPlayerService {
       this.roundCountService.incrementRoundCount();
     }
     this.animationService.tripleTwentyCounter = 0;
+    this.animationService.tripleCounter = 0
+    this.animationService.missCounter = 0;
 
     // Daten für die Snackbar sichern, bevor sie zurückgesetzt werden
     this._lastTurnSum = this.getLast3HistorySum();
@@ -149,6 +153,7 @@ export class CurrentPlayerService {
     this._lastCricketHistory = new Map(player.cricketMap);
     this._remainingPointsToDisplay.set(player.remainingPoints);
     this._history = player.history;
+    this.isAITurn.set(player.isAI ?? false);
     this.reset();
 
     this.captureState();
@@ -198,6 +203,9 @@ export class CurrentPlayerService {
     this.resetThrows();
     this._last3History = [];
     this.last3HisSignal.set([]);
+    if (this._currentPlayer.value) {
+      this._currentPlayer.value.last3History = [];
+    }
     this.badgeHandleService.resetBadges()
   }
 
@@ -348,13 +356,6 @@ export class CurrentPlayerService {
     if (shouldSaveStatistics) {
       this.savePointsForStatistics();
     }
-
-    this.captureState();
-  }
-
-  applyCricketPoints() {
-    // Statistiken bei Cricket nur speichern, wenn der Turn (alle Würfe) beendet ist
-    this.finalizeTurn('add', this._remainingThrows === 0);
   }
 
   /**
@@ -469,22 +470,17 @@ export class CurrentPlayerService {
     this.roundCountService.roundCount = state.roundCount;
     this._remainingThrows = state.remainingThrows;
     this._accumulatedPoints = state.accumulatedPoints;
-    // Hier TODO: man muss eigentlich jeden eintrag von last3History einzeln abziehen, dann darf man aber auch nicht this._accumulatedPoints = state.accumulatedPoints;
-    // es braucht hier einen prozess die Punte einzeln wieder abzuziehen oder draufzurechnen
-    // folge deaktiviere Undo bis der Fix da ist
-    // die Komplette Undo-Mechanik muss überdacht werden
-    /* vielleicht ja sowas in der Art
-      // last3HisLength = computed(() => this.last3HisSignal().length);
-      // private last3HisChangedStatesEffect = effect(() => {
-      //   const last3HisChanged = this.last3HisLength();
-      //   this._remainingPointsToDisplay.update(value => value = this._currentPlayer.value.remainingPoints);
-      //   console.warn("geändert :", last3HisChanged)
-      // });
-     */
-    this._remainingPointsToDisplay.set(currentPlayer.remainingPoints);
+    this.isAITurn.set((currentPlayer.isAI ?? false) && state.remainingThrows > 0);
+    if (this.currentGameMode === GameType.Highscore ||
+      this.currentGameMode === GameType.Elimination301 ||
+      this.currentGameMode === GameType.Cricket) {
+      this._remainingPointsToDisplay.set(currentPlayer.remainingPoints + state.accumulatedPoints);
+    } else {
+      this._remainingPointsToDisplay.set(currentPlayer.remainingPoints - state.accumulatedPoints);
+    }
     this._history = currentPlayer.history;
     this._last3History = currentPlayer.last3History || [];
-    this.last3HisSignal.update(aktuellesArray => [...aktuellesArray = this._last3History])
+    this.last3HisSignal.set([...this._last3History]);
     this._lastCricketHistory = new Map(currentPlayer.cricketMap);
     this.badgeHandleService.restoreBadgesFromHistory(this._last3History);
   }

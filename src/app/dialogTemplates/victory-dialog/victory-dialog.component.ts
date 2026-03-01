@@ -54,6 +54,6 @@ export class VictoryDialog implements OnInit {
     } else {
       this.winner = this.currentPlayerService._currentPlayer.value.name
     }
-    this.explosionAnimationService.showExplosion('WINNER: ' + this.winner);
+    this.explosionAnimationService.showExplosion('WINNER: ' + this.winner, 'red', '/assets/sounds/fanfare-trumpets.mp3');
   }
 }

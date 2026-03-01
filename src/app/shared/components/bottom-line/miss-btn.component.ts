@@ -8,6 +8,7 @@ import {MatRipple} from "@angular/material/core";
 import {ShapeMorphDirective} from "../../directive/shape-morph.directive";
 import {customRipple} from "../../utils/util";
 import {MatBadgeModule} from "@angular/material/badge";
+import {ExplosionAnimationService} from "../../animation/explosion-animation.service";
 
 @Component({
   selector: 'app-miss-btn',
@@ -26,8 +27,13 @@ export class MissBtn {
   protected badgeHandleService = inject(BadgeHandleService);
   protected readonly customRipple = customRipple;
   private cdr = inject(ChangeDetectorRef);
+  protected animationService = inject(ExplosionAnimationService)
 
   scoreMiss() {
+    this.animationService.missCounter++;
+    if (this.animationService.missCounter === 3) {
+      this.animationService.showExplosion('Miss', "green", 'assets/sounds/sitcom-laugh.mp3');
+    }
     if (this.currentPlayerService.currentGameMode === 'Cricket') {
       this.cricketService.scoreCricketWithMultiplier({value: 0, multiplier: 1});
     } else {

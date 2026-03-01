@@ -1,4 +1,4 @@
-import {Injectable, Renderer2, RendererFactory2, inject} from '@angular/core';
+import {inject, Injectable, Renderer2, RendererFactory2} from '@angular/core';
 import {SoundToggleService} from '../../services/sound-toggle.service';
 
 @Injectable({
@@ -8,6 +8,8 @@ export class ExplosionAnimationService {
   private renderer: Renderer2;
   private explosionElement: HTMLElement | null = null;
   tripleTwentyCounter: number = 0;
+  tripleCounter: number = 0;
+  missCounter: number = 0;
   private readonly soundToggle = inject(SoundToggleService);
 
   constructor(rendererFactory: RendererFactory2) {
@@ -18,9 +20,10 @@ export class ExplosionAnimationService {
    * Zeigt eine Explosionsanimation wie eine Silvesterrakete in der Mitte des Bildschirms an
    * @param text Der Text oder die Zahl, die in der Mitte der Explosion angezeigt werden soll
    * @param color Die Farbe der Explosion (default, red, green, blue)
-   * @param duration Dauer der Animation in Millisekunden (Standard: 1500ms)
+   * @param audioSrc der Sound der abgespielt werden soll
    */
-  showExplosion(text: string, color: 'default' | 'red' | 'green' | 'blue' = 'red', duration: number = 1500): void {
+  showExplosion(text: string, color: 'default' | 'red' | 'green' | 'blue' = 'red', audioSrc: string): void {
+    const duration: number = 1500;
     // Entferne vorherige Explosion, falls vorhanden
     this.removeExplosion();
 
@@ -62,7 +65,7 @@ export class ExplosionAnimationService {
     this.renderer.appendChild(document.body, container);
 
     // Soundeffekt abspielen (optional)
-    this.playExplosionSound();
+    this.playAnimationSound(audioSrc);
 
     // Referenz speichern
     this.explosionElement = container;
@@ -80,13 +83,13 @@ export class ExplosionAnimationService {
     }
   }
 
-  private playExplosionSound(): void {
+  public playAnimationSound(soundSrc: string): void {
     try {
       const isOn = this.soundToggle.isSoundOn.getValue();
       if (!isOn) return;
 
       const audio = new Audio();
-      audio.src = 'assets/sounds/firework-explosion.mp3';
+      audio.src = soundSrc;
       audio.volume = 0.5;
       audio.play().catch(err => {
         console.log('Audio konnte nicht abgespielt werden:', err);

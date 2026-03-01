@@ -67,7 +67,6 @@ export class DartService {
   score(_throw: Throw) {
     const points = _throw.value * _throw.multiplier;
     if (this.currentPlayerService.isOvershot(points)) {
-      this.currentPlayerService.captureState();
       this.displayOvershotNotification().afterDismissed().subscribe(() => {
         this.switchPlayer();
       })
@@ -142,7 +141,6 @@ export class DartService {
       return;
     }
     if (potentialTotal > target) {
-      this.currentPlayerService.captureState();
       this.displayOvershotNotification().afterDismissed().subscribe(() => {
         this.switchPlayer();
       })
@@ -162,7 +160,6 @@ export class DartService {
         this.currentPlayerService.finalizeTurn('subtract');
         this.handleVictory();
       } else {
-        this.currentPlayerService.captureState();
         this.displayDoubleOutFailNotification().afterDismissed().subscribe(() => {
           this.switchPlayer();
         })

@@ -80,6 +80,7 @@ export class InputButtonRowComponent implements OnInit {
     this.badgeHandleService.bullBadgeCount = this.getBadgeCountValue();
     this.setBadgeCount();
     this.dartService.score({value: 25, multiplier: 1});
+    this.animationService.playAnimationSound('assets/sounds/cow-moo-sound-effect.mp3');
     this.cdr.detectChanges();
   }
 
@@ -88,7 +89,7 @@ export class InputButtonRowComponent implements OnInit {
     this.badgeHandleService.bullsEyeBadgeCount = this.getBadgeCountValue();
     this.setBadgeCount();
     this.dartService.score({value: 25, multiplier: 2});
-    this.animationService.showExplosion('Bullseye');
+    this.animationService.showExplosion('Bullseye', "red", 'assets/sounds/oh-yeah.mp3');
     this.cdr.detectChanges();
   }
 
@@ -98,22 +99,31 @@ export class InputButtonRowComponent implements OnInit {
     if (inputButton.badge) {
       this.setBadgeCount(inputButton);
     }
+    this.multiplierAnimationCheck(multiplier, inputButton);
     this.dartService.score({value: inputButton.zahl, multiplier: multiplier});
-    this.trippleMultiplierCheck(multiplier, inputButton);
     this.cdr.detectChanges();
   }
 
-  private trippleMultiplierCheck(multiplier: number, inputButton: InputButton) {
+  private multiplierAnimationCheck(multiplier: number, inputButton: InputButton) {
+    if (multiplier === 2) {
+      this.animationService.playAnimationSound('assets/sounds/ship-bell-two-times.mp3');
+    }
     if (multiplier === 3) {
       if (inputButton.zahl === 20) {
         this.animationService.tripleTwentyCounter++
         if (this.animationService.tripleTwentyCounter === 3) {
-          this.animationService.showExplosion('180');
+          this.animationService.showExplosion('180', "red", 'assets/sounds/opening-bell-triple.mp3');
         } else {
-          this.animationService.showExplosion('T' + inputButton.zahl.toString());
+          this.animationService.showExplosion('T' + inputButton.zahl.toString(), "red", 'assets/sounds/good-result.mp3');
         }
       } else {
-        this.animationService.showExplosion('T' + inputButton.zahl.toString());
+        this.animationService.tripleCounter++
+        if (this.animationService.tripleCounter === 3) {
+          this.animationService.showExplosion('TripleTriple last: T' + inputButton.zahl.toString(), "red", 'assets/sounds/oh-yeah.mp3');
+        } else {
+          this.animationService.showExplosion('T' + inputButton.zahl.toString(), "red", 'assets/sounds/firework-explosion.mp3');
+        }
+
       }
     }
   }

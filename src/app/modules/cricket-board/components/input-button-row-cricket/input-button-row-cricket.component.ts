@@ -58,33 +58,45 @@ export class InputButtonRowCricketComponent implements OnInit {
 
   scoreBull() {
     this.cricketService.scoreCricketWithMultiplier({value: 25, multiplier: 1})
+    this.animationService.playAnimationSound('assets/sounds/cow-moo-sound-effect.mp3');
     this.cdr.detectChanges();
   }
 
   scoreBullsEye() {
     this.cricketService.scoreCricketWithMultiplier({value: 25, multiplier: 2})
-    this.animationService.showExplosion('Bullseye');
+    this.animationService.showExplosion('Bullseye', "red", 'assets/sounds/oh-yeah.mp3');
     this.cdr.detectChanges();
   }
 
   scoreHit(value: number) {
     let multiplier = this.multiplierService.getMultiplier();
     this.multiplierService.reset();
+    this.multiplierAnimationCheck(multiplier, value);
+    this.cricketService.scoreCricketWithMultiplier({value, multiplier});
+    this.cdr.detectChanges();
+  }
 
+  private multiplierAnimationCheck(multiplier: number, value: number) {
+    if (multiplier === 2) {
+      this.animationService.playAnimationSound('assets/sounds/ship-bell-two-times.mp3');
+    }
     if (multiplier === 3) {
       if (value === 20 && this.currentPlayerService._currentPlayer.value.cricketMap.get(value) === 3) {
         this.animationService.tripleTwentyCounter++
         if (this.animationService.tripleTwentyCounter === 3) {
-          this.animationService.showExplosion('180');
+          this.animationService.showExplosion('180', "red", 'assets/sounds/opening-bell-triple.mp3');
         } else {
-          this.animationService.showExplosion('T' + value.toString());
+          this.animationService.showExplosion('T' + value.toString(), "red", 'assets/sounds/good-result.mp3');
         }
       } else {
-        this.animationService.showExplosion('T' + value.toString());
+        this.animationService.tripleCounter++
+        if (this.animationService.tripleCounter === 3) {
+          this.animationService.showExplosion('TripleTriple last: T' + value.toString(), "red", 'assets/sounds/oh-yeah.mp3');
+        } else {
+          this.animationService.showExplosion('T' + value.toString(), "red", 'assets/sounds/firework-explosion.mp3');
+        }
       }
     }
-    this.cricketService.scoreCricketWithMultiplier({value, multiplier});
-    this.cdr.detectChanges();
   }
 
   getBadgeCountValue(primaryNumber: number) {
