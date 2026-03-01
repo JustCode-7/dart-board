@@ -1,5 +1,5 @@
 <div class="d-flex flex-column">
-  <mat-progress-bar [color]="'accent'" [value]="(timeLeft )*50"></mat-progress-bar>
+  <mat-progress-bar [color]="'accent'" [value]="progress()"></mat-progress-bar>
   <h5>
     NEXT Player: {{ this.nextPlayer.name }}
   </h5>
@@ -12,7 +12,7 @@
       <app-mini-player-overview></app-mini-player-overview>
     </div>
   }
-  <h3><strong>
+  <h3 class="text-light"><strong>
     ∑ {{ this.currentPlayerService._lastTurnSum }} | ➶ {{ wellFormedArray(this.currentPlayerService._lastTurnHits) }}
     <br>
     Points: {{ this.currentPlayerService._currentPlayer.value.remainingPoints }}

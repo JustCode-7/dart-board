@@ -1,4 +1,4 @@
-import {Component, inject, OnDestroy, OnInit} from '@angular/core';
+import {Component, inject, OnDestroy, OnInit, signal} from '@angular/core';
 import {CurrentPlayerService} from "../../services/current-player.service";
 import {PlayerService} from "../../services/player.service";
 import {MatSnackBar} from "@angular/material/snack-bar";
@@ -28,7 +28,9 @@ export class SwitchPlayerSnackComponent implements OnInit, OnDestroy {
   currentPlayerService = inject(CurrentPlayerService);
   cricketService = inject(CricketService);
 
-  public timeLeft: number = 2;
+  public timeLeft: number = 2300;
+  private readonly INTERVAL = 100;
+  public progress = signal(100);
   public nextPlayer!: Player;
   public cricketKeys: number[] = [];
 
@@ -47,14 +49,16 @@ export class SwitchPlayerSnackComponent implements OnInit, OnDestroy {
 
 
   startTimer() {
+    const totalTime = this.timeLeft;
     const intervalId = setInterval(() => {
       if (this.timeLeft > 0) {
-        this.timeLeft--;
+        this.timeLeft -= this.INTERVAL;
+        this.progress.set(Math.floor((this.timeLeft / totalTime) * 100));
       } else {
         clearInterval(intervalId);
         this.snackBarRef.dismiss();
       }
-    }, 1000);
+    }, this.INTERVAL);
   }
 
   private getAllButtonsToDisable(disabled: boolean) {
