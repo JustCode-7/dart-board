@@ -7,6 +7,8 @@ import {GameType} from '../models/enum/GameType';
 })
 export class AIService {
 
+  private readonly DARTBOARD_VALUES = [20, 1, 18, 4, 13, 6, 10, 15, 2, 17, 3, 19, 7, 16, 8, 11, 14, 9, 12, 5];
+
   getNextThrow(difficulty: Difficulty, gameType: GameType, player: Player, allPlayers: Player[]): Throw {
     // Basic logic: Higher difficulty = better chance for high multipliers and specific targets
 
@@ -17,7 +19,6 @@ export class AIService {
   }
 
   private getPointsThrow(difficulty: Difficulty, player: Player, allPlayers: Player[], gameType: GameType): Throw {
-    const random = Math.random();
     const remainingPoints = player.remainingPoints;
 
     // Target selection strategy
@@ -89,9 +90,6 @@ export class AIService {
       const needed = target - currentPointsWithPotential;
 
       // "Kill" strategy: can we hit an opponent's score?
-      const killTarget = allPlayers.find(p => p.id !== player.id && p.remainingPoints > 0 && p.remainingPoints === currentPointsWithPotential + needed);
-      // Wait, that's just the win target.
-      // A kill target is any opponent's current score.
       const opponentsToKill = allPlayers.filter(p => p.id !== player.id && p.remainingPoints > 0);
 
       let bestKillValue = -1;
@@ -100,7 +98,7 @@ export class AIService {
       for (const opp of opponentsToKill) {
         const toHit = opp.remainingPoints - currentPointsWithPotential;
         if (toHit > 0 && toHit <= 60) {
-          // Check if it's hitabel with one dart
+          // Check if it's hittable with one dart
           if (toHit <= 20) {
             bestKillValue = toHit;
             bestKillMultiplier = 1;
@@ -158,30 +156,86 @@ export class AIService {
       }
     }
 
-    // Probability distributions based on difficulty
-    const hitTargetChance = difficulty === Difficulty.Hard ? 0.8 : (difficulty === Difficulty.Medium ? 0.5 : 0.2);
-    const missSlightlyChance = difficulty === Difficulty.Hard ? 0.15 : (difficulty === Difficulty.Medium ? 0.3 : 0.4);
+    return this.calculateThrowWithSpread(targetValue, targetMultiplier, difficulty, player);
+  }
 
-    if (random < hitTargetChance) {
-      // Hit the intended target
-      return {value: targetValue, multiplier: targetMultiplier};
-    } else if (random < hitTargetChance + missSlightlyChance) {
-      // Hit target value but wrong multiplier or adjacent number
-      const secondaryRandom = Math.random();
-      if (secondaryRandom < 0.5) {
-        // Same value, different multiplier
-        return {value: targetValue, multiplier: 1};
-      } else {
-        // Adjacent-like miss (just pick a common neighbor or random small)
-        const neighbors = [1, 5, 20];
-        return {value: neighbors[Math.floor(Math.random() * neighbors.length)], multiplier: 1};
+  private calculateThrowWithSpread(targetValue: number, targetMultiplier: number, difficulty: Difficulty, player: Player): Throw {
+    // Standardabweichung basierend auf Schwierigkeit (in mm auf einer Standard-Dartscheibe Radius 170mm)
+    let sigma = 40; // Easy
+    if (difficulty === Difficulty.Medium) sigma = 20;
+    if (difficulty === Difficulty.Hard) sigma = 8;
+
+    // Menschlicher Faktor: Tagesform/Druck basierend auf last3History
+    if (player.last3History && player.last3History.length > 0) {
+      const avgLast3 = player.last3History.reduce((a, b) => a + b, 0) / player.last3History.length;
+      // Wenn der Durchschnitt der letzten 3 Würfe niedrig ist (< 20), steigt die Streuung leicht an (Druck/Frust)
+      if (avgLast3 < 20) {
+        sigma *= 1.2;
+      } else if (avgLast3 > 40) {
+        // Lauf: Streuung sinkt leicht
+        sigma *= 0.9;
       }
-    } else {
-      // Complete miss or very wrong number
-      const missRandom = Math.random();
-      if (missRandom < 0.3) return {value: 0, multiplier: 1};
-      return {value: Math.floor(Math.random() * 20) + 1, multiplier: 1};
     }
+
+    // Ziel-Koordinaten (Polar: Radius r, Winkel theta)
+    // Radius: Bullseye=0, Double Ring=170mm
+    // Winkel: 20 ist oben (90 Grad oder pi/2)
+    let targetR = 0;
+    let targetTheta = 0;
+
+    if (targetValue === 0) {
+      targetR = 200; // Irgendwo draußen
+    } else if (targetValue === 25) {
+      targetR = targetMultiplier === 2 ? 6 : 12; // Bullseye (D25) vs Single Bull (S25)
+    } else {
+      // Normale Felder
+      const angleStep = (2 * Math.PI) / 20;
+      const index = this.DARTBOARD_VALUES.indexOf(targetValue);
+      // Index 0 (20) ist bei 90 Grad (pi/2)
+      targetTheta = (Math.PI / 2) - (index * angleStep);
+
+      if (targetMultiplier === 3) targetR = 105; // Triple Ring Radius (ca. 107mm Mitte)
+      else if (targetMultiplier === 2) targetR = 165; // Double Ring Radius (ca. 167mm Mitte)
+      else targetR = 135; // Single Feld (zwischen Triple und Double)
+    }
+
+    // Gaußsche Streuung (Box-Muller)
+    const u1 = Math.random();
+    const u2 = Math.random();
+    const mag = sigma * Math.sqrt(-2.0 * Math.log(u1));
+    const hitX = targetR * Math.cos(targetTheta) + mag * Math.cos(2.0 * Math.PI * u2);
+    const hitY = targetR * Math.sin(targetTheta) + mag * Math.sin(2.0 * Math.PI * u2);
+
+    // Zurück in Polarkoordinaten
+    const hitR = Math.sqrt(hitX * hitX + hitY * hitY);
+    let hitTheta = Math.atan2(hitY, hitX);
+
+    return this.mapCoordinatesToThrow(hitR, hitTheta);
+  }
+
+  private mapCoordinatesToThrow(r: number, theta: number): Throw {
+    // Bullseye Check
+    if (r < 6.35) return {value: 25, multiplier: 2}; // Double Bull
+    if (r < 15.9) return {value: 25, multiplier: 1}; // Single Bull
+
+    if (r > 170) return {value: 0, multiplier: 1}; // Out
+
+    // Winkel normalisieren auf [0, 2pi)
+    let normalizedTheta = (theta + (Math.PI / 2) + (Math.PI / 20)) % (2 * Math.PI);
+    if (normalizedTheta < 0) normalizedTheta += 2 * Math.PI;
+
+    const angleStep = (2 * Math.PI) / 20;
+    let index = Math.floor((2 * Math.PI - normalizedTheta) / angleStep) % 20;
+    // Fix für negative/verschobene Indizes
+    if (index < 0) index += 20;
+
+    const value = this.DARTBOARD_VALUES[index];
+
+    let multiplier = 1;
+    if (r >= 99 && r <= 107) multiplier = 3; // Triple
+    else if (r >= 162 && r <= 170) multiplier = 2; // Double
+
+    return {value, multiplier};
   }
 
   private getCricketThrow(difficulty: Difficulty, player: Player, allPlayers: Player[]): Throw {
@@ -189,11 +243,12 @@ export class AIService {
     const cricketMap = player.cricketMap;
     let openTargets = targets.filter(t => (cricketMap.get(t) || 0) < 3);
 
-    let target = 20;
+    let targetValue = 20;
+    let targetMultiplier = 1;
 
     if (openTargets.length > 0) {
       // Prioritize highest open target
-      target = openTargets[0];
+      targetValue = openTargets[0];
     } else {
       // All closed for current player. Find highest scorable target for points.
       // A target is scorable if at least one other player has it NOT closed.
@@ -202,50 +257,22 @@ export class AIService {
       );
 
       if (scorableTargets.length > 0) {
-        target = scorableTargets[0];
+        targetValue = scorableTargets[0];
       } else {
         // Everything closed for everyone. Just hit anything.
-        target = 20;
+        targetValue = 20;
       }
     }
 
-    const random = Math.random();
-    let value = target;
-    let multiplier = 1;
-
-    // Difficulty-based target selection
-    const hitTargetChance = difficulty === Difficulty.Hard ? 0.8 : (difficulty === Difficulty.Medium ? 0.5 : 0.2);
-
-    if (random < hitTargetChance) {
-      value = target;
-      if (target === 25) {
-        multiplier = (difficulty === Difficulty.Hard && Math.random() < 0.4) ? 2 : 1;
-      } else {
-        const multiRand = Math.random();
-        if (difficulty === Difficulty.Hard) {
-          if (multiRand < 0.5) multiplier = 3;
-          else if (multiRand < 0.8) multiplier = 2;
-          else multiplier = 1;
-        } else if (difficulty === Difficulty.Medium) {
-          if (multiRand < 0.2) multiplier = 3;
-          else if (multiRand < 0.5) multiplier = 2;
-          else multiplier = 1;
-        } else {
-          multiplier = 1;
-        }
-      }
+    if (targetValue !== 25) {
+      // Aim for triples in Cricket if not Bullseye
+      targetMultiplier = 3;
+      if (difficulty === Difficulty.Easy) targetMultiplier = 1;
+      else if (difficulty === Difficulty.Medium && Math.random() < 0.5) targetMultiplier = 1;
     } else {
-      // Missed target, hit something else or 0
-      const missRandom = Math.random();
-      if (missRandom < 0.7) {
-        value = targets[Math.floor(Math.random() * targets.length)];
-        multiplier = 1;
-      } else {
-        value = 0;
-        multiplier = 1;
-      }
+      targetMultiplier = difficulty === Difficulty.Hard ? 2 : 1;
     }
 
-    return {value, multiplier};
+    return this.calculateThrowWithSpread(targetValue, targetMultiplier, difficulty, player);
   }
 }
