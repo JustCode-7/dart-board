@@ -161,9 +161,16 @@ export class AIService {
 
   private calculateThrowWithSpread(targetValue: number, targetMultiplier: number, difficulty: Difficulty, player: Player): Throw {
     // Standardabweichung basierend auf Schwierigkeit (in mm auf einer Standard-Dartscheibe Radius 170mm)
-    let sigma = 40; // Easy
-    if (difficulty === Difficulty.Medium) sigma = 20;
-    if (difficulty === Difficulty.Hard) sigma = 8;
+    let baseSigma = 40; // Easy
+    if (difficulty === Difficulty.Medium) baseSigma = 20;
+    if (difficulty === Difficulty.Hard) baseSigma = 8;
+
+    // Individuelle Spieler-Varianz (simuliert "Tagesform" oder "Handgeschick")
+    // Wir nutzen die Player-ID für einen persistenten aber unterschiedlichen Faktor
+    const playerSeed = (player.id * 12345) % 1000 / 1000; // Pseudo-Zufall [0, 1]
+    const playerFactor = 0.85 + (playerSeed * 0.3); // [0.85, 1.15] - Manche Spieler sind leicht besser, manche schlechter
+
+    let sigma = baseSigma * playerFactor;
 
     // Menschlicher Faktor: Tagesform/Druck basierend auf last3History
     if (player.last3History && player.last3History.length > 0) {
@@ -177,9 +184,11 @@ export class AIService {
       }
     }
 
+    // Zusätzliche Zufallsschwankung pro Wurf (Inkonsistenz)
+    const throwInconsistency = 0.9 + (Math.random() * 0.2); // [0.9, 1.1]
+    sigma *= throwInconsistency;
+
     // Ziel-Koordinaten (Polar: Radius r, Winkel theta)
-    // Radius: Bullseye=0, Double Ring=170mm
-    // Winkel: 20 ist oben (90 Grad oder pi/2)
     let targetR = 0;
     let targetTheta = 0;
 
@@ -199,12 +208,17 @@ export class AIService {
       else targetR = 135; // Single Feld (zwischen Triple und Double)
     }
 
+    // Kleiner Ziel-Drift (Menschen zielen nie exakt auf den mathematischen Mittelpunkt)
+    // Ein Drift von +- 2mm in X und Y
+    const driftX = (Math.random() - 0.5) * 4;
+    const driftY = (Math.random() - 0.5) * 4;
+
     // Gaußsche Streuung (Box-Muller)
     const u1 = Math.random();
     const u2 = Math.random();
     const mag = sigma * Math.sqrt(-2.0 * Math.log(u1));
-    const hitX = targetR * Math.cos(targetTheta) + mag * Math.cos(2.0 * Math.PI * u2);
-    const hitY = targetR * Math.sin(targetTheta) + mag * Math.sin(2.0 * Math.PI * u2);
+    const hitX = targetR * Math.cos(targetTheta) + mag * Math.cos(2.0 * Math.PI * u2) + driftX;
+    const hitY = targetR * Math.sin(targetTheta) + mag * Math.sin(2.0 * Math.PI * u2) + driftY;
 
     // Zurück in Polarkoordinaten
     const hitR = Math.sqrt(hitX * hitX + hitY * hitY);
@@ -221,11 +235,11 @@ export class AIService {
     if (r > 170) return {value: 0, multiplier: 1}; // Out
 
     // Winkel normalisieren auf [0, 2pi)
-    let normalizedTheta = (theta + (Math.PI / 2) + (Math.PI / 20)) % (2 * Math.PI);
+    let normalizedTheta = (Math.PI / 2 + Math.PI / 20 - theta) % (2 * Math.PI);
     if (normalizedTheta < 0) normalizedTheta += 2 * Math.PI;
 
     const angleStep = (2 * Math.PI) / 20;
-    let index = Math.floor((2 * Math.PI - normalizedTheta) / angleStep) % 20;
+    let index = Math.floor(normalizedTheta / angleStep) % 20;
     // Fix für negative/verschobene Indizes
     if (index < 0) index += 20;
 
