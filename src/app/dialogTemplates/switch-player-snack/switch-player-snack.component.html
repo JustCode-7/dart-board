@@ -5,15 +5,9 @@
       {{ 'NEXT Player: ' + this.nextPlayer.name }}
     </h5>
   </div>
-  @if (this.cricketService._gameType === '') {
-    <div class="d-flex flex-column">
-      <app-mini-player-overview></app-mini-player-overview>
-    </div>
-  } @else {
-    <div class="d-flex flex-column">
-      <app-mini-player-overview></app-mini-player-overview>
-    </div>
-  }
+  <div class="d-flex flex-column">
+    <app-mini-player-overview></app-mini-player-overview>
+  </div>
   <h3 class="text-light"><strong>
     ∑ {{ this.currentPlayerService._lastTurnSum }} | ➶ {{ wellFormedArray(this.currentPlayerService._lastTurnHits) }}
     <br>

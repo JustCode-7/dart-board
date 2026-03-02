@@ -30,7 +30,7 @@ import {Subscription} from "rxjs";
 export class CricketBoardComponent implements OnDestroy, OnInit {
   cricketService = inject(CricketService);
   protected playerService = inject(PlayerService);
-  private currentPlayerService = inject(CurrentPlayerService);
+  protected currentPlayerService = inject(CurrentPlayerService);
   private aiService = inject(AIService);
   protected readonly fullscreenService = inject(ToggleFullscreenService);
   private aiSubscription?: Subscription;

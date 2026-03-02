@@ -8,9 +8,6 @@
           class="m-auto raised-button-3d-rect"
           mat-flat-button [color]="multiplierService.multiplier() === 2 ? 'accent' : 'primary'"
           matRipple [matRippleColor]="customRipple.rippleColor" [matRippleRadius]="customRipple.rippleRadius"
-          [matBadge]="this.badgeHandleService.bullBadgeCount"
-          [matBadgeHidden]="this.badgeHandleService.matBadgeHiddenBull"
-          matBadgeColor="accent"
           (shapeMorphClick)="scoreBull()"
           appShapeMorph>
           Bull
@@ -20,9 +17,6 @@
           class="m-auto raised-button-3d-rect" mat-flat-button
           [color]="multiplierService.multiplier() === 2 ? 'accent' : 'accent'"
           matRipple [matRippleColor]="customRipple.rippleColor" [matRippleRadius]="customRipple.rippleRadius"
-          [matBadge]="this.badgeHandleService.bullsEyeBadgeCount"
-          [matBadgeHidden]="this.badgeHandleService.matBadgeHiddenBullsEye"
-          matBadgeColor="accent"
           (shapeMorphClick)="scoreBullsEye()"
           appShapeMorph>
           BullsEye
@@ -38,8 +32,6 @@
                     matRipple [matRippleColor]="customRipple.rippleColor" [matRippleUnbounded]="true"
                     [matRippleCentered]="true"
                     [matRippleRadius]="customRipple.rippleRadius" mat-fab [color]="buttonColor"
-                    [matBadge]="inputButton.badgeValue" [matBadgeHidden]="inputButton.badge"
-                    matBadgeColor="accent"
                     (shapeMorphClick)="scoreWithMultiplier(inputButton)"
                     appShapeMorph>
               {{ inputButton.zahl }}

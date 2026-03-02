@@ -5,7 +5,6 @@ import {MatRippleModule, ThemePalette} from "@angular/material/core";
 import {CommonModule} from "@angular/common";
 import {ShapeMorphDirective} from "../../../../shared/directive/shape-morph.directive";
 import {DartService} from "../../../../services/dart.service";
-import {BadgeHandleService} from "../../../../services/badge-handle.service";
 import {ExplosionAnimationService} from "../../../../shared/animation/explosion-animation.service";
 import {customRipple} from "../../../../shared/utils/util";
 import {MultiplierService} from "../../../../services/multiplier.service";
@@ -33,7 +32,6 @@ export interface InputButton {
 export class InputButtonRowComponent implements OnInit {
 
   public dartService: DartService = inject(DartService)
-  protected badgeHandleService: BadgeHandleService = inject(BadgeHandleService)
   protected animationService = inject(ExplosionAnimationService)
   protected multiplierService = inject(MultiplierService);
   private cdr = inject(ChangeDetectorRef);
@@ -43,6 +41,7 @@ export class InputButtonRowComponent implements OnInit {
   protected readonly customRipple = customRipple;
 
   public readonly buttonGroups: InputButton[][] = [];
+  private twentyButtons: InputButton[] = [];
 
   get buttonColor(): ThemePalette {
     const m = this.multiplierService.multiplier();
@@ -58,9 +57,9 @@ export class InputButtonRowComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.badgeHandleService.twentyButtons.length === 0) {
+    if (this.twentyButtons.length === 0) {
       for (let i = 0; i < 20; i++) {
-        this.badgeHandleService.twentyButtons.push({zahl: i + 1, badge: true});
+        this.twentyButtons.push({zahl: i + 1, badge: true});
       }
     }
     this.groupButtons();
@@ -68,7 +67,7 @@ export class InputButtonRowComponent implements OnInit {
   }
 
   private groupButtons() {
-    const btns = this.badgeHandleService.twentyButtons;
+    const btns = this.twentyButtons;
     // 1-5, 6-10, 11-15, 16-20
     for (let i = 0; i < 4; i++) {
       this.buttonGroups.push(btns.slice(i * 5, (i + 1) * 5));
@@ -76,18 +75,12 @@ export class InputButtonRowComponent implements OnInit {
   }
 
   scoreBull() {
-    this.badgeHandleService.matBadgeHiddenBull = false;
-    this.badgeHandleService.bullBadgeCount = this.getBadgeCountValue();
-    this.setBadgeCount();
     this.dartService.score({value: 25, multiplier: 1});
     this.animationService.playAnimationSound('assets/sounds/cow-moo-sound-effect.mp3');
     this.cdr.detectChanges();
   }
 
   scoreBullsEye() {
-    this.badgeHandleService.matBadgeHiddenBullsEye = false;
-    this.badgeHandleService.bullsEyeBadgeCount = this.getBadgeCountValue();
-    this.setBadgeCount();
     this.dartService.score({value: 25, multiplier: 2});
     this.animationService.showExplosion('Bullseye', "red", 'assets/sounds/oh-yeah.mp3');
     this.cdr.detectChanges();
@@ -96,9 +89,6 @@ export class InputButtonRowComponent implements OnInit {
   scoreWithMultiplier(inputButton: InputButton) {
     const multiplier = this.multiplierService.getMultiplier();
     this.multiplierService.reset();
-    if (inputButton.badge) {
-      this.setBadgeCount(inputButton);
-    }
     this.multiplierAnimationCheck(multiplier, inputButton);
     this.dartService.score({value: inputButton.zahl, multiplier: multiplier});
     this.cdr.detectChanges();
@@ -126,18 +116,6 @@ export class InputButtonRowComponent implements OnInit {
 
       }
     }
-  }
-
-  private setBadgeCount(inputButton?: InputButton) {
-    this.badgeHandleService.tempBadgeValue++;
-    if (inputButton) {
-      inputButton.badgeValue = this.getBadgeCountValue();
-      inputButton.badge = false;
-    }
-  }
-
-  getBadgeCountValue() {
-    return this.badgeHandleService.tempBadgeValue;
   }
 
   private updateOrientation() {

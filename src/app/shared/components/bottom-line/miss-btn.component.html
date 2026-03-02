@@ -2,9 +2,6 @@
   <button id="miss-btn" mat-raised-button color="warn" class="btn-scale raised-button-3d-rect"
           matRipple [matRippleColor]="customRipple.rippleColor" [matRippleUnbounded]="true"
           [matRippleRadius]="customRipple.rippleRadius"
-          [matBadge]="badgeHandleService.missBadgeCount"
-          [matBadgeHidden]="badgeHandleService.matBadgeHiddenMiss"
-          matBadgeColor="accent"
           (shapeMorphClick)="scoreMiss()"
           appShapeMorph
   >

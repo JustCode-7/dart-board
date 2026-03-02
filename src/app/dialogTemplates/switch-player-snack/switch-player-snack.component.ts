@@ -1,7 +1,7 @@
-import {Component, inject, OnDestroy, OnInit, signal} from '@angular/core';
+import {Component, inject, OnInit, signal} from '@angular/core';
 import {CurrentPlayerService} from "../../services/current-player.service";
 import {PlayerService} from "../../services/player.service";
-import {MatSnackBar} from "@angular/material/snack-bar";
+import {MAT_SNACK_BAR_DATA, MatSnackBar} from "@angular/material/snack-bar";
 import {CommonModule} from "@angular/common";
 import {MatButtonModule} from "@angular/material/button";
 import {MatCardModule} from "@angular/material/card";
@@ -27,11 +27,12 @@ import {wellFormedArray} from "../../shared/utils/util";
     }
   `]
 })
-export class SwitchPlayerSnackComponent implements OnInit, OnDestroy {
+export class SwitchPlayerSnackComponent implements OnInit {
   protected readonly wellFormedArray = wellFormedArray;
   protected readonly GameType = GameType;
   protected playerService: PlayerService = inject(PlayerService)
   snackBarRef = inject(MatSnackBar);
+  data = inject(MAT_SNACK_BAR_DATA);
   currentPlayerService = inject(CurrentPlayerService);
   cricketService = inject(CricketService);
 
@@ -43,17 +44,11 @@ export class SwitchPlayerSnackComponent implements OnInit, OnDestroy {
 
 
   ngOnInit(): void {
-    this.nextPlayer = this.currentPlayerService._currentPlayer.value;
+    this.nextPlayer = this.data.nextPlayer;
     this.startTimer();
     // Convert Map iterator to a stable array to avoid ExpressionChangedAfterItHasBeenCheckedError
     this.cricketKeys = Array.from(this.nextPlayer.cricketMap.keys());
-    this.getAllButtonsToDisable(true)
   }
-
-  ngOnDestroy(): void {
-    this.getAllButtonsToDisable(false)
-  }
-
 
   startTimer() {
     const totalTime = this.timeLeft;
@@ -67,15 +62,4 @@ export class SwitchPlayerSnackComponent implements OnInit, OnDestroy {
       }
     }, this.INTERVAL);
   }
-
-  private getAllButtonsToDisable(disabled: boolean) {
-    // @ts-ignore
-    for (const btn of document.getElementsByTagName("button")) {
-      if (btn.innerText !== 'OK' && btn.innerText !== 'REVERT') {
-        btn.disabled = disabled;
-      }
-    }
-  }
-
-
 }
