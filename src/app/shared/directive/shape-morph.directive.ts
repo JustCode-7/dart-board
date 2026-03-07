@@ -2,6 +2,7 @@ import {Directive, ElementRef, EventEmitter, HostListener, inject, Output, Rende
 import {MatSnackBar, MatSnackBarRef} from "@angular/material/snack-bar";
 import {ShapeMorphHoldSnackComponent} from './shape-morph-hold-snack.component';
 import {DrunkToggleService} from "../../services/drunk-toggle.service";
+import {CurrentPlayerService} from "../../services/current-player.service";
 
 @Directive({
   selector: '[appShapeMorph]',
@@ -27,6 +28,7 @@ export class ShapeMorphDirective {
   private readonly drunkToggleService = inject(DrunkToggleService)
 
   private readonly snackBar: MatSnackBar = inject(MatSnackBar);
+  private readonly currentPlayerService = inject(CurrentPlayerService);
 
   constructor(
     private el: ElementRef,
@@ -196,12 +198,14 @@ export class ShapeMorphDirective {
 
     if (this.holdDuration > 0) {
       if (!ev.isTrusted) { // prevent double emit as human player
+        this.currentPlayerService.setLastClickedButton(this.el.nativeElement);
         this.shapeMorphClick.emit();
       } else {
         this.openHintIfNeeded();
       }
     } else {
       if (!ev.isTrusted) { // prevent double emit as human player
+        this.currentPlayerService.setLastClickedButton(this.el.nativeElement);
         this.shapeMorphClick.emit();
       }
     }
@@ -241,6 +245,7 @@ export class ShapeMorphDirective {
     // true bei mouseup/touchend
     if (success && this.holdSucceeded) {
       // Aktion erst beim Loslassen ausführen
+      this.currentPlayerService.setLastClickedButton(this.el.nativeElement);
       this.shapeMorphClick.emit();
       this.vibrateOnClick(400)
       this.clickCount = 0

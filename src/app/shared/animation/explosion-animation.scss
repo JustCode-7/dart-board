@@ -79,7 +79,7 @@
   .explosion-particle:nth-child(#{$i}) {
     $angle: random(360) * 1deg;
     $distance: random(100) + 50; // 50..150 (px baseline)
-    $size: random(33) + 4;       // 4..37 (px baseline)
+    $size: random(33) + 4; // 4..37 (px baseline)
     $duration: (random(15) + 8) / 10;
     $delay: random(10) / 100;
 
@@ -118,7 +118,7 @@
   .explosion-trail:nth-child(#{$i}) {
     $angle: random(360) * 1deg;
     $distance: random(200) + 100; // 100..300 baseline
-    $size: random(10) + 2;        // 2..12 baseline
+    $size: random(10) + 2; // 2..12 baseline
     $duration: (random(10) + 5) / 10;
     $delay: random(5) / 100;
 
@@ -240,5 +240,61 @@
 
   .explosion-text {
     text-shadow: 0 0 var(--glow-blur) rgba(255, 255, 255, 0.9), 0 0 calc(var(--glow-blur) * 0.66) rgba(50, 50, 255, 0.8);
+  }
+}
+
+.trajectory-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10000;
+}
+
+.trajectory-particle {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff 0%, #ffeb3b 50%, #f44336 100%);
+  box-shadow: 0 0 10px #ffeb3b;
+  opacity: 0;
+}
+
+@keyframes trajectoryMove {
+  0% {
+    transform: translate(var(--start-x), var(--start-y)) scale(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+    transform: translate(var(--start-x), var(--start-y)) scale(1.2);
+  }
+  100% {
+    transform: translate(var(--end-x), var(--end-y)) scale(0.2);
+    opacity: 0;
+  }
+}
+
+.trajectory-trail {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(255, 235, 59, 0.6);
+  pointer-events: none;
+  opacity: 0;
+}
+
+@keyframes trailFade {
+  0% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.1);
   }
 }

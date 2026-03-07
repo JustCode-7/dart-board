@@ -65,14 +65,20 @@ export class DartBoardComponent implements OnDestroy, OnInit {
 
     if (_throw.value === 0) {
       const missBtn = document.getElementById('miss-btn');
-      missBtn?.click();
+      if (missBtn) {
+        this.currentPlayerService.setLastClickedButton(missBtn);
+        missBtn.click();
+      }
       return;
     }
 
     if (_throw.value === 25) {
       const buttonId = _throw.multiplier === 2 ? 'dart-btn-bullseye' : 'dart-btn-bull';
       const btn = document.getElementById(buttonId);
-      btn?.click();
+      if (btn) {
+        this.currentPlayerService.setLastClickedButton(btn);
+        btn.click();
+      }
       return;
     }
 
@@ -84,6 +90,7 @@ export class DartBoardComponent implements OnDestroy, OnInit {
 
     const btn = document.getElementById(`dart-btn-${_throw.value}`);
     if (btn) {
+      this.currentPlayerService.setLastClickedButton(btn);
       btn.click();
     } else {
       // Fallback

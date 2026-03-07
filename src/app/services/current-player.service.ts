@@ -40,14 +40,55 @@ export class CurrentPlayerService {
 
   // undo - workaround
   last3HisSignal = signal(this._last3History);
+  private lastClickedButton: HTMLElement | null = null;
   isTooLong = computed(() => this.last3HisSignal().length > 2);
   public isAITurn = signal(false);
 
   private updateButtonStatesEffect = effect(() => {
     const shouldDisable = this.isTooLong();
-
     this.updateButtonStates(shouldDisable);
   });
+
+  private trajectoryEffect = effect(() => {
+    const last3 = this.last3HisSignal();
+    const isAi = this.isAITurn();
+    if (last3.length > 0) {
+      // Wenn KI am Zug ist, suchen wir das Element anhand der ID, da kein direkter Klick registriert wurde
+      if (isAi && !this.lastClickedButton) {
+        // Wir nehmen den letzten Wert aus dem Array um das Element zu finden
+        // ACHTUNG: Das funktioniert nur, wenn wir wissen, welcher Wert geworfen wurde.
+        // Die AI ruft performClick auf, was document.getElementById nutzt.
+        // Wir setzen lastClickedButton in performClick
+      }
+
+      if (this.lastClickedButton) {
+        const verticalButtons = Array.from(document.querySelectorAll('.dart-buttons-vertical button'));
+        // Die Buttons im HTML sind in der Reihenfolge: Wurf 3, Wurf 2, Wurf 1
+        // last3HisSignal[0] ist Wurf 1
+        // last3HisSignal[1] ist Wurf 2
+        // last3HisSignal[2] ist Wurf 3
+        // Also:
+        // length 1 -> Ziel ist verticalButtons[2] (letzter im DOM)
+        // length 2 -> Ziel ist verticalButtons[1]
+        // length 3 -> Ziel ist verticalButtons[0] (erster im DOM)
+        const targetIndex = 3 - last3.length;
+        const target = verticalButtons[targetIndex] as HTMLElement;
+
+        if (target) {
+          const source = this.lastClickedButton;
+          this.lastClickedButton = null;
+          // Kurze Verzögerung, damit das UI aktualisiert wurde
+          setTimeout(() => {
+            this.animationService.showTrajectory(source, target);
+          }, 50);
+        }
+      }
+    }
+  });
+
+  public setLastClickedButton(btn: HTMLElement | null) {
+    this.lastClickedButton = btn;
+  }
 
   constructor(private playerService: PlayerService,
               private snackbar: MatSnackBar,

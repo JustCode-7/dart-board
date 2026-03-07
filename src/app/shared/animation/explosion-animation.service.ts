@@ -7,6 +7,7 @@ import {SoundToggleService} from '../../services/sound-toggle.service';
 export class ExplosionAnimationService {
   private renderer: Renderer2;
   private explosionElement: HTMLElement | null = null;
+  private trajectoryContainer: HTMLElement | null = null;
   tripleTwentyCounter: number = 0;
   tripleCounter: number = 0;
   missCounter: number = 0;
@@ -74,6 +75,98 @@ export class ExplosionAnimationService {
     setTimeout(() => {
       this.removeExplosion();
     }, duration);
+  }
+
+  /**
+   * Zeigt eine Partikelanimation von einem Startelement zu einem Zielelement in einem ballistischen Bogen
+   */
+  showTrajectory(source: HTMLElement, target: HTMLElement): void {
+    const duration = 1000;
+    const sourceRect = source.getBoundingClientRect();
+    const targetRect = target.getBoundingClientRect();
+
+    const startX = sourceRect.left + sourceRect.width / 2;
+    const startY = sourceRect.top + sourceRect.height / 2;
+    const endX = targetRect.left + targetRect.width / 2;
+    const endY = targetRect.top + targetRect.height / 2;
+
+    const container = this.renderer.createElement('div');
+    this.renderer.addClass(container, 'trajectory-container');
+    this.renderer.appendChild(document.body, container);
+
+    const particleCount = 5;
+    for (let i = 0; i < particleCount; i++) {
+      setTimeout(() => {
+        this.createMovingParticle(container, startX, startY, endX, endY, duration);
+      }, i * 100);
+    }
+
+    setTimeout(() => {
+      if (document.body.contains(container)) {
+        this.renderer.removeChild(document.body, container);
+      }
+    }, duration + particleCount * 100 + 500);
+  }
+
+  private createMovingParticle(container: HTMLElement, startX: number, startY: number, endX: number, endY: number, duration: number) {
+    const particle = this.renderer.createElement('div');
+    this.renderer.addClass(particle, 'trajectory-particle');
+
+    // Mittelpunkt für den Bogen berechnen
+    const midX = (startX + endX) / 2;
+    const midY = Math.min(startY, endY) - 150; // Bogen nach oben
+
+    this.renderer.setStyle(particle, '--start-x', `${startX}px`);
+    this.renderer.setStyle(particle, '--start-y', `${startY}px`);
+    this.renderer.setStyle(particle, '--end-x', `${endX}px`);
+    this.renderer.setStyle(particle, '--end-y', `${endY}px`);
+
+    this.renderer.appendChild(container, particle);
+
+    const startTime = performance.now();
+
+    const animate = (currentTime: number) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+
+      // Quadratischer Bezier-Bogen
+      const x = (1 - progress) * (1 - progress) * startX + 2 * (1 - progress) * progress * midX + progress * progress * endX;
+      const y = (1 - progress) * (1 - progress) * startY + 2 * (1 - progress) * progress * midY + progress * progress * endY;
+
+      this.renderer.setStyle(particle, 'transform', `translate(${x}px, ${y}px)`);
+      this.renderer.setStyle(particle, 'opacity', progress < 0.1 ? progress * 10 : (1 - progress) * 2);
+
+      // Schweif-Partikel
+      if (Math.random() > 0.5) {
+        this.createTrailParticle(container, x, y);
+      }
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        if (container.contains(particle)) {
+          this.renderer.removeChild(container, particle);
+        }
+      }
+    };
+
+    requestAnimationFrame(animate);
+  }
+
+  private createTrailParticle(container: HTMLElement, x: number, y: number) {
+    const trail = this.renderer.createElement('div');
+    this.renderer.addClass(trail, 'trajectory-trail');
+    this.renderer.setStyle(trail, 'left', `${x}px`);
+    this.renderer.setStyle(trail, 'top', `${y}px`);
+    this.renderer.setStyle(trail, 'animation', 'trailFade 0.5s ease-out forwards');
+
+    this.renderer.appendChild(container, trail);
+
+    setTimeout(() => {
+      if (container.contains(trail)) {
+        this.renderer.removeChild(container, trail);
+      }
+    }, 500);
   }
 
   private removeExplosion(): void {
