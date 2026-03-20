@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, inject, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, HostListener, inject, OnInit} from '@angular/core';
 import {AbstractControl, FormArray, FormBuilder, ReactiveFormsModule} from '@angular/forms';
 import {Router} from "@angular/router";
 import {GameType} from '../../../models/enum/GameType';
@@ -38,6 +38,41 @@ export class GameSelectionComponent implements OnInit {
   private fb = inject(FormBuilder)
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
+  showScrollTopButton = false;
+  showScrollBottomButton = false;
+
+  @HostListener('window:scroll', [])
+  onWindowScroll() {
+    this.checkScrollVisibility();
+  }
+
+  private checkScrollVisibility() {
+    const startButton = document.querySelector('button[type="submit"]');
+    if (startButton) {
+      const rect = startButton.getBoundingClientRect();
+      // Wenn der Start-Button nicht mehr im Viewport ist (oben rausgescrollt)
+      this.showScrollTopButton = rect.bottom < 0;
+    }
+
+    // Prüfen ob der letzte Spieler sichtbar ist
+    const playerRows = document.querySelectorAll('.player-row');
+    if (playerRows.length > 0) {
+      const lastPlayer = playerRows[playerRows.length - 1];
+      const rect = lastPlayer.getBoundingClientRect();
+      // Wenn der letzte Spieler unterhalb des Viewports liegt
+      this.showScrollBottomButton = rect.top > window.innerHeight;
+    } else {
+      this.showScrollBottomButton = false;
+    }
+  }
+
+  scrollToTop() {
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }
+
+  scrollToBottom() {
+    window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'});
+  }
 
   formGroup = this.fb.group({
     gameType: this.fb.control<any>(GameType.Simple501),
@@ -103,6 +138,7 @@ export class GameSelectionComponent implements OnInit {
         difficulty: this.fb.control(Difficulty.Medium)
       }));
       this.cdr.detectChanges();
+      setTimeout(() => this.checkScrollVisibility(), 100);
     }
   }
 
@@ -117,12 +153,13 @@ export class GameSelectionComponent implements OnInit {
       });
       this.playerNames.push(group);
       this.cdr.detectChanges();
+      setTimeout(() => this.checkScrollVisibility(), 100);
     }
   }
 
   removePlayerName(index: number) {
     this.playerNames.removeAt(index);
-
+    setTimeout(() => this.checkScrollVisibility(), 100);
   }
 
   onSubmit() {

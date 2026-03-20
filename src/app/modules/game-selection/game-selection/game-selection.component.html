@@ -1,28 +1,35 @@
-<div class="container-fluid mt-3 d-flex justify-content-center">
-  <form [formGroup]="formGroup" (ngSubmit)="onSubmit()"
+<div class="d-flex justify-content-center">
+  <form class="ms-2 mt-2 vw-100 justify-content-center" [formGroup]="formGroup" (ngSubmit)="onSubmit()"
         (reset)="onReset($event)">
-    <div class="my-3">
+    <mat-form-field appearance="fill" class="me-2">
+      <mat-label class="text">Game Type</mat-label>
+      <mat-select formControlName="gameType">
+        <mat-option [value]="gameType.Simple501">501</mat-option>
+        <mat-option [value]="gameType.DoubleOut501">501 (Double Out)</mat-option>
+        <mat-option [value]="gameType.Cricket">Cricket</mat-option>
+        <mat-option [value]="gameType.Elimination301">Elimination (301)</mat-option>
+        <mat-option [value]="gameType.Highscore">Highscore</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <button mat-raised-button color="accent" type="submit" [disabled]="!validateGameStart(playerNames)">Start
+    </button>
+    @if (playerNames.length > 0 && !validateGameStart(playerNames)) {
+      <mat-hint class="ms-2 mt-2 text-danger">
+        Mindestens ein menschlicher Spieler wird benötigt.
+      </mat-hint>
+    }
+    <button mat-raised-button class="ms-2" type="reset">Reset</button>
+    @if (formGroup.get('gameType')?.value === gameType.Highscore) {
       <mat-form-field appearance="fill">
-        <mat-label class="text">Game Type</mat-label>
-        <mat-select formControlName="gameType">
-          <mat-option [value]="gameType.Simple501">501</mat-option>
-          <mat-option [value]="gameType.DoubleOut501">501 (Double Out)</mat-option>
-          <mat-option [value]="gameType.Cricket">Cricket</mat-option>
-          <mat-option [value]="gameType.Elimination301">Elimination (301)</mat-option>
-          <mat-option [value]="gameType.Highscore">Highscore</mat-option>
+        <mat-label>Max Rounds</mat-label>
+        <mat-select formControlName="maxRounds">
+          @for (r of roundOptions; track r) {
+            <mat-option [value]="r">{{ r }}</mat-option>
+          }
         </mat-select>
       </mat-form-field>
-
-      <div *ngIf="formGroup.get('gameType')?.value === gameType.Highscore">
-        <mat-form-field appearance="fill">
-          <mat-label>Max Rounds</mat-label>
-          <mat-select formControlName="maxRounds">
-            <mat-option *ngFor="let r of roundOptions" [value]="r">{{ r }}</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-
-    </div>
+    }
     <div class="d-flex flex-row my-3">
       <button mat-raised-button color="accent" type="button" (click)="addPlayerName()">
         <mat-icon>
@@ -38,24 +45,15 @@
       </button>
     </div>
 
-    <div formArrayName="playerNames" cdkDropList (cdkDropListDropped)="drop($event)">
-      <div *ngFor="let playerNameGroup of playerNames.controls; let i=index" cdkDrag [formGroupName]="i">
-        <div class="d-flex flex-row align-items-center">
-          <mat-form-field appearance="fill" *ngIf="playerNameGroup.get('isAI')?.value" class="difficulty-select ms-2">
-            <mat-label>Difficulty</mat-label>
-            <mat-select formControlName="difficulty">
-              <mat-option [value]="difficulty.Easy">Leicht</mat-option>
-              <mat-option [value]="difficulty.Medium">Mittel</mat-option>
-              <mat-option [value]="difficulty.Hard">Schwer</mat-option>
-            </mat-select>
-          </mat-form-field>
-
+    <div class="d-flex flex-column" formArrayName="playerNames" cdkDropList (cdkDropListDropped)="drop($event)">
+      @for (playerNameGroup of playerNames.controls; track $index) {
+        <div class="d-flex flex-row rounded-3 player-row" cdkDrag [formGroupName]="$index">
           <mat-form-field appearance="fill">
-            <mat-label>Player {{ i + 1 }}</mat-label>
+            <mat-label>Player {{ $index + 1 }}</mat-label>
             <div class="d-flex flex-row">
-              <input #nameInput matInput id="playerName-{{ i }}" type="text"
+              <input #nameInput matInput id="playerName-{{ $index }}" type="text"
                      formControlName="name">
-              <button mat-mini-fab class="ms-2 mb-1" type="button" color="warn" (click)="removePlayerName(i)">
+              <button mat-mini-fab class="ms-2 mb-1" type="button" color="warn" (click)="removePlayerName($index)">
                 <mat-icon>close</mat-icon>
               </button>
             </div>
@@ -65,25 +63,34 @@
               </mat-hint>
             }
           </mat-form-field>
+          @if (playerNameGroup.get('isAI')?.value) {
+            <mat-form-field appearance="fill" class="difficulty-select p-3">
+              <mat-label>KI-Difficulty</mat-label>
+              <mat-select formControlName="difficulty">
+                <mat-option [value]="difficulty.Easy">Leicht</mat-option>
+                <mat-option [value]="difficulty.Medium">Mittel</mat-option>
+                <mat-option [value]="difficulty.Hard">Schwer</mat-option>
+              </mat-select>
+            </mat-form-field>
+          }
           <button mat-icon-button (click)="$event.preventDefault()">
             <mat-icon>
               reorder
             </mat-icon>
           </button>
         </div>
-      </div>
-
-    </div>
-    <h5>start game </h5>
-    <div class="d-flex justify-content-start">
-      <button mat-raised-button color="accent" type="submit" [disabled]="!validateGameStart(playerNames)">Start
-      </button>
-      @if (playerNames.length > 0 && !validateGameStart(playerNames)) {
-        <mat-hint class="ms-2 mt-2 text-danger">
-          Mindestens ein menschlicher Spieler wird benötigt.
-        </mat-hint>
       }
-      <button mat-raised-button class="ms-2" type="reset">Reset</button>
     </div>
   </form>
+  @if (showScrollTopButton) {
+    <button mat-fab color="primary" class="scroll-btn" (click)="scrollToTop()">
+      <mat-icon>arrow_upward</mat-icon>
+    </button>
+  }
+
+  @if (showScrollBottomButton) {
+    <button mat-fab color="warn" class="scroll-btn" (click)="scrollToBottom()">
+      <mat-icon>arrow_downward</mat-icon>
+    </button>
+  }
 </div>

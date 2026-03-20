@@ -404,9 +404,10 @@ export class CurrentPlayerService {
   }
 
   evaluateCricketPoints(_throw: Throw) {
+    const relevantValues = [15, 16, 17, 18, 19, 20, 25];
     let map = this._currentPlayer.value.cricketMap;
     const value = _throw.value;
-    if (value > 0) { // kein Miss also Treffer
+    if (value > 0 && relevantValues.includes(value)) { // kein Miss und relevante Zahl
       const multiplier = _throw.multiplier;
 
       if (map.has(value)) { // wenn der Wert schon im Map ist, heißt schon einmal getroffen

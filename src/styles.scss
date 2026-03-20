@@ -109,6 +109,8 @@ mat-card {
   .mdc-snackbar__surface {
     background-color: #424242 !important;
     color: #000 !important;
+    margin: 10%;
+    //max-width: 90% !important;
   }
 
   .mdc-snackbar__label, .mdc-button__label {

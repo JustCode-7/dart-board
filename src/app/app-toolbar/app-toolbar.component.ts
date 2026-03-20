@@ -100,46 +100,6 @@ export class AppToolbarComponent implements OnInit, OnDestroy {
     this.currentPlayerService.undoLastPlayerActions();
   }
 
-  get canChangeFirstPlayer(): boolean {
-    // Allow reordering only if no points have been scored yet in the current mode
-    const isCricket = this.cricketService._gameType !== '';
-    if (isCricket) {
-      return this.currentPlayerService._lastCricketHistory.size === 0 && this.currentPlayerService._last3History.length === 0;
-    } else {
-      return this.currentPlayerService._last3History.length === 0;
-    }
-  }
-
-  setNextPlayerAsFirst() {
-    if (!this.canChangeFirstPlayer) {
-      console.warn('Spielerreihenfolge kann nicht mehr geändert werden: Es wurden bereits Punkte erzielt.');
-      return;
-    }
-
-    const isCricket = this.cricketService._gameType !== '';
-
-    if (isCricket) {
-      // Rotate for Cricket
-      if (this.cricketService.playerNames.length > 1) {
-        const firstPlayer = this.cricketService.playerNames.shift();
-        if (firstPlayer) {
-          this.cricketService.playerNames.push(firstPlayer);
-        }
-      }
-      this.cricketService.initPlayers(this.cricketService.playerNames);
-    } else {
-      // Rotate for Dart
-      if (this.dartService.playerNames.length > 1) {
-        const firstPlayer = this.dartService.playerNames.shift();
-        if (firstPlayer) {
-          this.dartService.playerNames.push(firstPlayer);
-        }
-      }
-      this.dartService.initPlayers(this.dartService.playerNames);
-    }
-  }
-
-
   getCurrentGameModeName(): string {
     const isCricket = this.cricketService._gameType !== '';
     if (isCricket) {

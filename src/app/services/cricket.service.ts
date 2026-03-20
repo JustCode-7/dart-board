@@ -71,15 +71,62 @@ export class CricketService {
       this.handleVictory();
     } else if (this.currentPlayerService.hasNoThrowsRemaining()) {
       this.currentPlayerService.finalizeTurn('add', this.currentPlayerService._remainingThrows === 0);
-      this.switchPlayer();
+      if (this.roundCountService.getRemainingRounds() === 0) {
+        this.handleVictory();
+      } else {
+        this.switchPlayer();
+      }
     }
     this.currentPlayerService.sortMap();
   }
 
   private handleVictory() {
     this._hideAll = true;
-    this.dialog.open(VictoryDialog, {disableClose: true});
-    // TODO: Open PointsOverview as Option
+    if (this.roundCountService.getRemainingRounds() === 0) {
+      this.handleVictoryByReachingRoundLimit();
+    } else {
+      this.dialog.open(VictoryDialog, {disableClose: true});
+    }
+  }
+
+  private handleVictoryByReachingRoundLimit() {
+    const winners = this.getPlayersWithHighestPoints();
+    const winner = this.playerService._players.find(p => p.name === winners[0]);
+    if (winner) {
+      this.currentPlayerService._currentPlayer.next(winner);
+    }
+    this.dialog.open(VictoryDialog, {data: {victoryByReachingRoundLimit: true}, disableClose: true});
+  }
+
+  private getPlayersWithHighestPoints(): string[] {
+    const players = this.playerService._players;
+    if (players.length === 0) return [];
+
+    let maxPoints = -1;
+    players.forEach(p => {
+      const points = this.getEffectivePoints(p);
+      if (points > maxPoints) maxPoints = points;
+    });
+
+    const potentialWinners = players.filter(p => this.getEffectivePoints(p) === maxPoints);
+
+    if (potentialWinners.length > 1) {
+      // Bei Punktgleichheit: meiste geschlossene Felder
+      let maxClosed = -1;
+      potentialWinners.forEach(p => {
+        const closed = this.countClosedFields(p);
+        if (closed > maxClosed) maxClosed = closed;
+      });
+      const finalWinners = potentialWinners.filter(p => this.countClosedFields(p) === maxClosed);
+      return finalWinners.map(p => p.name);
+    }
+
+    return potentialWinners.map(p => p.name);
+  }
+
+  private countClosedFields(player: Player): number {
+    const relevantValues = [15, 16, 17, 18, 19, 20, 25];
+    return relevantValues.filter(v => (player.cricketMap.get(v) || 0) >= 3).length;
   }
 
   private switchPlayer() {
@@ -116,6 +163,11 @@ export class CricketService {
         return true;
       }
     }
+
+    if (this.roundCountService.getRemainingRounds() === 0 && this.currentPlayerService.hasNoThrowsRemaining()) {
+      return true;
+    }
+
     return false;
   }
 
@@ -140,8 +192,9 @@ export class CricketService {
   }
 
   private playerHasAllClosed() {
-    return Array.from(this.currentPlayerService._currentPlayer.value.cricketMap.values()).every(value => value === 3)
-      && this.currentPlayerService._currentPlayer.value.cricketMap.size == 7;
+    const relevantValues = [15, 16, 17, 18, 19, 20, 25];
+    const map = this.currentPlayerService._currentPlayer.value.cricketMap;
+    return relevantValues.every(value => (map.get(value) || 0) >= 3);
   }
 
 }
