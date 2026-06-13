@@ -12,6 +12,11 @@ import {MissBtn} from "../../../shared/components/bottom-line/miss-btn.component
 import {Throw} from "../../../models/game/game.model";
 import {PlayerService} from "../../../services/player.service";
 import {Subscription} from "rxjs";
+import {MatDialog} from "@angular/material/dialog";
+import {HiddenPlayersDialog} from "../../../dialogTemplates/hidden-players-dialog/hidden-players-dialog.component";
+import {MatIconModule} from "@angular/material/icon";
+import {PlayerOverview} from "../../../shared/components/player-overview/player-overview";
+import {MatButtonModule} from "@angular/material/button";
 
 @Component({
   selector: 'app-dart-board',
@@ -23,6 +28,9 @@ import {Subscription} from "rxjs";
     InputButtonRowComponent,
     MultiplierToggleComponent,
     MissBtn,
+    PlayerOverview,
+    MatIconModule,
+    MatButtonModule,
   ],
 })
 export class DartBoardComponent implements OnDestroy, OnInit {
@@ -34,12 +42,17 @@ export class DartBoardComponent implements OnDestroy, OnInit {
   protected readonly fullscreenService = inject(ToggleFullscreenService);
   private aiSubscription?: Subscription;
   private aiTimeout: any;
+  private dialog: MatDialog = inject(MatDialog);
 
   ngOnInit(): void {
     this.fullscreenService.toggleTabFullScreenModeGame();
     this.aiSubscription = this.currentPlayerService.aiTurn$.subscribe(() => {
       this.playAITurn();
     });
+  }
+
+  openPlayersOverviewDialog() {
+    this.dialog.open(HiddenPlayersDialog)
   }
 
   private playAITurn() {

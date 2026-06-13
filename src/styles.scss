@@ -63,7 +63,7 @@ mat-card {
   padding-top: 0;
   @media (orientation: landscape) {
     overflow: clip;
-    max-height: 38vh;
+    max-height: 40vh; // Increased slightly for more room
   }
   @media (orientation: portrait) {
     overflow: clip;
@@ -147,6 +147,47 @@ mat-card {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  height: calc(100vh - 64px); // Toolbar height assumption, adjust if needed
+
+  .game-content-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+
+    @media screen and (orientation: landscape) {
+      flex-direction: row;
+
+      #dart-input, #cricket-input {
+        flex-grow: 1;
+      }
+    }
+  }
+
+  .pow-container {
+    display: flex;
+    background-color: rgba(0, 0, 0, 0.2);
+    overflow: auto;
+
+    @media screen and (orientation: portrait) {
+      height: 7vh;
+      min-height: 50px;
+      max-height: 40vh;
+      width: 100%;
+    }
+
+    @media screen and (orientation: landscape) {
+      width: 40vw; // Sidebar width
+      height: 100%;
+      flex-direction: column;
+    }
+
+    app-player-overview {
+      flex: 1;
+      height: 100%;
+      width: 100%;
+    }
+  }
 
   .input-container {
     flex: 1;

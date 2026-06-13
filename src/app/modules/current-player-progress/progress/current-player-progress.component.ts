@@ -3,14 +3,11 @@ import {CurrentPlayerService} from "../../../services/current-player.service";
 import {RoundCountService} from "../../../services/round-count.service";
 import {PlayerService} from "../../../services/player.service";
 import {GameType} from "../../../models/enum/GameType";
-import {MatDialog} from "@angular/material/dialog";
 import {CommonModule} from "@angular/common";
 import {MatCardModule} from "@angular/material/card";
 import {MatIconModule} from "@angular/material/icon";
 import {MatButtonModule} from "@angular/material/button";
 import {GameTimerService} from "../../../services/game-timer.service";
-import {HiddenPlayersDialog} from "../../../dialogTemplates/hidden-players-dialog/hidden-players-dialog.component";
-import {PlayerOverview} from "../../../shared/components/player-overview/player-overview";
 
 @Component({
   selector: 'app-current-player-progress',
@@ -22,7 +19,6 @@ import {PlayerOverview} from "../../../shared/components/player-overview/player-
     MatCardModule,
     MatIconModule,
     MatButtonModule,
-    PlayerOverview,
   ],
 })
 export class CurrentPlayerProgressComponent {
@@ -31,7 +27,6 @@ export class CurrentPlayerProgressComponent {
   public currentPlayerService: CurrentPlayerService = inject(CurrentPlayerService);
   public roundCountService: RoundCountService = inject(RoundCountService);
   public gameTimerService: GameTimerService = inject(GameTimerService);
-  private dialog: MatDialog = inject(MatDialog);
 
   getProgressColor() {
     const remainingThrows = this.currentPlayerService._remainingThrows;
@@ -61,9 +56,5 @@ export class CurrentPlayerProgressComponent {
       this.currentPlayerService.last3HisSignal();
       return player.cricketMap.get(value) || 0;
     })();
-  }
-
-  openPlayersOverviewDialog() {
-    this.dialog.open(HiddenPlayersDialog)
   }
 }

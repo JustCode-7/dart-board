@@ -129,18 +129,5 @@
 }
 
 .pow-container {
-  display: flex;
-  height: 7vh;
-  min-width: 200px;
-  min-height: 50px;
-  max-height: 40vh;
-  background-color: rgba(0, 0, 0, 0.2);
-  resize: both;
-  overflow: auto;
-
-  app-player-overview {
-    flex: 1;
-    height: 100%;
-    width: 100%;
-  }
+  display: none;
 }
