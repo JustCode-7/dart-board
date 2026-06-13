@@ -22,11 +22,6 @@
       Fullscreen
     </button>
     <p mat-menu-item>
-      <mat-slide-toggle #drunktoggle [checked]="this.drunkModeService.isDrunkModeOn.value"
-                        (change)="setDrunkMode(drunktoggle.checked)">drunk-mode
-      </mat-slide-toggle>
-    </p>
-    <p mat-menu-item>
       <mat-slide-toggle #soundtoggle [checked]="this.soundToggleService.isSoundOn.value"
                         (change)="setSoundMode(soundtoggle.checked)">sounds
       </mat-slide-toggle>
@@ -41,9 +36,6 @@
               (click)="openGameInstructions()"
       ><span class="mt-2 material-symbols-outlined">question_mark</span>
       </button>
-    }
-    @if (drunkModeService.isDrunkModeOn.value) {
-      <mat-icon [matTooltip]="'Bist du betrunken,musst du gerückt halten ^^'" color="accent">local_bar</mat-icon>
     }
     @if (soundToggleService.isSoundOn.value) {
       <mat-icon [matTooltip]="'Spielsound ist aktiv'" color="accent">volume_up</mat-icon>

@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, HostListener, inject, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, computed, HostListener, inject, OnInit} from '@angular/core';
 import {MatButtonModule} from "@angular/material/button";
 import {MatBadgeModule} from "@angular/material/badge";
 import {MatRippleModule, ThemePalette} from "@angular/material/core";
@@ -103,28 +103,37 @@ export class InputButtonRowCricketComponent implements OnInit {
   }
 
   getBadgeCountValue(primaryNumber: number) {
-    return this.currentPlayerService._currentPlayer.value.cricketMap.get(primaryNumber) ?? "0";
+    return computed(() => {
+      this.currentPlayerService.last3HisSignal();
+      return this.currentPlayerService._currentPlayer.value.cricketMap.get(primaryNumber) ?? "0";
+    });
   }
 
   isClosed(value: number) {
-    if (this.playerService._players.length === 1) {
-      return false;
-    }
-    if (value === 50 || value === 25) {
-      if (value === 25) return this.currentPlayerService.isCricketBullClosed()
-      if (value === 50) return this.currentPlayerService.isCricketBullClosed()
-    }
-    return this.currentPlayerService.isCricketNumberClosed(value)
+    return computed(() => {
+      this.currentPlayerService.last3HisSignal();
+      if (this.playerService._players.length === 1) {
+        return false;
+      }
+      if (value === 50 || value === 25) {
+        if (value === 25) return this.currentPlayerService.isCricketBullClosed()
+        if (value === 50) return this.currentPlayerService.isCricketBullClosed()
+      }
+      return this.currentPlayerService.isCricketNumberClosed(value)
+    });
   }
 
   isScorable(value: number) {
-    if (this.playerService._players.length === 1) {
-      return true;
-    } else {
-      const allOtherplayers = this.playerService._players.filter((player) => this.currentPlayerService._currentPlayer.value !== player)
-      return allOtherplayers.some((player) =>
-        player.cricketMap.get(value) !== 3)
-    }
+    return computed(() => {
+      this.currentPlayerService.last3HisSignal();
+      if (this.playerService._players.length === 1) {
+        return true;
+      } else {
+        const allOtherplayers = this.playerService._players.filter((player) => this.currentPlayerService._currentPlayer.value !== player)
+        return allOtherplayers.some((player) =>
+          player.cricketMap.get(value) !== 3)
+      }
+    });
   }
 
   private updateOrientation() {

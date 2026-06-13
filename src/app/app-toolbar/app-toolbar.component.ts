@@ -18,7 +18,6 @@ import {ToggleFullscreenService} from "../services/toggle-fullscreen.service";
 import {customRipple} from "../shared/utils/util";
 import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 import {GameType} from "../models/enum/GameType";
-import {DrunkToggleService} from "../services/drunk-toggle.service";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {SoundToggleService} from "../services/sound-toggle.service";
 import {PwaInstallService} from "../services/pwa-install.service";
@@ -47,7 +46,6 @@ export class AppToolbarComponent implements OnInit, OnDestroy {
   private router: Router = inject(Router);
   pwa = inject(PwaInstallService);
   appVersion: string = environment.appVersion
-  drunkModeService = inject(DrunkToggleService);
   soundToggleService = inject(SoundToggleService);
   cricketService = inject(CricketService);
   dartService = inject(DartService);
@@ -111,10 +109,6 @@ export class AppToolbarComponent implements OnInit, OnDestroy {
     if (dartMode === GameType.Elimination301) return 'Elimination';
     if (dartMode === GameType.Highscore) return 'Highscore';
     return '';
-  }
-
-  setDrunkMode(checked: boolean) {
-    this.drunkModeService.isDrunkModeOn.next(checked)
   }
 
   setSoundMode(checked: boolean) {

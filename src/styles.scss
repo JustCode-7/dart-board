@@ -109,8 +109,7 @@ mat-card {
   .mdc-snackbar__surface {
     background-color: #424242 !important;
     color: #000 !important;
-    margin: 10%;
-    //max-width: 90% !important;
+    width: 100% !important;
   }
 
   .mdc-snackbar__label, .mdc-button__label {
@@ -123,13 +122,13 @@ mat-card {
 
   /* Ensure the shape-morph snack is top-centered */
   .mat-mdc-snack-bar-container.app-shape-morph-snack {
-    margin: 0 auto !important; /* center horizontally */
+    //margin: auto !important; /* center horizontally */
   }
 
   /* Make sure top position class takes effect */
-  .mat-mdc-snack-bar-top.app-shape-morph-snack {
-    top: auto !important;
-  }
+  //.mat-mdc-snack-bar-top.app-shape-morph-snack {
+  //  top: auto !important;
+  //}
 }
 
 

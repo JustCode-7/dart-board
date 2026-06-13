@@ -1,4 +1,4 @@
-import {Component, inject} from '@angular/core';
+import {Component, computed, inject} from '@angular/core';
 import {CurrentPlayerService} from "../../../services/current-player.service";
 import {RoundCountService} from "../../../services/round-count.service";
 import {PlayerService} from "../../../services/player.service";
@@ -55,7 +55,10 @@ export class CurrentPlayerProgressComponent {
   }
 
   getCricketHitCount(player: any, value: number): number {
-    return player.cricketMap.get(value) || 0;
+    return computed(() => {
+      this.currentPlayerService.last3HisSignal();
+      return player.cricketMap.get(value) || 0;
+    })();
   }
 
   openPlayersOverviewDialog() {

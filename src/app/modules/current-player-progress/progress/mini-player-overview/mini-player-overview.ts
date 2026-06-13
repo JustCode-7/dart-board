@@ -1,4 +1,4 @@
-import {Component, inject} from '@angular/core';
+import {Component, computed, inject} from '@angular/core';
 import {PlayerService} from "../../../../services/player.service";
 import {CurrentPlayerService} from "../../../../services/current-player.service";
 import {GameType} from "../../../../models/enum/GameType";
@@ -29,6 +29,9 @@ export class MiniPlayerOverview {
   }
 
   getCricketHitCount(player: any, value: number): number {
-    return player.cricketMap.get(value) || 0;
+    return computed(() => {
+      this.currentPlayerService.last3HisSignal();
+      return player.cricketMap.get(value) || 0;
+    })();
   }
 }

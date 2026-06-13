@@ -3,14 +3,14 @@
   <div class="d-flex flex-column align-items-center">
     <div class="d-flex flex-row justify-content-center mb-1">
       <div class="d-flex flex-column align-items-center">
-        <button [disabled]="isClosed(25)" mat-raised-button
+        <button [disabled]="isClosed(25)()" mat-raised-button
                 class="justify-content-center no-pointer fs-3 mt-4"
                 [color]="'accent'"
-        >{{ getBadgeCountValue(25) }}
+        >{{ getBadgeCountValue(25)() }}
         </button>
         <div class="d-flex flex-column mx-3 pt-2 btn-scale">
           <app-bull-buttons
-            [disabled]="isClosed(25)"
+            [disabled]="isClosed(25)()"
             (bullClick)="scoreBull()"
             (bullseyeClick)="scoreBullsEye()">
           </app-bull-buttons>
@@ -22,14 +22,14 @@
       <div class="d-flex flex-row flex-wrap justify-content-center">
         <div *ngFor="let group of buttonGroups" class="d-flex flex-direction">
           <div *ngFor="let btnValue of group" class="d-flex flex-column mb-1 align-items-center">
-            <button [disabled]="isClosed(btnValue)" mat-raised-button
+            <button [disabled]="isClosed(btnValue)()" mat-raised-button
                     class="justify-content-center no-pointer fs-3 mt-4 me-1"
                     [color]="'accent'"
-            >{{ getBadgeCountValue(btnValue) }}
+            >{{ getBadgeCountValue(btnValue)() }}
             </button>
-            <button [disabled]="isClosed(btnValue)"
+            <button [disabled]="isClosed(btnValue)()"
                     id="cricket-btn-{{btnValue}}"
-                    class="mt-4 raised-button-3d {{this.isScorable(btnValue)? '' : border}}"
+                    class="mt-4 raised-button-3d {{this.isScorable(btnValue)()? '' : border}}"
                     mat-fab
                     [color]="buttonColor"
                     matRipple [matRippleColor]="customRipple.rippleColor" [matRippleUnbounded]="true"

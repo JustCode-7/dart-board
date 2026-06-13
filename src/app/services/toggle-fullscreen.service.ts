@@ -19,7 +19,7 @@ export class ToggleFullscreenService {
   }
 
   toggleTabFullScreenModeGame() {
-    if (!document.fullscreenElement) {
+    if (document.documentElement.requestFullscreen && !document.fullscreenElement) {
       document.documentElement.requestFullscreen().then(() => {
         this.isFullScreen.next(true)
         this.initDisplayAlwaysOnMode().then(() => {
@@ -29,30 +29,42 @@ export class ToggleFullscreenService {
         .catch(reason => {
           console.warn("Fullscreen error: ", reason)
         });
+    } else {
+      console.warn("Fullscreen API is not supported on this browser.");
     }
   }
 
   toggleTabFullScreenModeMenue() {
-    if (!document.fullscreenElement) {
+    if (document.documentElement.requestFullscreen && !document.fullscreenElement) {
       document.documentElement.requestFullscreen().then(() => {
         this.isFullScreen.next(true)
         this.initDisplayAlwaysOnMode().then(() => {
           console.log('full screen and display always on mode requested');
         })
       });
-    } else if (document.exitFullscreen) {
+    } else if (document.exitFullscreen && document.fullscreenElement) {
       document.exitFullscreen();
+    } else {
+      console.warn("Fullscreen API is not supported or no element is in fullscreen.");
     }
   }
 
   releaseDisplayAlwaysOnMode() {
-    this.wakeLock!.release().then(() => {
-      this.wakeLock = null;
-    });
+    if (this.wakeLock) {
+      this.wakeLock.release().then(() => {
+        this.wakeLock = null;
+      }).catch(err => {
+        console.error(`Error releasing wake lock: ${err.message}`);
+      });
+    }
   }
 
 
   async initDisplayAlwaysOnMode() {
+    if (!('wakeLock' in navigator)) {
+      console.log('Wake Lock API not supported.');
+      return;
+    }
     try {
       this.wakeLock = await navigator.wakeLock.request("screen");
     } catch (err) {
