@@ -1,8 +1,8 @@
 import {Component, computed, inject} from '@angular/core';
-import {PlayerService} from "../../../../services/player.service";
-import {CurrentPlayerService} from "../../../../services/current-player.service";
-import {GameType} from "../../../../models/enum/GameType";
 import {CommonModule} from "@angular/common";
+import {PlayerService} from "../../../services/player.service";
+import {CurrentPlayerService} from "../../../services/current-player.service";
+import {GameType} from "../../../models/enum/GameType";
 
 @Component({
   selector: 'app-mini-player-overview',
@@ -10,14 +10,14 @@ import {CommonModule} from "@angular/common";
   imports: [CommonModule
   ],
   templateUrl: './mini-player-overview.html',
-  styleUrls: ['./../current-player-progress.component.scss'],
+  styleUrls: ['./mini-player-overview.scss'],
 })
 export class MiniPlayerOverview {
 
   playerService: PlayerService = inject(PlayerService)
   currentPlayerService: CurrentPlayerService = inject(CurrentPlayerService)
-  protected readonly GameType = GameType;
 
+  protected readonly GameType = GameType;
 
   getDiffToCurrentPlayer(player: any): number {
     const currentPoints = this.currentPlayerService._remainingPointsToDisplay();

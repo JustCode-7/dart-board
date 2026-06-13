@@ -5,9 +5,7 @@ import {MatCardModule} from "@angular/material/card";
 import {MatButtonModule} from "@angular/material/button";
 import {GameType} from "../../models/enum/GameType";
 import {CurrentPlayerService} from "../../services/current-player.service";
-import {
-  MiniPlayerOverview
-} from "../../modules/current-player-progress/progress/mini-player-overview/mini-player-overview";
+import {MiniPlayerOverview} from "../../shared/components/mini-player-overview/mini-player-overview";
 
 @Component({
   selector: 'app-hidden-players-dialog',

@@ -8,11 +8,9 @@ import {MatCardModule} from "@angular/material/card";
 import {CricketService} from "../../services/cricket.service";
 import {Player} from "../../models/player/player.model";
 import {MatProgressBarModule} from "@angular/material/progress-bar";
-import {
-  MiniPlayerOverview
-} from "../../modules/current-player-progress/progress/mini-player-overview/mini-player-overview";
 import {GameType} from "../../models/enum/GameType";
 import {wellFormedArray} from "../../shared/utils/util";
+import {MiniPlayerOverview} from "../../shared/components/mini-player-overview/mini-player-overview";
 
 @Component({
   selector: 'app-switch-player-snack',

@@ -4,12 +4,10 @@ import {RouterModule} from "@angular/router";
 import {MAT_DIALOG_DATA, MatDialogModule} from "@angular/material/dialog";
 import {MatButtonModule} from "@angular/material/button";
 import {ExplosionAnimationService} from "../../shared/animation/explosion-animation.service";
-import {
-  MiniPlayerOverview
-} from "../../modules/current-player-progress/progress/mini-player-overview/mini-player-overview";
 import {GameType} from "../../models/enum/GameType";
 import {wellFormedArray} from "../../shared/utils/util";
 import {DartService} from "../../services/dart.service";
+import {MiniPlayerOverview} from "../../shared/components/mini-player-overview/mini-player-overview";
 
 export interface VictoryDialogData {
   victoryByReachingRoundLimit: boolean;

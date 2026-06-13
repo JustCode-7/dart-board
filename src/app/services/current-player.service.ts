@@ -62,7 +62,7 @@ export class CurrentPlayerService {
       }
 
       if (this.lastClickedButton) {
-        const verticalButtons = Array.from(document.querySelectorAll('.dart-buttons-vertical button'));
+        const verticalButtons = Array.from(document.querySelectorAll('.dart-throw-indicator button'));
         // Die Buttons im HTML sind in der Reihenfolge: Wurf 3, Wurf 2, Wurf 1
         // last3HisSignal[0] ist Wurf 1
         // last3HisSignal[1] ist Wurf 2

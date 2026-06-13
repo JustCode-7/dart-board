@@ -4,13 +4,13 @@ import {RoundCountService} from "../../../services/round-count.service";
 import {PlayerService} from "../../../services/player.service";
 import {GameType} from "../../../models/enum/GameType";
 import {MatDialog} from "@angular/material/dialog";
-import {HiddenPlayersDialog} from "../../../dialogTemplates/hidden-players-dialog/hidden-players-dialog.component";
 import {CommonModule} from "@angular/common";
 import {MatCardModule} from "@angular/material/card";
 import {MatIconModule} from "@angular/material/icon";
 import {MatButtonModule} from "@angular/material/button";
-import {MiniPlayerOverview} from "./mini-player-overview/mini-player-overview";
 import {GameTimerService} from "../../../services/game-timer.service";
+import {HiddenPlayersDialog} from "../../../dialogTemplates/hidden-players-dialog/hidden-players-dialog.component";
+import {PlayerOverview} from "../../../shared/components/player-overview/player-overview";
 
 @Component({
   selector: 'app-current-player-progress',
@@ -22,7 +22,7 @@ import {GameTimerService} from "../../../services/game-timer.service";
     MatCardModule,
     MatIconModule,
     MatButtonModule,
-    MiniPlayerOverview,
+    PlayerOverview,
   ],
 })
 export class CurrentPlayerProgressComponent {
