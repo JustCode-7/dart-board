@@ -1,48 +1,45 @@
 <div [hidden]="this.cricketService._hideAll" class="container-fluid">
 
-  <div class="d-flex flex-row flex-wrap w-100 justify-content-center align-items-center pe-3">
-    <div class="d-flex flex-row flex-wrap justify-content-center">
-      <div *ngFor="let group of buttonGroups" class="d-flex flex-direction">
-        <div *ngFor="let btnValue of group" class="d-flex flex-column mb-1">
-          @if (btnValue === 25 || btnValue === 50) {
-            <button [disabled]="isClosed(25)" mat-raised-button
-                    class="ms-3 justify-content-center no-pointer fs-3 mt-4 me-3"
-                    [color]="'accent'"
-            >{{ getBadgeCountValue(25) }}
-            </button>
-          } @else {
+  <div class="d-flex flex-column align-items-center">
+    <div class="d-flex flex-row justify-content-center mb-1">
+      <div class="d-flex flex-column align-items-center">
+        <button [disabled]="isClosed(25)" mat-raised-button
+                class="justify-content-center no-pointer fs-3 mt-4"
+                [color]="'accent'"
+        >{{ getBadgeCountValue(25) }}
+        </button>
+        <div class="d-flex flex-column mx-3 pt-2 btn-scale">
+          <app-bull-buttons
+            [disabled]="isClosed(25)"
+            (bullClick)="scoreBull()"
+            (bullseyeClick)="scoreBullsEye()">
+          </app-bull-buttons>
+        </div>
+      </div>
+    </div>
+
+    <div class="d-flex flex-row flex-wrap w-100 justify-content-center align-items-center pe-3">
+      <div class="d-flex flex-row flex-wrap justify-content-center">
+        <div *ngFor="let group of buttonGroups" class="d-flex flex-direction">
+          <div *ngFor="let btnValue of group" class="d-flex flex-column mb-1 align-items-center">
             <button [disabled]="isClosed(btnValue)" mat-raised-button
-                    class="ms-3 justify-content-center no-pointer fs-3 mt-4 me-3"
+                    class="justify-content-center no-pointer fs-3 mt-4"
                     [color]="'accent'"
             >{{ getBadgeCountValue(btnValue) }}
             </button>
-          }
-          <button [disabled]="isClosed(btnValue)"
-                  id="cricket-btn-{{btnValue}}"
-                  class="ms-4 mt-4 raised-button-3d {{this.isScorable(btnValue)? '' : border}}"
-                  mat-fab
-                  [color]="btnValue === 25 ? (multiplierService.multiplier() === 2 ? 'accent' : 'warn') : buttonColor"
-                  matRipple [matRippleColor]="customRipple.rippleColor" [matRippleUnbounded]="true"
-                  [matRippleRadius]="customRipple.rippleRadius"
-                  (shapeMorphClick)="justScore(btnValue)"
-                  appShapeMorph
-          >
-            @if (btnValue !== 25 && btnValue !== 50) {
+            <button [disabled]="isClosed(btnValue)"
+                    id="cricket-btn-{{btnValue}}"
+                    class="mt-4 raised-button-3d {{this.isScorable(btnValue)? '' : border}}"
+                    mat-fab
+                    [color]="buttonColor"
+                    matRipple [matRippleColor]="customRipple.rippleColor" [matRippleUnbounded]="true"
+                    [matRippleRadius]="customRipple.rippleRadius"
+                    (shapeMorphClick)="justScore(btnValue)"
+                    appShapeMorph
+            >
               {{ btnValue }}
-            }
-
-            @if (btnValue === 25) {
-              <span class="mt-2 material-symbols-outlined">
-                {{ 'trip_origin' }}
-            </span>
-
-            }
-            @if (btnValue === 50) {
-              <span class="mt-2 material-symbols-outlined">
-                 {{ 'target' }}
-            </span>
-            }
-          </button>
+            </button>
+          </div>
         </div>
       </div>
     </div>

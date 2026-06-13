@@ -81,8 +81,8 @@ export class CricketBoardComponent implements OnDestroy, OnInit {
     // but the button handles it via value 50 or value 25 with multiplier.
     // In our cricket-board, justScore(25) is Bull, justScore(50) is BullsEye.
     let buttonId = `cricket-btn-${_throw.value}`;
-    if (_throw.value === 25 && _throw.multiplier === 2) {
-      buttonId = `cricket-btn-50`;
+    if (_throw.value === 25) {
+      buttonId = _throw.multiplier === 2 ? 'dart-btn-bullseye' : 'dart-btn-bull';
     }
 
     const btn = document.getElementById(buttonId);

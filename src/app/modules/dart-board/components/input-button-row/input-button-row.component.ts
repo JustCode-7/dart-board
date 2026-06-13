@@ -9,6 +9,7 @@ import {ExplosionAnimationService} from "../../../../shared/animation/explosion-
 import {customRipple} from "../../../../shared/utils/util";
 import {MultiplierService} from "../../../../services/multiplier.service";
 import {CurrentPlayerService} from "../../../../services/current-player.service";
+import {BullButtonsComponent} from "../../../../shared/components/bull-buttons/bull-buttons.component";
 
 export interface InputButton {
   zahl: number;
@@ -27,6 +28,8 @@ export interface InputButton {
     MatBadgeModule,
     MatRippleModule,
     ShapeMorphDirective,
+    BullButtonsComponent,
+
   ],
 })
 export class InputButtonRowComponent implements OnInit {

@@ -1,0 +1,22 @@
+<div class="d-flex justify-content-center pb-3">
+  <button
+    id="dart-btn-bull"
+    class="m-auto raised-button-3d-rect me-2"
+    [disabled]="disabled"
+    mat-flat-button [color]="multiplierService.multiplier() === 2 ? 'accent' : 'primary'"
+    matRipple [matRippleColor]="customRipple.rippleColor" [matRippleRadius]="customRipple.rippleRadius"
+    (shapeMorphClick)="scoreBull()"
+    appShapeMorph>
+    Bull
+  </button>
+  <button
+    id="dart-btn-bullseye"
+    class="m-auto raised-button-3d-rect" mat-flat-button
+    [disabled]="disabled"
+    [color]="multiplierService.multiplier() === 2 ? 'accent' : 'accent'"
+    matRipple [matRippleColor]="customRipple.rippleColor" [matRippleRadius]="customRipple.rippleRadius"
+    (shapeMorphClick)="scoreBullsEye()"
+    appShapeMorph>
+    BullsEye
+  </button>
+</div>

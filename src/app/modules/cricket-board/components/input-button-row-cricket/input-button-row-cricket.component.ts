@@ -10,6 +10,7 @@ import {PlayerService} from "../../../../services/player.service";
 import {ExplosionAnimationService} from "../../../../shared/animation/explosion-animation.service";
 import {customRipple} from "../../../../shared/utils/util";
 import {MultiplierService} from "../../../../services/multiplier.service";
+import {BullButtonsComponent} from "../../../../shared/components/bull-buttons/bull-buttons.component";
 
 
 @Component({
@@ -23,12 +24,14 @@ import {MultiplierService} from "../../../../services/multiplier.service";
     MatBadgeModule,
     MatRippleModule,
     ShapeMorphDirective,
+    BullButtonsComponent,
+
   ],
 })
 export class InputButtonRowCricketComponent implements OnInit {
   protected readonly customRipple = customRipple;
 
-  readonly buttonGroups: number[][] = [[15, 16], [17, 18], [19, 20], [25, 50]];
+  readonly buttonGroups: number[][] = [[15, 16], [17, 18], [19, 20]];
   public readonly border = "border border-5 border-warning"
 
   protected animationService = inject(ExplosionAnimationService)
@@ -131,11 +134,8 @@ export class InputButtonRowCricketComponent implements OnInit {
   justScore(value: number) {
     if (value === 25) {
       this.scoreBull()
-    } else if (value === 50) {
-      this.scoreBullsEye()
     } else {
       this.scoreHit(value)
     }
-
   }
 }
