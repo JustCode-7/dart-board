@@ -71,7 +71,7 @@ export class CurrentPlayerService {
         // length 1 -> Ziel ist verticalButtons[2] (letzter im DOM)
         // length 2 -> Ziel ist verticalButtons[1]
         // length 3 -> Ziel ist verticalButtons[0] (erster im DOM)
-        const targetIndex = 3 - last3.length;
+        const targetIndex = last3.length - 1;
         const target = verticalButtons[targetIndex] as HTMLElement;
 
         if (target) {
