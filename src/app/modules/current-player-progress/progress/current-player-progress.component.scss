@@ -109,6 +109,27 @@
     }
   }
 
+  .timer-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin: 0.5rem;
+    gap: 4%;
+
+    .game-timer {
+      font-size: 0.8rem;
+      font-family: monospace;
+      color: #ffd740; // Accent color for visibility
+    }
+
+    button {
+      transform: scale(0.8);
+      width: 32px;
+      height: 32px;
+      line-height: 32px;
+    }
+  }
+
   .players-overview {
     flex: 1.5;
 

@@ -10,6 +10,7 @@ import {MatCardModule} from "@angular/material/card";
 import {MatIconModule} from "@angular/material/icon";
 import {MatButtonModule} from "@angular/material/button";
 import {MiniPlayerOverview} from "./mini-player-overview/mini-player-overview";
+import {GameTimerService} from "../../../services/game-timer.service";
 
 @Component({
   selector: 'app-current-player-progress',
@@ -29,6 +30,7 @@ export class CurrentPlayerProgressComponent {
   protected readonly GameType = GameType;
   public currentPlayerService: CurrentPlayerService = inject(CurrentPlayerService);
   public roundCountService: RoundCountService = inject(RoundCountService);
+  public gameTimerService: GameTimerService = inject(GameTimerService);
   private dialog: MatDialog = inject(MatDialog);
 
   getProgressColor() {

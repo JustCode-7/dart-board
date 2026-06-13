@@ -37,13 +37,19 @@
         ><span>{{ currentPlayerService.last3HisSignal()[2] ?? '➶' }}</span>
         </button>
       </div>
-      <div class="round-info small text-nowrap">
-        <span class="round-label">Runde</span>
-        <span class="round-value">{{ roundCountService.roundCount }}/{{ roundCountService.MAX_ROUND_COUNT }}</span>
-        <button class="p-2" mat-icon-button (click)="openPlayersOverviewDialog()">
-          <mat-icon>groups</mat-icon>
-        </button>
+      <div class="d-flex flex-row">
+        <div class="round-info small text-nowrap">
+          <span class="round-label">Runde</span>
+          <span class="round-value">{{ roundCountService.roundCount }}/{{ roundCountService.MAX_ROUND_COUNT }}</span>
+        </div>
+        <div class="timer-container">
+          <span class="game-timer">{{ gameTimerService.elapsedTimeSignal() }}</span>
+        </div>
       </div>
+      <button class="p-2" mat-icon-button (click)="openPlayersOverviewDialog()">
+        <mat-icon>groups</mat-icon>
+      </button>
+
     </div>
   </div>
 </div>
