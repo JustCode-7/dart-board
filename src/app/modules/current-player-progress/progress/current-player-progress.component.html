@@ -13,7 +13,6 @@
       </div>
     </mat-card>
   </div>
-  <!-- Zweites Drittel: Drei Pfeil-Buttons vertikal und Rundeninfo rechts daneben -->
   <div class="section dart-status">
     <div class="status-content">
       <div class="dart-buttons-vertical">
@@ -45,53 +44,9 @@
       </div>
     </div>
   </div>
-
-  <!-- Drittes Drittel: Übersicht aller Spieler -->
-  <div class="section players-overview">
-    <div class="mini-scoreboard">
-      <ng-container *ngFor="let player of playerService._players">
-        <div class="mini-player-row" [class.active-player]="player.id === currentPlayerService._currentPlayer.value.id">
-          <div>
-            <div class="mini-player-name player-name text-wrap text-truncate">{{ player.name }}</div>
-            @if ((currentPlayerService._currentPlayer.value !== player &&
-              currentPlayerService._currentPlayer.value.remainingPoints < player.remainingPoints
-              && currentPlayerService.currentGameMode === GameType.Elimination301)) {
-              <div
-                class="diff-score small ms-1">
-                ({{ getDiffToCurrentPlayer(player) }})
-              </div>
-            }
-          </div>
-
-          <div class="mini-player-actions d-flex align-items-center">
-            <!-- Cricket Miniature -->
-            <div *ngIf="currentPlayerService.currentGameMode === GameType.Cricket"
-                 class="cricket-mini-display d-flex me-2">
-              <div *ngFor="let val of getCricketValues()"
-                   class="cricket-circle-wrapper">
-                <div class="cricket-circle"
-                     [class.closed]="getCricketHitCount(player, val) >= 3"
-                     [attr.title]="val === 25 ? 'Bull' : val">
-                  <span class="cricket-value">{{ val === 25 ? 'B' : val }}</span>
-                </div>
-                <div class="hit-count" [class.closed]="getCricketHitCount(player, val) >= 3">
-                  {{ getCricketHitCount(player, val) }}
-                </div>
-              </div>
-            </div>
-
-            <span class="mini-player-score fw-bold matcardpointer"
-                  (click)="currentPlayerService.showHistory(player)">
-               @if (currentPlayerService._currentPlayer.value === player) {
-                 {{ currentPlayerService._remainingPointsToDisplay() }}
-               } @else {
-                 {{ player.remainingPoints }}
-               }
-          </span>
-          </div>
-        </div>
-      </ng-container>
-    </div>
+</div>
+<div class="section players-overview">
+  <div class="mini-scoreboard">
+    <app-mini-player-overview></app-mini-player-overview>
   </div>
 </div>
-

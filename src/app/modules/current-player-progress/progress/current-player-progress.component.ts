@@ -9,6 +9,7 @@ import {CommonModule} from "@angular/common";
 import {MatCardModule} from "@angular/material/card";
 import {MatIconModule} from "@angular/material/icon";
 import {MatButtonModule} from "@angular/material/button";
+import {MiniPlayerOverview} from "./mini-player-overview/mini-player-overview";
 
 @Component({
   selector: 'app-current-player-progress',
@@ -20,6 +21,7 @@ import {MatButtonModule} from "@angular/material/button";
     MatCardModule,
     MatIconModule,
     MatButtonModule,
+    MiniPlayerOverview,
   ],
 })
 export class CurrentPlayerProgressComponent {
