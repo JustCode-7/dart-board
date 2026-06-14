@@ -64,6 +64,11 @@ mat-card {
   @media (orientation: landscape) {
     overflow: clip;
     max-height: 40vh; // Increased slightly for more room
+
+    @media (max-height: 500px) {
+      overflow: visible;
+      max-height: none;
+    }
   }
   @media (orientation: portrait) {
     overflow: clip;
@@ -149,11 +154,22 @@ mat-card {
   overflow: hidden;
   height: calc(100vh - 64px);
 
+  @media screen and (orientation: landscape) and (max-height: 500px) {
+    overflow: auto;
+    height: auto;
+    min-height: calc(100vh - 64px);
+  }
+
   .game-content-container {
     display: flex;
     flex-direction: column;
     flex: 1;
     overflow: hidden;
+
+    @media screen and (orientation: landscape) and (max-height: 500px) {
+      overflow: visible;
+      flex: none;
+    }
 
     @media screen and (orientation: landscape) {
       flex-direction: row;
@@ -184,6 +200,11 @@ mat-card {
       width: 40vw;
       height: 100%;
       flex-direction: column;
+
+      @media (max-height: 500px) {
+        height: auto;
+        min-height: 100%;
+      }
       .mini-player-name {
         font-size: 1.2rem;
         min-width: 80px;
