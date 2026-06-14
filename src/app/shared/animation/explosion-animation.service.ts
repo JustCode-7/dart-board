@@ -12,9 +12,17 @@ export class ExplosionAnimationService {
   tripleCounter: number = 0;
   missCounter: number = 0;
   private readonly soundToggle = inject(SoundToggleService);
+  private pfeilImage: HTMLImageElement | null = null;
 
   constructor(rendererFactory: RendererFactory2) {
     this.renderer = rendererFactory.createRenderer(null, null);
+    this.preloadAssets();
+  }
+
+  private preloadAssets(): void {
+    // Preload pfeil.svg, damit es im Browser-Cache ist, bevor die Animation startet
+    this.pfeilImage = new Image();
+    this.pfeilImage.src = '/assets/image/pfeil.svg';
   }
 
   /**
@@ -112,15 +120,19 @@ export class ExplosionAnimationService {
     const particle = this.renderer.createElement('div');
     this.renderer.addClass(particle, 'trajectory-particle');
 
+    // Korrektur für Zentrierung (Pfeilgröße 32x12)
+    const offsetX = 16;
+    const offsetY = 6;
+    const sX = startX - offsetX;
+    const sY = startY - offsetY;
+    const eX = endX - offsetX;
+    const eY = endY - offsetY;
+
     // Mittelpunkt für den Bogen berechnen
-    const midX = (startX + endX) / 2;
-    const midY = Math.min(startY, endY) - 150; // Bogen nach oben
+    const midX = (sX + eX) / 2;
+    const midY = Math.min(sY, eY) - 150; // Bogen nach oben
 
-    this.renderer.setStyle(particle, '--start-x', `${startX}px`);
-    this.renderer.setStyle(particle, '--start-y', `${startY}px`);
-    this.renderer.setStyle(particle, '--end-x', `${endX}px`);
-    this.renderer.setStyle(particle, '--end-y', `${endY}px`);
-
+    this.renderer.setStyle(particle, 'opacity', '0');
     this.renderer.appendChild(container, particle);
 
     const startTime = performance.now();
@@ -130,15 +142,15 @@ export class ExplosionAnimationService {
       const progress = Math.min(elapsed / duration, 1);
 
       // Quadratischer Bezier-Bogen
-      const x = (1 - progress) * (1 - progress) * startX + 2 * (1 - progress) * progress * midX + progress * progress * endX;
-      const y = (1 - progress) * (1 - progress) * startY + 2 * (1 - progress) * progress * midY + progress * progress * endY;
+      const x = (1 - progress) * (1 - progress) * sX + 2 * (1 - progress) * progress * midX + progress * progress * eX;
+      const y = (1 - progress) * (1 - progress) * sY + 2 * (1 - progress) * progress * midY + progress * progress * eY;
 
       // Ableitung für die Rotation (Tangente)
-      const dx = 2 * (1 - progress) * (midX - startX) + 2 * progress * (endX - midX);
-      const dy = 2 * (1 - progress) * (midY - startY) + 2 * progress * (endY - midY);
+      const dx = 2 * (1 - progress) * (midX - sX) + 2 * progress * (eX - midX);
+      const dy = 2 * (1 - progress) * (midY - sY) + 2 * progress * (eY - midY);
       const angle = Math.atan2(dy, dx) * (180 / Math.PI); // 0 Grad ist nun horizontal (Spitze rechts)
 
-      this.renderer.setStyle(particle, 'transform', `translate(${x}px, ${y}px) rotate(${angle}deg)`);
+      this.renderer.setStyle(particle, 'transform', `translate3d(${x}px, ${y}px, 0) rotate(${angle}deg)`);
       this.renderer.setStyle(particle, 'opacity', progress < 0.1 ? progress * 10 : (1 - progress) * 2);
 
       // Schweif-Partikel
