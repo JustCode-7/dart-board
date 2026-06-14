@@ -47,7 +47,7 @@
 
     <div class="d-flex flex-column" formArrayName="playerNames" cdkDropList (cdkDropListDropped)="drop($event)">
       @for (playerNameGroup of playerNames.controls; track $index) {
-        <div class="d-flex flex-row rounded-3 player-row" cdkDrag [formGroupName]="$index">
+        <div class="d-flex flex-row rounded-3 player-row shadow m-1" cdkDrag [formGroupName]="$index">
           <mat-form-field appearance="fill">
             <mat-label>Player {{ $index + 1 }}</mat-label>
             <div class="d-flex flex-row">
