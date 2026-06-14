@@ -104,8 +104,8 @@
         // Travel distance scaled to viewport
         $distFactor: ($distance / 150); // 150px was previous max
         transform: translate(
-            calc(-50% + calc(var(--particle-max-distance) * #{$distFactor}) * #{cos($angle)}),
-            calc(-50% + calc(var(--particle-max-distance) * #{$distFactor}) * #{sin($angle)})
+          calc(-50% + calc(var(--particle-max-distance) * #{$distFactor}) * #{cos($angle)}),
+          calc(-50% + calc(var(--particle-max-distance) * #{$distFactor}) * #{sin($angle)})
         ) scale(0.2);
         opacity: 0;
       }
@@ -137,8 +137,8 @@
       100% {
         $distFactor: ($distance / 300); // 300px previous max
         transform: translate(
-            calc(-50% + calc(var(--trail-max-distance) * #{$distFactor}) * #{cos($angle)}),
-            calc(-50% + calc(var(--trail-max-distance) * #{$distFactor}) * #{sin($angle)})
+          calc(-50% + calc(var(--trail-max-distance) * #{$distFactor}) * #{cos($angle)}),
+          calc(-50% + calc(var(--trail-max-distance) * #{$distFactor}) * #{sin($angle)})
         );
         opacity: 0;
       }
@@ -255,12 +255,14 @@
 
 .trajectory-particle {
   position: absolute;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: radial-gradient(circle, #fff 0%, #ffeb3b 50%, #f44336 100%);
-  box-shadow: 0 0 10px #ffeb3b;
+  width: 32px;
+  height: 12px;
+  background-image: url("/assets/image/pfeil.svg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  filter: drop-shadow(0 0 3px rgba(255, 235, 59, 0.5));
   opacity: 0;
+  transform-origin: center;
 }
 
 @keyframes trajectoryMove {
@@ -280,10 +282,10 @@
 
 .trajectory-trail {
   position: absolute;
-  width: 4px;
-  height: 4px;
+  width: 2px;
+  height: 2px;
   border-radius: 50%;
-  background: rgba(255, 235, 59, 0.6);
+  background: rgba(255, 235, 59, 0.4);
   pointer-events: none;
   opacity: 0;
 }

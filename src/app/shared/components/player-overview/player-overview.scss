@@ -33,9 +33,9 @@
       gap: 0.5rem;
 
       &.active-player {
-        min-width: fit-content;
         background-color: rgba(128, 216, 255, 0.2);
-        border: 1px solid rgba(128, 216, 255, 0.3);
+        border: 1px solid rgba(128, 216, 255, 0.4);
+        box-shadow: 0 0 8px rgba(128, 216, 255, 0.2);
       }
 
       .mini-player-name {

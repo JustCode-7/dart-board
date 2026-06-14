@@ -94,18 +94,18 @@ export class ExplosionAnimationService {
     this.renderer.addClass(container, 'trajectory-container');
     this.renderer.appendChild(document.body, container);
 
-    const particleCount = 5;
+    const particleCount = 3;
     for (let i = 0; i < particleCount; i++) {
       setTimeout(() => {
         this.createMovingParticle(container, startX, startY, endX, endY, duration);
-      }, i * 100);
+      }, i * 300);
     }
 
     setTimeout(() => {
       if (document.body.contains(container)) {
         this.renderer.removeChild(document.body, container);
       }
-    }, duration + particleCount * 100 + 500);
+    }, duration + particleCount * 300 + 500);
   }
 
   private createMovingParticle(container: HTMLElement, startX: number, startY: number, endX: number, endY: number, duration: number) {
@@ -133,11 +133,16 @@ export class ExplosionAnimationService {
       const x = (1 - progress) * (1 - progress) * startX + 2 * (1 - progress) * progress * midX + progress * progress * endX;
       const y = (1 - progress) * (1 - progress) * startY + 2 * (1 - progress) * progress * midY + progress * progress * endY;
 
-      this.renderer.setStyle(particle, 'transform', `translate(${x}px, ${y}px)`);
+      // Ableitung für die Rotation (Tangente)
+      const dx = 2 * (1 - progress) * (midX - startX) + 2 * progress * (endX - midX);
+      const dy = 2 * (1 - progress) * (midY - startY) + 2 * progress * (endY - midY);
+      const angle = Math.atan2(dy, dx) * (180 / Math.PI); // 0 Grad ist nun horizontal (Spitze rechts)
+
+      this.renderer.setStyle(particle, 'transform', `translate(${x}px, ${y}px) rotate(${angle}deg)`);
       this.renderer.setStyle(particle, 'opacity', progress < 0.1 ? progress * 10 : (1 - progress) * 2);
 
       // Schweif-Partikel
-      if (Math.random() > 0.5) {
+      if (Math.random() > 0.7) {
         this.createTrailParticle(container, x, y);
       }
 
