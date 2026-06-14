@@ -21,8 +21,9 @@ export class ExplosionAnimationService {
 
   private preloadAssets(): void {
     // Preload pfeil.svg, damit es im Browser-Cache ist, bevor die Animation startet
+    // Wir verwenden einen relativen Pfad ohne führenden Slash, damit base-href beachtet wird
     this.pfeilImage = new Image();
-    this.pfeilImage.src = '/assets/image/pfeil.svg';
+    this.pfeilImage.src = 'assets/image/pfeil.svg';
   }
 
   /**
