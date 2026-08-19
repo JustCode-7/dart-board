@@ -9,10 +9,6 @@ export class GameTimerService implements OnDestroy {
 
   public elapsedTimeSignal = signal<string>('00:00:00');
 
-  constructor() {
-    this.startTimer();
-  }
-
   startTimer() {
     this.startTime = Date.now();
     this.timerInterval = setInterval(() => {

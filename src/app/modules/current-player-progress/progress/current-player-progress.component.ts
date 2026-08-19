@@ -1,4 +1,4 @@
-import {Component, computed, inject} from '@angular/core';
+import {Component, computed, inject, OnDestroy, OnInit} from '@angular/core';
 import {CurrentPlayerService} from "../../../services/current-player.service";
 import {RoundCountService} from "../../../services/round-count.service";
 import {PlayerService} from "../../../services/player.service";
@@ -21,12 +21,22 @@ import {GameTimerService} from "../../../services/game-timer.service";
     MatButtonModule,
   ],
 })
-export class CurrentPlayerProgressComponent {
+export class CurrentPlayerProgressComponent implements OnInit, OnDestroy {
+
   public playerService = inject(PlayerService);
   protected readonly GameType = GameType;
   public currentPlayerService: CurrentPlayerService = inject(CurrentPlayerService);
   public roundCountService: RoundCountService = inject(RoundCountService);
   public gameTimerService: GameTimerService = inject(GameTimerService);
+
+
+  ngOnInit(): void {
+    this.gameTimerService.startTimer();
+  }
+
+  ngOnDestroy(): void {
+    this.gameTimerService.stopTimer();
+  }
 
   getProgressColor() {
     const remainingThrows = this.currentPlayerService._remainingThrows;
