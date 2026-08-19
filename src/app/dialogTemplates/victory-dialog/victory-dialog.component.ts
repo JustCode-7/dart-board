@@ -8,6 +8,7 @@ import {GameType} from "../../models/enum/GameType";
 import {wellFormedArray} from "../../shared/utils/util";
 import {DartService} from "../../services/dart.service";
 import {MiniPlayerOverview} from "../../shared/components/mini-player-overview/mini-player-overview";
+import {VictoryCountService} from "../../services/victory-count.service";
 
 export interface VictoryDialogData {
   victoryByReachingRoundLimit: boolean;
@@ -44,6 +45,7 @@ export class VictoryDialog implements OnInit {
   private explosionAnimationService = inject(ExplosionAnimationService)
   private readonly dartService = inject(DartService);
   protected winner: string | string[] | number = ''
+  private readonly victoryCountService = inject(VictoryCountService);
 
   ngOnInit(): void {
 
@@ -51,6 +53,10 @@ export class VictoryDialog implements OnInit {
       this.winner = wellFormedArray(this.currentPlayerService.getPlayersWithHighestPoints());
     } else {
       this.winner = this.currentPlayerService._currentPlayer.value.name
+    }
+    if (typeof this.winner === "string") {
+      let winnerForMap = this.winner.replace('\"', '').trim()
+      this.victoryCountService.addWinToPlayer(winnerForMap)
     }
     this.explosionAnimationService.showExplosion('WINNER: ' + this.winner, 'red', 'assets/sounds/fanfare-trumpets.mp3');
   }

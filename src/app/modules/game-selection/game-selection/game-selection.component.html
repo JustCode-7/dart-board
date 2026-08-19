@@ -73,6 +73,9 @@
               </mat-select>
             </mat-form-field>
           }
+          <div class="align-content-center text-warning fw-bold">
+            {{ getWins(playerNameGroup?.value) }}
+          </div>
           <button mat-icon-button (click)="$event.preventDefault()">
             <mat-icon>
               reorder

@@ -40,3 +40,10 @@ export const DEFAULT_PLAYER: Player = {
   average: 0,
   last3History: [],
 };
+
+export interface OverviewPlayers {
+  name: string
+  isAI: boolean
+  difficulty: Difficulty
+  wins: number
+}

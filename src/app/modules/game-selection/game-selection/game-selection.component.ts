@@ -2,7 +2,7 @@ import {ChangeDetectorRef, Component, HostListener, inject, OnInit} from '@angul
 import {AbstractControl, FormArray, FormBuilder, ReactiveFormsModule} from '@angular/forms';
 import {Router} from "@angular/router";
 import {GameType} from '../../../models/enum/GameType';
-import {Difficulty} from "../../../models/player/player.model";
+import {Difficulty, OverviewPlayers} from "../../../models/player/player.model";
 import {CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray} from "@angular/cdk/drag-drop";
 import {MatButtonModule} from "@angular/material/button";
 import {MatFormFieldModule} from "@angular/material/form-field";
@@ -10,6 +10,7 @@ import {MatSelectModule} from "@angular/material/select";
 import {MatInputModule} from "@angular/material/input";
 import {MatIconModule} from "@angular/material/icon";
 import {CommonModule} from "@angular/common";
+
 
 @Component({
   selector: 'app-game-selection',
@@ -30,8 +31,6 @@ import {CommonModule} from "@angular/common";
 })
 export class GameSelectionComponent implements OnInit {
 
-
-  // Create a reference, to make the enum accessible in the html-template
   gameType = GameType;
   difficulty = Difficulty;
 
@@ -80,12 +79,14 @@ export class GameSelectionComponent implements OnInit {
       this.fb.group({
         name: this.fb.control('first'),
         isAI: this.fb.control(false),
-        difficulty: this.fb.control(Difficulty.Medium)
+        difficulty: this.fb.control(Difficulty.Medium),
+        wins: 0
       }),
       this.fb.group({
         name: this.fb.control('second'),
         isAI: this.fb.control(false),
-        difficulty: this.fb.control(Difficulty.Medium)
+        difficulty: this.fb.control(Difficulty.Medium),
+        wins: 0
       }),
     ]),
     maxRounds: this.fb.control<number>(3)
@@ -96,8 +97,8 @@ export class GameSelectionComponent implements OnInit {
   private readonly defaultFormState = {
     gameType: GameType.Simple501,
     playerNames: [
-      {name: 'first', isAI: false, difficulty: Difficulty.Medium},
-      {name: 'second', isAI: false, difficulty: Difficulty.Medium}
+      {name: 'first', isAI: false, difficulty: Difficulty.Medium, wins: 0},
+      {name: 'second', isAI: false, difficulty: Difficulty.Medium, wins: 0}
     ],
     maxRounds: 3
   }
@@ -110,13 +111,15 @@ export class GameSelectionComponent implements OnInit {
         this.formGroup.setControl('playerNames', this.fb.array<AbstractControl>(savedPlayers.map((name: string) => this.fb.group({
           name: this.fb.control(name),
           isAI: this.fb.control(false),
-          difficulty: this.fb.control(Difficulty.Medium)
+          difficulty: this.fb.control(Difficulty.Medium),
+          wins: 0
         }))));
       } else {
-        this.formGroup.setControl('playerNames', this.fb.array<AbstractControl>(savedPlayers.map((p: any) => this.fb.group({
+        this.formGroup.setControl('playerNames', this.fb.array<AbstractControl>(savedPlayers.map((p: OverviewPlayers) => this.fb.group({
           name: this.fb.control(p.name),
           isAI: this.fb.control(p.isAI || false),
-          difficulty: this.fb.control(p.difficulty || Difficulty.Medium)
+          difficulty: this.fb.control(p.difficulty || Difficulty.Medium),
+          wins: p.wins
         }))));
       }
     }
@@ -135,7 +138,8 @@ export class GameSelectionComponent implements OnInit {
       this.playerNames.push(this.fb.group({
         name: this.fb.control(''),
         isAI: this.fb.control(false),
-        difficulty: this.fb.control(Difficulty.Medium)
+        difficulty: this.fb.control(Difficulty.Medium),
+        wins: 0
       }));
       this.cdr.detectChanges();
       setTimeout(() => this.checkScrollVisibility(), 100);
@@ -149,7 +153,8 @@ export class GameSelectionComponent implements OnInit {
       const group = this.fb.group({
         name: this.fb.control(randomName),
         isAI: this.fb.control(true),
-        difficulty: this.fb.control(Difficulty.Medium)
+        difficulty: this.fb.control(Difficulty.Medium),
+        wins: 0
       });
       this.playerNames.push(group);
       this.cdr.detectChanges();
@@ -163,7 +168,7 @@ export class GameSelectionComponent implements OnInit {
   }
 
   onSubmit() {
-    const players = this.formGroup.controls.playerNames.value;
+    const players: OverviewPlayers[] = this.formGroup.controls.playerNames.value;
     const gameType = this.formGroup.value.gameType;
     const maxRounds = this.formGroup.value.maxRounds;
 
@@ -183,10 +188,11 @@ export class GameSelectionComponent implements OnInit {
     // Otherwise, the form would be completely empty.
     event.preventDefault();
     this.formGroup.reset(this.defaultFormState);
-    this.formGroup.setControl('playerNames', this.fb.array<AbstractControl>(this.defaultFormState.playerNames.map(p => this.fb.group({
+    this.formGroup.setControl('playerNames', this.fb.array<AbstractControl>(this.defaultFormState.playerNames.map((p: OverviewPlayers) => this.fb.group({
       name: this.fb.control(p.name),
       isAI: this.fb.control(p.isAI),
-      difficulty: this.fb.control(p.difficulty)
+      difficulty: this.fb.control(p.difficulty),
+      wins: 0
     }))));
   }
 
@@ -217,6 +223,27 @@ export class GameSelectionComponent implements OnInit {
         return GameType.Highscore;
       default:
         return GameType.Simple501;
+    }
+  }
+
+  getWins(player: OverviewPlayers) {
+    let savedPlayersEqualActual = false
+    const players: OverviewPlayers[] = this.formGroup.controls.playerNames.value;
+    if (localStorage.getItem('playerNames')) {
+      const savedPlayers: OverviewPlayers[] = JSON.parse(localStorage.getItem('playerNames')!);
+      if (this.playerNames.length === savedPlayers.length) {
+        const savedNames = savedPlayers.map(value => value.name)
+        const currentNames = players.map(value => value.name)
+        savedPlayersEqualActual = savedNames.every((value) => currentNames.includes(value))
+      }
+
+    }
+    if (savedPlayersEqualActual) {
+      return player.wins
+    } else {
+      this.formGroup.controls.playerNames.value.forEach(player => player.wins = 0)
+      localStorage.setItem('playerNames', JSON.stringify(players));
+      return 0;
     }
   }
 }
