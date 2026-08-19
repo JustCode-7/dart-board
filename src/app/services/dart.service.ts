@@ -181,17 +181,21 @@ export class DartService {
 
   private displayDoubleOutFailNotification() {
     const playerName = this.currentPlayerService._currentPlayer.value.name;
-    return this.snackbar.open(`Sorry ${playerName}, you haven't end with double. Switching players.`, 'OK', {
+    return this.snackbar.open(`NOT DOUBLED OUT !!! Sorry ${playerName}, you haven't end with double. Switching players.`, 'OK', {
       duration: 2000,
-      verticalPosition: 'top'
+      horizontalPosition: 'center',
+      verticalPosition: 'top',
+      panelClass: ['absolute-centered-snackbar'],
     })
   }
 
   private displayOvershotNotification() {
     const playerName = this.currentPlayerService._currentPlayer.value.name;
-    return this.snackbar.open(`Sorry ${playerName}, you have overshot. Switching players.`, 'OK', {
+    return this.snackbar.open(`OVERSHOT !!! Sorry ${playerName}, you have overshot. Switching players.`, 'OK', {
       duration: 2000,
-      verticalPosition: 'top'
+      horizontalPosition: 'center',
+      verticalPosition: 'top',
+      panelClass: ['absolute-centered-snackbar']
     })
   }
 

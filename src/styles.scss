@@ -136,6 +136,17 @@ mat-card {
   //}
 }
 
+.absolute-centered-snackbar {
+  margin-top: 30vh !important;
+  transform: translateY(-50%) !important;
+
+  .mdc-snackbar__surface {
+    background-color: rgb(248 132 16 / 0.76) !important;
+    color: #000 !important;
+    width: 100% !important;
+  }
+}
+
 
 .toggle-group-scale {
   transform: scale(1.5);
