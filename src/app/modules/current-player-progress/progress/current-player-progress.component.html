@@ -17,7 +17,7 @@
   </div>
   <div class="section dart-status">
     <div class="status-content">
-      <div class="dart-throw-indicator">
+      <div class="dart-throw-indicator" [@throwAdded]="currentPlayerService.last3HisSignal().length">
         <button
           [color]="(currentPlayerService.last3HisSignal().length >= 1) ? getProgressColor() : 'gray'"
           mat-mini-fab

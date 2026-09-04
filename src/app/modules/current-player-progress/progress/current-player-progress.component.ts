@@ -8,6 +8,7 @@ import {MatCardModule} from "@angular/material/card";
 import {MatIconModule} from "@angular/material/icon";
 import {MatButtonModule} from "@angular/material/button";
 import {GameTimerService} from "../../../services/game-timer.service";
+import {animate, keyframes, style, transition, trigger} from "@angular/animations";
 
 @Component({
   selector: 'app-current-player-progress',
@@ -20,6 +21,17 @@ import {GameTimerService} from "../../../services/game-timer.service";
     MatIconModule,
     MatButtonModule,
   ],
+  animations: [
+    trigger('throwAdded', [
+      transition(':increment', [
+        animate('2000ms ease-in-out', keyframes([
+          style({transform: 'scale(1)', offset: 0}),
+          style({transform: 'scale(1.75)', offset: 0.5}),
+          style({transform: 'scale(1)', offset: 1.0}),
+        ]))
+      ])
+    ])
+  ]
 })
 export class CurrentPlayerProgressComponent implements OnInit, OnDestroy {
 
