@@ -32,7 +32,7 @@ export class GameInitializationResolver {
       players = playerNamesLegacy;
     }
 
-    if (gameType === GameType.Highscore && maxRounds) {
+    if ((gameType === GameType.Highscore || gameType === GameType.RandomHit) && maxRounds) {
       this.roundCountService.setMaxRounds(Number(maxRounds));
     } else {
       this.roundCountService.setMaxRounds();

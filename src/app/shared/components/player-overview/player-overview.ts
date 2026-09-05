@@ -20,6 +20,9 @@ export class PlayerOverview {
   protected readonly GameType = GameType;
 
   getDiffToCurrentPlayer(player: any): number {
+    if (player === this.currentPlayerService._currentPlayer.getValue()) {
+      return 0;
+    }
     const currentPoints = this.currentPlayerService._remainingPointsToDisplay();
     return Math.abs(currentPoints - player.remainingPoints);
   }

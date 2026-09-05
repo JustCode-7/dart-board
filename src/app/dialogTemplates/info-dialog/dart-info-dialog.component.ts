@@ -18,6 +18,9 @@ import {CurrentPlayerService} from "../../services/current-player.service";
       @if (currentplayerService.currentGameMode === GameType.Highscore) {
         <p> Wer am Ende der Rundenazahl die meisten Punkte hat gewinnt.</p>
       }
+      @if (currentplayerService.currentGameMode === GameType.RandomHit) {
+        <p> Triff das vorgegebene zufällige Feld (1-20 Single/Double/Triple, Bull oder Bullseye), um 1 Punkt zu erzielen. Wer am Ende der Rundenanzahl die meisten Punkte hat, gewinnt.</p>
+      }
       @if (currentplayerService.currentGameMode === GameType.Simple501 || currentplayerService.currentGameMode === GameType.DoubleOut501) {
         <p> Wer zu erst Null hat gewinnt, sonst derjenige der am Ende der Rundenazahl die wenigsten Punkte hat.</p>
       }

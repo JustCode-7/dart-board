@@ -51,8 +51,8 @@ export class DartService {
     this.playerNames = players.map(p => typeof p === 'string' ? p : p.name);
 
     // Initialize starting points based on game type
-    if (this._gameType === GameType.Elimination301 || this._gameType === GameType.Highscore) {
-      // Elimination/Highscore starts at 0 points and counts upwards
+    if (this._gameType === GameType.Elimination301 || this._gameType === GameType.Highscore || this._gameType === GameType.RandomHit) {
+      // Elimination/Highscore/RandomHit starts at 0 points and counts upwards
       this.playerService._players.forEach(p => p.remainingPoints = 0);
     } else {
       // Ensure 501 start for classic modes
@@ -80,6 +80,10 @@ export class DartService {
         this.scoreHighscore(points);
         return;
       }
+      if (this._gameType === GameType.RandomHit) {
+        this.scoreRandomHit(_throw);
+        return;
+      }
       if (this._gameType === GameType.DoubleOut501) {
         this.currentPlayerService.score501(points);
         this.checksFor501DoubleOut(_throw.multiplier);
@@ -105,6 +109,21 @@ export class DartService {
 
   private scoreHighscore(points: number) {
     this.currentPlayerService.scoreHighscore(points);
+    if (this.roundCountService.getRemainingRounds() == 0 && this.isNewRound() && this.currentPlayerService.hasNoThrowsRemaining()) {
+      this.currentPlayerService.finalizeTurn('add');
+      this.handleVictoryByReachingRoundLimit();
+    } else if (this.currentPlayerService.hasNoThrowsRemaining()) {
+      this.currentPlayerService.finalizeTurn('add');
+      this.switchPlayer();
+    }
+  }
+
+  private scoreRandomHit(_throw: Throw) {
+    const currentTarget = this.currentPlayerService._randomHitTarget();
+    const isHit = currentTarget !== null && _throw.value === currentTarget.value && _throw.multiplier === currentTarget.multiplier;
+    const points = isHit ? 1 : 0;
+    const hitValue = _throw.value * _throw.multiplier;
+    this.currentPlayerService.scoreRandomHit(points, isHit, hitValue);
     if (this.roundCountService.getRemainingRounds() == 0 && this.isNewRound() && this.currentPlayerService.hasNoThrowsRemaining()) {
       this.currentPlayerService.finalizeTurn('add');
       this.handleVictoryByReachingRoundLimit();

@@ -108,6 +108,7 @@ export class AppToolbarComponent implements OnInit, OnDestroy {
     if (dartMode === GameType.DoubleOut501) return '501 (DO)';
     if (dartMode === GameType.Elimination301) return 'Elimination';
     if (dartMode === GameType.Highscore) return 'Highscore';
+    if (dartMode === GameType.RandomHit) return 'Random Hit';
     return '';
   }
 

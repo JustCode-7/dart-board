@@ -1,17 +1,6 @@
 import {GameType} from "../enum/GameType";
 import {Player} from "../player/player.model";
 
-enum Multiplier {
-  EINS = 1,
-  ZWEI = 2,
-  DREI = 3,
-}
-
-interface Score {
-  value: number,
-  multiplier: number,
-}
-
 export interface Game {
   gameType: GameType;
   players: Player[];
@@ -19,6 +8,7 @@ export interface Game {
   roundCount: number;
   remainingThrows: number;
   accumulatedPoints: number;
+  randomHitTarget?: Throw | null;
 }
 
 export interface GameSnapshot {

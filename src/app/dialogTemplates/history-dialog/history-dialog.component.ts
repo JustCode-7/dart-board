@@ -4,7 +4,6 @@ import {CommonModule} from "@angular/common";
 import {MAT_DIALOG_DATA, MatDialogModule} from "@angular/material/dialog";
 import {MatButtonModule} from "@angular/material/button";
 import {MatCardModule} from "@angular/material/card";
-import {wellFormedArray} from "../../shared/utils/util";
 
 export interface HistoryDialogData {
   player: Player;
@@ -17,23 +16,25 @@ export interface HistoryDialogData {
       <h1 mat-dialog-title>Match-History - {{ historyData.player.name }}</h1>
       <mat-dialog-content>
         <mat-card class="mb-1">
-          <mat-card-title class="row justify-content-between"> <b class="text-bg-warning rounded">{{ historyData.player.remainingPoints }}</b> ⌀ {{ historyData.player.average }}
+          <mat-card-title class="row justify-content-between"><b
+            class="text-bg-warning rounded">{{ historyData.player.remainingPoints }}</b>
+            ⌀ {{ historyData.player.average }}
           </mat-card-title>
           @for (playerhistory of historyData.player.history; track $index) {
-              <div class="dart-throw-indicator">
-                <button mat-mini-fab class="no-pointer sum-circle">
-                  <span>{{ playerhistory.sum }}</span>
-                </button>
-                <button mat-mini-fab color="warn" class="no-pointer hit-circle">
-                  <span>{{ playerhistory.hits[0] ?? '➶' }}</span>
-                </button>
-                <button mat-mini-fab color="warn" class="no-pointer hit-circle">
-                  <span>{{ playerhistory.hits[1] ?? '➶' }}</span>
-                </button>
-                <button mat-mini-fab color="warn" class="no-pointer hit-circle">
-                  <span>{{ playerhistory.hits[2] ?? '➶' }}</span>
-                </button>
-              </div>
+            <div class="dart-throw-indicator">
+              <button mat-mini-fab class="no-pointer sum-circle">
+                <span>{{ playerhistory.sum }}</span>
+              </button>
+              <button mat-mini-fab color="warn" class="no-pointer hit-circle">
+                <span>{{ playerhistory.hits[0] ?? '➶' }}</span>
+              </button>
+              <button mat-mini-fab color="warn" class="no-pointer hit-circle">
+                <span>{{ playerhistory.hits[1] ?? '➶' }}</span>
+              </button>
+              <button mat-mini-fab color="warn" class="no-pointer hit-circle">
+                <span>{{ playerhistory.hits[2] ?? '➶' }}</span>
+              </button>
+            </div>
           }
         </mat-card>
       </mat-dialog-content>
@@ -50,7 +51,10 @@ export interface HistoryDialogData {
     MatCardModule,
   ],
   styles: [`
-    .minWith15vw { min-width: 30vw; }
+    .minWith15vw {
+      min-width: 30vw;
+    }
+
     .dart-throw-indicator {
       display: flex;
       flex-direction: row;
@@ -78,9 +82,4 @@ export interface HistoryDialogData {
 export class HistoryDialog {
 
   public historyData: HistoryDialogData = inject(MAT_DIALOG_DATA)
-  protected readonly wellFormedArray = wellFormedArray;
-
-  sumLast3(arr: number[]): number {
-    return arr.reduce((a, b) => a + b, 0);
-  }
 }

@@ -3,6 +3,7 @@ import {CommonModule} from "@angular/common";
 import {PlayerService} from "../../../services/player.service";
 import {CurrentPlayerService} from "../../../services/current-player.service";
 import {GameType} from "../../../models/enum/GameType";
+import {Player} from "../../../models/player/player.model";
 
 @Component({
   selector: 'app-mini-player-overview',
@@ -19,7 +20,10 @@ export class MiniPlayerOverview {
 
   protected readonly GameType = GameType;
 
-  getDiffToCurrentPlayer(player: any): number {
+  getDiffToCurrentPlayer(player: Player): number {
+    if (player === this.currentPlayerService._currentPlayer.getValue()) {
+      return 0;
+    }
     const currentPoints = this.currentPlayerService._remainingPointsToDisplay();
     return Math.abs(currentPoints - player.remainingPoints);
   }

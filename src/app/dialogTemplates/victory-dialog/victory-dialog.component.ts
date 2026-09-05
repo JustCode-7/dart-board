@@ -17,7 +17,7 @@ export interface VictoryDialogData {
 @Component({
   selector: 'app-victory-dialog',
   template: `
-    <h1 mat-dialog-title>Congratulations {{ winner }} !</h1>
+    <h1 mat-dialog-title>Congratulations: <br>{{ winner }}</h1>
     <mat-dialog-content>
       @if (data?.victoryByReachingRoundLimit) {
         <p>You have reached the limit of rounds.</p>
@@ -49,7 +49,7 @@ export class VictoryDialog implements OnInit {
 
   ngOnInit(): void {
 
-    if (this.dartService._gameType === GameType.Highscore || this.dartService._gameType === GameType.Elimination301 || this.dartService._gameType === GameType.Cricket) {
+    if (this.dartService._gameType === GameType.Highscore || this.dartService._gameType === GameType.Elimination301 || this.dartService._gameType === GameType.Cricket || this.dartService._gameType === GameType.RandomHit) {
       this.winner = wellFormedArray(this.currentPlayerService.getPlayersWithHighestPoints());
     } else {
       this.winner = this.currentPlayerService._currentPlayer.value.name

@@ -12,6 +12,7 @@ import {Game} from "../models/game/game.model";
 import {VictoryDialog} from "../dialogTemplates/victory-dialog/victory-dialog.component";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {MatDialog} from "@angular/material/dialog";
+import {generateRandomHitTarget} from "../shared/utils/util";
 
 
 export const MAX_REMAINING_THROWS = 3;
@@ -34,6 +35,7 @@ export class CurrentPlayerService {
   public _lastCricketHistory: Map<number, number> = new Map();
   protected animationService = inject(ExplosionAnimationService)
   public _history: HistoryEntry[] = [];
+  public _randomHitTarget = signal<Throw | null>(null);
 
   private aiTurnSubject = new Subject<void>();
   public aiTurn$ = this.aiTurnSubject.asObservable();
@@ -131,6 +133,10 @@ export class CurrentPlayerService {
     }
   }
 
+  generateNewRandomHitTarget() {
+    this._randomHitTarget.set(generateRandomHitTarget(this._randomHitTarget()));
+  }
+
   init(player: Player) {
     this._currentPlayer.next(player);
     this._remainingPointsToDisplay.set(player.remainingPoints);
@@ -140,8 +146,14 @@ export class CurrentPlayerService {
     this.isAITurn.set(player.isAI ?? false);
     this.reset();
 
+    if (this.currentGameMode === GameType.RandomHit) {
+      this.generateNewRandomHitTarget();
+    } else {
+      this._randomHitTarget.set(null);
+    }
+
     // Initialen Snapshot im Store speicherns
-    this.gameStore.initGame(this.currentGameMode as GameType, this.playerService._players);
+    this.gameStore.initGame(this.currentGameMode as GameType, this.playerService._players, this._randomHitTarget());
 
     this.triggerAIIfActive();
   }
@@ -153,7 +165,8 @@ export class CurrentPlayerService {
       currentPlayerIndex: this.playerService._players.indexOf(this._currentPlayer.value),
       roundCount: this.roundCountService.roundCount,
       remainingThrows: this._remainingThrows,
-      accumulatedPoints: this._accumulatedPoints
+      accumulatedPoints: this._accumulatedPoints,
+      randomHitTarget: this._randomHitTarget()
     };
   }
 
@@ -201,6 +214,9 @@ export class CurrentPlayerService {
         this._remainingPointsToDisplay.set(player.remainingPoints);
         this._history = player.history;
         this.reset();
+        if (this.currentGameMode === GameType.RandomHit) {
+          this.generateNewRandomHitTarget();
+        }
         this.captureState();
 
 
@@ -241,6 +257,25 @@ export class CurrentPlayerService {
     if (this._currentPlayer.value) {
       this._currentPlayer.value.last3History = [];
       this.isAITurn.set(this._currentPlayer.value.isAI ?? false);
+    }
+  }
+
+  scoreRandomHit(points: number, isHit: boolean, hitValue: number = points) {
+    if (this.hasThrowsRemaining()) {
+      this.calcAverage();
+      const currentPlayer = this._currentPlayer.value;
+      this.captureState();
+      // Nur zum Anzeigen der aktuellen Punktzahl
+      this._remainingPointsToDisplay.update(value => value + points);
+      this._last3History.push(hitValue);
+      currentPlayer.last3History = [...this._last3History];
+      this.last3HisSignal.update(() => [...this._last3History]);
+      this.accumulatePoints(points);
+      this.decrementRemainingThrows();
+      if (isHit && this.hasThrowsRemaining()) {
+        this.generateNewRandomHitTarget();
+      }
+      this._currentPlayer.next(currentPlayer);
     }
   }
 
@@ -341,7 +376,7 @@ export class CurrentPlayerService {
   }
 
   isOvershot(points: number): boolean {
-    if (this.currentGameMode === GameType.Highscore) {
+    if (this.currentGameMode === GameType.Highscore || this.currentGameMode === GameType.RandomHit) {
       return false;
     }
     if (this.currentGameMode === GameType.Elimination301) {
@@ -487,10 +522,12 @@ export class CurrentPlayerService {
     this.roundCountService.roundCount = state.roundCount;
     this._remainingThrows = state.remainingThrows;
     this._accumulatedPoints = state.accumulatedPoints;
+    this._randomHitTarget.set(state.randomHitTarget ?? null);
     this.isAITurn.set((currentPlayer.isAI ?? false) && state.remainingThrows > 0);
     if (this.currentGameMode === GameType.Highscore ||
       this.currentGameMode === GameType.Elimination301 ||
-      this.currentGameMode === GameType.Cricket) {
+      this.currentGameMode === GameType.Cricket ||
+      this.currentGameMode === GameType.RandomHit) {
       this._remainingPointsToDisplay.set(currentPlayer.remainingPoints + state.accumulatedPoints);
     } else {
       this._remainingPointsToDisplay.set(currentPlayer.remainingPoints - state.accumulatedPoints);

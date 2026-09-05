@@ -1,6 +1,6 @@
 import {Injectable, signal} from '@angular/core';
 import {Game, GameSnapshot} from '../models/game/game.model';
-import {Player} from '../models/player/player.model';
+import {Player, Throw} from '../models/player/player.model';
 import {GameType} from '../models/enum/GameType';
 
 @Injectable({
@@ -11,14 +11,15 @@ export class GameStoreService {
 
   gameState = signal<Game | null>(null);
 
-  initGame(gameType: GameType, players: Player[]) {
+  initGame(gameType: GameType, players: Player[], randomHitTarget?: Throw | null) {
     const initialGame: Game = {
       gameType,
       players: players,
       currentPlayerIndex: 0,
       roundCount: 1,
       remainingThrows: 3,
-      accumulatedPoints: 0
+      accumulatedPoints: 0,
+      randomHitTarget: randomHitTarget ?? null
     };
     this.history = [];
     this.saveSnapshot(initialGame);

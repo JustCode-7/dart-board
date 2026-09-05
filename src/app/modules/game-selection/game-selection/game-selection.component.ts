@@ -221,6 +221,9 @@ export class GameSelectionComponent implements OnInit {
         return GameType.Elimination301;
       case 'Highscore':
         return GameType.Highscore;
+      case 'Random-Hit':
+      case 'RandomHit':
+        return GameType.RandomHit;
       default:
         return GameType.Simple501;
     }

@@ -26,7 +26,7 @@ export class HiddenPlayersDialog implements OnInit {
   }
 
   ngOnInit() {
-    this.dialogRef.updateSize('200%', '75%');
+    this.dialogRef.updateSize('200%', '50%');
   }
 
   getDiff(player: any): number {

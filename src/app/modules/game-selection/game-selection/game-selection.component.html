@@ -9,6 +9,7 @@
         <mat-option [value]="gameType.Cricket">Cricket</mat-option>
         <mat-option [value]="gameType.Elimination301">Elimination (301)</mat-option>
         <mat-option [value]="gameType.Highscore">Highscore</mat-option>
+        <mat-option [value]="gameType.RandomHit">Random Hit</mat-option>
       </mat-select>
     </mat-form-field>
 
@@ -20,7 +21,7 @@
       </mat-hint>
     }
     <button mat-raised-button class="ms-2 me-2" type="reset">Reset</button>
-    @if (formGroup.get('gameType')?.value === gameType.Highscore) {
+    @if (formGroup.get('gameType')?.value === gameType.Highscore || formGroup.get('gameType')?.value === gameType.RandomHit) {
       <mat-form-field appearance="fill">
         <mat-label>Max Rounds</mat-label>
         <mat-select formControlName="maxRounds">

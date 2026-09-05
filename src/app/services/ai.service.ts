@@ -1,11 +1,13 @@
-import {Injectable} from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {Difficulty, Player, Throw} from '../models/player/player.model';
 import {GameType} from '../models/enum/GameType';
+import {CurrentPlayerService} from './current-player.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AIService {
+  private currentPlayerService = inject(CurrentPlayerService);
 
   private readonly DARTBOARD_VALUES = [20, 1, 18, 4, 13, 6, 10, 15, 2, 17, 3, 19, 7, 16, 8, 11, 14, 9, 12, 5];
 
@@ -15,7 +17,21 @@ export class AIService {
     if (gameType === GameType.Cricket) {
       return this.getCricketThrow(difficulty, player, allPlayers);
     }
+    if (gameType === GameType.RandomHit) {
+      return this.getRandomHitThrow(difficulty, player);
+    }
     return this.getPointsThrow(difficulty, player, allPlayers, gameType);
+  }
+
+  private getRandomHitThrow(difficulty: Difficulty, player: Player): Throw {
+    const target = this.currentPlayerService._randomHitTarget();
+    let targetValue = 20;
+    let targetMultiplier = 1;
+    if (target) {
+      targetValue = target.value;
+      targetMultiplier = target.multiplier;
+    }
+    return this.calculateThrowWithSpread(targetValue, targetMultiplier, difficulty, player);
   }
 
   private getPointsThrow(difficulty: Difficulty, player: Player, allPlayers: Player[], gameType: GameType): Throw {
@@ -40,8 +56,8 @@ export class AIService {
             targetMultiplier = 2;
           } else if (remainingPoints > 40 && remainingPoints <= 60) {
             // Setup for a double
-            const neededForEven = remainingPoints - 40; // Aim for 40 left (D20)
-            targetValue = neededForEven;
+            // Aim for 40 left (D20)
+            targetValue = remainingPoints - 40;
             targetMultiplier = 1;
           } else {
             // Odd number or too high, aim for something to get to a double
@@ -189,7 +205,7 @@ export class AIService {
     sigma *= throwInconsistency;
 
     // Ziel-Koordinaten (Polar: Radius r, Winkel theta)
-    let targetR = 0;
+    let targetR;
     let targetTheta = 0;
 
     if (targetValue === 0) {
@@ -257,8 +273,8 @@ export class AIService {
     const cricketMap = player.cricketMap;
     let openTargets = targets.filter(t => (cricketMap.get(t) || 0) < 3);
 
-    let targetValue = 20;
-    let targetMultiplier = 1;
+    let targetValue;
+    let targetMultiplier;
 
     if (openTargets.length > 0) {
       // Prioritize highest open target

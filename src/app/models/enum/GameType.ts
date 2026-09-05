@@ -3,5 +3,6 @@ export enum GameType {
     DoubleOut501 = '501-DoubleOut',
     Cricket = 'Cricket',
     Elimination301 = 'Elimination-301',
-    Highscore = 'Highscore'
+    Highscore = 'Highscore',
+    RandomHit = 'Random-Hit'
 }

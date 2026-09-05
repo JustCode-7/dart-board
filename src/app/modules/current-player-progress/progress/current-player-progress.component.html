@@ -15,6 +15,14 @@
       </div>
     </mat-card>
   </div>
+  @if (currentPlayerService.currentGameMode === GameType.RandomHit && currentPlayerService._randomHitTarget()) {
+    <div class="section target-info">
+      <div class="target-card">
+        <div class="target-label">ZIEL</div>
+        <div class="target-value">{{ formatTarget(currentPlayerService._randomHitTarget()) }}</div>
+      </div>
+    </div>
+  }
   <div class="section dart-status">
     <div class="status-content">
       <div class="dart-throw-indicator" [@throwAdded]="currentPlayerService.last3HisSignal().length">
