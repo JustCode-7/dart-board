@@ -8,9 +8,21 @@
   <div class="d-flex flex-column">
     <app-mini-player-overview></app-mini-player-overview>
   </div>
+  <div class="dart-throw-indicator">
+    <button mat-mini-fab class="no-pointer sum-circle">
+      <span>{{ this.currentPlayerService._lastTurnSum }}</span>
+    </button>
+    <button mat-mini-fab color="warn" class="no-pointer hit-circle">
+      <span>{{ this.currentPlayerService._lastTurnHits[0] ?? '➶' }}</span>
+    </button>
+    <button mat-mini-fab color="warn" class="no-pointer hit-circle">
+      <span>{{ this.currentPlayerService._lastTurnHits[1] ?? '➶' }}</span>
+    </button>
+    <button mat-mini-fab color="warn" class="no-pointer hit-circle">
+      <span>{{ this.currentPlayerService._lastTurnHits[2] ?? '➶' }}</span>
+    </button>
+  </div>
   <h3 class="text-light"><strong>
-    ∑ {{ this.currentPlayerService._lastTurnSum }} | ➶ {{ wellFormedArray(this.currentPlayerService._lastTurnHits) }}
-    <br>
     Points: {{ this.currentPlayerService._currentPlayer.value.remainingPoints }}
   </strong></h3>
 </div>

@@ -9,7 +9,6 @@ import {CricketService} from "../../services/cricket.service";
 import {Player} from "../../models/player/player.model";
 import {MatProgressBarModule} from "@angular/material/progress-bar";
 import {GameType} from "../../models/enum/GameType";
-import {wellFormedArray} from "../../shared/utils/util";
 import {MiniPlayerOverview} from "../../shared/components/mini-player-overview/mini-player-overview";
 
 @Component({
@@ -23,10 +22,32 @@ import {MiniPlayerOverview} from "../../shared/components/mini-player-overview/m
       max-width: 75%;
       display: inline-block;
     }
+
+    .dart-throw-indicator {
+      display: flex;
+      flex-direction: row;
+      gap: 6px;
+      align-items: center;
+      justify-content: center;
+      margin: 8px 0;
+
+      .sum-circle {
+        background-color: #4caf50 !important;
+        color: #fff !important;
+        transform: scale(0.95);
+        font-weight: bold;
+      }
+
+      .hit-circle {
+        background-color: #f44336 !important;
+        color: #fff !important;
+        transform: scale(0.75);
+        margin: 0;
+      }
+    }
   `]
 })
 export class SwitchPlayerSnackComponent implements OnInit {
-  protected readonly wellFormedArray = wellFormedArray;
   protected readonly GameType = GameType;
   protected playerService: PlayerService = inject(PlayerService)
   snackBarRef = inject(MatSnackBar);

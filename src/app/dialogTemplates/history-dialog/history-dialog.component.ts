@@ -14,26 +14,31 @@ export interface HistoryDialogData {
   selector: 'app-history-dialog',
   template: `
     <div class="minWith15vw">
-      <h1 mat-dialog-title>history of: {{ historyData.player.name }}</h1>
+      <h1 mat-dialog-title>Match-History - {{ historyData.player.name }}</h1>
       <mat-dialog-content>
         <mat-card class="mb-1">
-          <mat-card-title>{{ historyData.player.remainingPoints }}
+          <mat-card-title class="row justify-content-between"> <b class="text-bg-warning rounded">{{ historyData.player.remainingPoints }}</b> ⌀ {{ historyData.player.average }}
           </mat-card-title>
-          <br>
-          last∑ {{ sumLast3(historyData.player.last3History) }}<br>
-          last➶ {{ wellFormedArray(historyData.player.last3History) }}<br>
-          ⌀ {{ historyData.player.average }}<br>
-          Match-History:
           @for (playerhistory of historyData.player.history; track $index) {
-            <mat-card class="flex-row w-100">
-              <div class="w-25">∑ {{ playerhistory.sum }}</div>
-              <div class="w-75">|➶ {{ wellFormedArray(playerhistory.hits) }}</div>
-            </mat-card>
+              <div class="dart-throw-indicator">
+                <button mat-mini-fab class="no-pointer sum-circle">
+                  <span>{{ playerhistory.sum }}</span>
+                </button>
+                <button mat-mini-fab color="warn" class="no-pointer hit-circle">
+                  <span>{{ playerhistory.hits[0] ?? '➶' }}</span>
+                </button>
+                <button mat-mini-fab color="warn" class="no-pointer hit-circle">
+                  <span>{{ playerhistory.hits[1] ?? '➶' }}</span>
+                </button>
+                <button mat-mini-fab color="warn" class="no-pointer hit-circle">
+                  <span>{{ playerhistory.hits[2] ?? '➶' }}</span>
+                </button>
+              </div>
           }
         </mat-card>
       </mat-dialog-content>
       <mat-dialog-actions>
-        <button mat-raised-button mat-dialog-close="">Close</button>
+        <button mat-raised-button mat-dialog-close="" color="accent">Close</button>
       </mat-dialog-actions>
     </div>
   `,
@@ -44,7 +49,31 @@ export interface HistoryDialogData {
     CommonModule,
     MatCardModule,
   ],
-  styles: [' .minWith15vw { min-width: 30vw; }']
+  styles: [`
+    .minWith15vw { min-width: 30vw; }
+    .dart-throw-indicator {
+      display: flex;
+      flex-direction: row;
+      gap: 6px;
+      align-items: center;
+      justify-content: center;
+      margin: 4px 0;
+
+      .sum-circle {
+        background-color: #4caf50 !important;
+        color: #fff !important;
+        transform: scale(0.95);
+        font-weight: bold;
+      }
+
+      .hit-circle {
+        background-color: #f44336 !important;
+        color: #fff !important;
+        transform: scale(0.75);
+        margin: 0;
+      }
+    }
+  `]
 })
 export class HistoryDialog {
 
