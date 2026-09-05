@@ -5,7 +5,6 @@ import {MAT_SNACK_BAR_DATA, MatSnackBar} from "@angular/material/snack-bar";
 import {CommonModule} from "@angular/common";
 import {MatButtonModule} from "@angular/material/button";
 import {MatCardModule} from "@angular/material/card";
-import {CricketService} from "../../services/cricket.service";
 import {Player} from "../../models/player/player.model";
 import {MatProgressBarModule} from "@angular/material/progress-bar";
 import {GameType} from "../../models/enum/GameType";
@@ -53,7 +52,6 @@ export class SwitchPlayerSnackComponent implements OnInit {
   snackBarRef = inject(MatSnackBar);
   data = inject(MAT_SNACK_BAR_DATA);
   currentPlayerService = inject(CurrentPlayerService);
-  cricketService = inject(CricketService);
 
   public timeLeft: number = 2300;
   private readonly INTERVAL = 100;

@@ -7,7 +7,6 @@ import {SoundToggleService} from '../../services/sound-toggle.service';
 export class ExplosionAnimationService {
   private renderer: Renderer2;
   private explosionElement: HTMLElement | null = null;
-  private trajectoryContainer: HTMLElement | null = null;
   tripleTwentyCounter: number = 0;
   tripleCounter: number = 0;
   missCounter: number = 0;
@@ -32,14 +31,20 @@ export class ExplosionAnimationService {
    * @param color Die Farbe der Explosion (default, red, green, blue)
    * @param audioSrc der Sound der abgespielt werden soll
    */
-  showExplosion(text: string, color: 'default' | 'red' | 'green' | 'blue' = 'red', audioSrc: string): void {
+  showExplosion(text: string, color: 'default' | 'red' | 'green' | 'blue' = 'red', audioSrc: string, winner?: boolean): void {
     const duration: number = 1500;
     // Entferne vorherige Explosion, falls vorhanden
     this.removeExplosion();
 
     // Container erstellen
     const container = this.renderer.createElement('div');
-    this.renderer.addClass(container, 'explosion-container');
+    if (winner) {
+      this.renderer.addClass(container, 'explosion-container');
+      this.renderer.addClass(container, 'winner-animated-position');
+    } else {
+      this.renderer.addClass(container, 'explosion-container');
+    }
+
 
     // Explosion-Element erstellen
     const explosion = this.renderer.createElement('div');

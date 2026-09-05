@@ -4,9 +4,9 @@ import {bootstrapApplication} from "@angular/platform-browser";
 import {AppComponent} from "./app/app.component";
 import {provideRouter, withComponentInputBinding} from "@angular/router";
 import {routes} from "./app/app-routing.module";
-import {provideAnimationsAsync} from "@angular/platform-browser/animations/async";
 import {ServiceWorkerModule} from "@angular/service-worker";
 import {noop} from "./app/shared/utils/util";
+import {provideAnimationsAsync} from "@angular/platform-browser/animations/async";
 
 if (environment.production) {
   enableProdMode();

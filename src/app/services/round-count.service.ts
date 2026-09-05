@@ -33,11 +33,4 @@ export class RoundCountService {
   reset() {
     this.roundCount = this.INITIAL_ROUND_COUNT;
   }
-
-  decrementRoundCount() {
-    if (this.roundCount > 1) {
-      this.roundCount--;
-    }
-
-  }
 }

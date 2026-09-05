@@ -50,7 +50,6 @@ export class VictoryDialog implements OnInit {
   private readonly victoryCountService = inject(VictoryCountService);
 
   ngOnInit(): void {
-
     if (this.dartService._gameType === GameType.Highscore || this.dartService._gameType === GameType.Elimination301 || this.dartService._gameType === GameType.Cricket || this.dartService._gameType === GameType.RandomHit) {
       this.winner = wellFormedArray(this.currentPlayerService.getPlayersWithHighestPoints());
     } else {
@@ -60,6 +59,6 @@ export class VictoryDialog implements OnInit {
       let winnerForMap = this.winner.replace('\"', '').trim()
       this.victoryCountService.addWinToPlayer(winnerForMap)
     }
-    this.explosionAnimationService.showExplosion('WINNER: ' + this.winner, 'red', 'assets/sounds/fanfare-trumpets.mp3');
+    this.explosionAnimationService.showExplosion('WINNER: ' + this.winner, 'red', 'assets/sounds/fanfare-trumpets.mp3', true);
   }
 }

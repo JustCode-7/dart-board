@@ -199,7 +199,7 @@ export class CurrentPlayerService {
     } else {
       const snackRef = this.snackbar.openFromComponent(SwitchPlayerSnackComponent, {
         duration: 3300,
-        panelClass: ['app-shape-morph-snack'],
+        panelClass: ['app-shape-morph-snack', 'switch-player-panel'],
         horizontalPosition: "center",
         verticalPosition: "bottom",
         data: {nextPlayer: player}
