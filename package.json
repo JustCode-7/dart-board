@@ -1,8 +1,9 @@
 {
   "name": "dart-board",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "scripts": {
     "ng": "ng",
+    "install": "npm i",
     "start": "ng serve",
     "build": "ng build",
     "build:ci": "ng build --configuration production",
