@@ -9,9 +9,9 @@
 
       <div class="d-flex flex-row justify-content-center flex-wrap">
         <div *ngFor="let group of buttonGroups" class="d-flex flex-column">
-          <div class="my-2 d-flex justify-content-center mx-2"
+          <div class="d-flex justify-content-center"
                *ngFor="let inputButton of group">
-            <button class="mb-2 raised-button-3d me-2"
+            <button class="raised-button-3d input-btn-margin"
                     id="dart-btn-{{inputButton.zahl}}"
                     matRipple [matRippleColor]="customRipple.rippleColor" [matRippleUnbounded]="true"
                     [matRippleCentered]="true"
