@@ -9,6 +9,7 @@ import {wellFormedArray} from "../../shared/utils/util";
 import {DartService} from "../../services/dart.service";
 import {MiniPlayerOverview} from "../../shared/components/mini-player-overview/mini-player-overview";
 import {VictoryCountService} from "../../services/victory-count.service";
+import {RoundCountService} from "../../services/round-count.service";
 
 export interface VictoryDialogData {
   victoryByReachingRoundLimit: boolean;
@@ -20,7 +21,7 @@ export interface VictoryDialogData {
     <h1 mat-dialog-title>Congratulations: <br>{{ winner }}</h1>
     <mat-dialog-content>
       @if (data?.victoryByReachingRoundLimit) {
-        <p>You have reached the limit of rounds.</p>
+        <p>You have reached the limit of {{ roundCountService.MAX_ROUND_COUNT }} rounds.</p>
       }
       <div class="d-flex flex-column">
         <app-mini-player-overview></app-mini-player-overview>
@@ -44,6 +45,7 @@ export class VictoryDialog implements OnInit {
   @Inject(MAT_DIALOG_DATA) public data?: VictoryDialogData = inject(MAT_DIALOG_DATA);
   private explosionAnimationService = inject(ExplosionAnimationService)
   private readonly dartService = inject(DartService);
+  readonly roundCountService = inject(RoundCountService);
   protected winner: string | string[] | number = ''
   private readonly victoryCountService = inject(VictoryCountService);
 

@@ -48,7 +48,8 @@
       <div class="d-flex flex-row">
         <div class="round-info small text-nowrap">
           <span class="round-label">Runde</span>
-          <span class="round-value">{{ roundCountService.roundCount }}/{{ roundCountService.MAX_ROUND_COUNT }}</span>
+          <span
+            class="round-value">{{ getRoundCount() }}</span>
         </div>
         <div class="timer-container">
           <span class="game-timer">{{ gameTimerService.elapsedTimeSignal() }}</span>

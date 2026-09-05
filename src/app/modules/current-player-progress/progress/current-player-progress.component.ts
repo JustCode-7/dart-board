@@ -53,4 +53,9 @@ export class CurrentPlayerProgressComponent implements OnInit, OnDestroy {
         return undefined;
     }
   }
+
+  getRoundCount(): string {
+    const actual = this.roundCountService.roundCount <= this.roundCountService.MAX_ROUND_COUNT ? this.roundCountService.roundCount : this.roundCountService.MAX_ROUND_COUNT
+    return `${actual} / ${this.roundCountService.MAX_ROUND_COUNT}`;
+  }
 }

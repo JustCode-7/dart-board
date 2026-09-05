@@ -22,7 +22,7 @@ export class RoundCountService {
   }
 
   getRemainingRounds(): number {
-    const decrementedRoundCount = this.MAX_ROUND_COUNT - this.roundCount;
+    const decrementedRoundCount = this.MAX_ROUND_COUNT - (this.roundCount - 1);
     return decrementedRoundCount < 0 ? 0 : decrementedRoundCount;
   }
 
