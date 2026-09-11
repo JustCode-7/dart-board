@@ -10,6 +10,7 @@ import {MatSelectModule} from "@angular/material/select";
 import {MatInputModule} from "@angular/material/input";
 import {MatIconModule} from "@angular/material/icon";
 import {CommonModule} from "@angular/common";
+import {WebComponentWrapper} from "../../../shared/components/web-component-wrapper/web-component-wrapper";
 
 
 @Component({
@@ -26,7 +27,8 @@ import {CommonModule} from "@angular/common";
     MatInputModule,
     MatIconModule,
     CdkDropList,
-    CdkDrag
+    CdkDrag,
+    WebComponentWrapper
   ],
 })
 export class GameSelectionComponent implements OnInit {
