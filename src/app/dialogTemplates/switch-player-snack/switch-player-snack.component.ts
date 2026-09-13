@@ -33,15 +33,16 @@ import {MiniPlayerOverview} from "../../shared/components/mini-player-overview/m
       .sum-circle {
         background-color: #4caf50 !important;
         color: #fff !important;
-        transform: scale(0.95);
+        transform: scale(1.2);
         font-weight: bold;
       }
 
       .hit-circle {
         background-color: #f44336 !important;
         color: #fff !important;
-        transform: scale(0.75);
+        transform: scale(0.9);
         margin: 0;
+        font-weight: bold;
       }
     }
   `]

@@ -7,9 +7,11 @@
         <div class="player-name-score-row">
           <div class="player-name text-wrap text-truncate">
             <mat-icon *ngIf="currentPlayerService._currentPlayer.value.isAI" class="ai-icon">smart_toy</mat-icon>
-            {{ currentPlayerService._currentPlayer.value.name || 'Spieler' }}:
+            {{ currentPlayerService._currentPlayer.value.name || 'Spieler' }}
           </div>
-          <div class="player-score">{{ this.currentPlayerService._remainingPointsToDisplay() }}</div>
+          <div
+            class="player-score text-bg-warning rounded">{{ this.currentPlayerService._remainingPointsToDisplay() }}
+          </div>
         </div>
         <div class="player-avg small">⌀ {{ currentPlayerService._currentPlayer.value.average }}</div>
       </div>

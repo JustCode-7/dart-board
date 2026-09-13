@@ -2,7 +2,7 @@
   <mat-progress-bar [color]="'accent'" [value]="progress()"></mat-progress-bar>
   <div class="player-name mt-1">
     <h5 class="text-truncate text-warning">
-      {{ 'NEXT: ' + this.nextPlayer.name }}
+      {{ 'Next Player - ' + this.nextPlayer.name }}
     </h5>
   </div>
   <div class="d-flex flex-column">
@@ -22,7 +22,14 @@
       <span>{{ this.currentPlayerService._lastTurnHits[2] ?? '➶' }}</span>
     </button>
   </div>
-  <h3 class="text-light"><strong>
-    Points: {{ this.currentPlayerService._currentPlayer.value.remainingPoints }}
-  </strong></h3>
+  <div class="d-flex justify-content-between w-100">
+    <h3 class="d-inline-flex">
+      <b class="text-bg-warning rounded">
+        {{ this.currentPlayerService._currentPlayer.value.remainingPoints }}
+      </b>
+    </h3>
+    <h3 class="text-white">
+      ⌀ {{ currentPlayerService._currentPlayer.value.average }}
+    </h3>
+  </div>
 </div>

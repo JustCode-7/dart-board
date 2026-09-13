@@ -18,7 +18,7 @@ export interface VictoryDialogData {
 @Component({
   selector: 'app-victory-dialog',
   template: `
-    <h1 mat-dialog-title>Congratulations: <br>{{ winner }}</h1>
+    <h1 mat-dialog-title>Congratulations to <br>{{ winner }}</h1>
     <mat-dialog-content>
       @if (data?.victoryByReachingRoundLimit) {
         <p>You have reached the limit of {{ roundCountService.MAX_ROUND_COUNT }} rounds.</p>
