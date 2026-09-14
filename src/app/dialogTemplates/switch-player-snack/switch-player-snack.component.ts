@@ -16,6 +16,11 @@ import {MiniPlayerOverview} from "../../shared/components/mini-player-overview/m
   imports: [MatCardModule, MatButtonModule, CommonModule, MatProgressBarModule, MiniPlayerOverview],
   standalone: true,
   styles: [`
+    .current-player-score {
+      padding-left: 12px;
+      padding-right: 12px;
+    }
+
     .player-name {
       min-width: 50%;
       max-width: 75%;
