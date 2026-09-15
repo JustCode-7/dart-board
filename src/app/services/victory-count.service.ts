@@ -1,6 +1,6 @@
 import {inject, Injectable} from '@angular/core';
 import {PlayerService} from "./player.service";
-import {OverviewPlayers} from "../models/player/player.model";
+import {OverviewPlayer} from "../models/player/player.model";
 
 interface VictoryCount {
   playerName: string;
@@ -17,7 +17,7 @@ export class VictoryCountService {
 
   addWinToPlayer(playerName: string) {
     if (localStorage.getItem('playerNames')) {
-      let players: OverviewPlayers[] = JSON.parse(localStorage.getItem('playerNames')!)
+      let players: OverviewPlayer[] = JSON.parse(localStorage.getItem('playerNames')!)
       let player = players.find(p => p.name === playerName)
       if (player) {
         player.wins++

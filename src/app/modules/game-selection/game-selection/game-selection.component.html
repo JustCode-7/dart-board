@@ -1,9 +1,9 @@
 <div class="d-flex justify-content-center ms-2 game-selection">
-  <form class="ms-2 mt-2 vw-100 justify-content-center" [formGroup]="formGroup" (ngSubmit)="onSubmit()"
+  <form class="ms-2 mt-2 vw-100 justify-content-center" [formRoot]="gameForm"
         (reset)="onReset($event)">
     <mat-form-field appearance="fill" class="me-2">
       <mat-label class="text">Game Type</mat-label>
-      <mat-select formControlName="gameType">
+      <mat-select [formField]="gameForm.gameType">
         <mat-option [value]="gameType.Simple501">501</mat-option>
         <mat-option [value]="gameType.DoubleOut501">501 (Double Out)</mat-option>
         <mat-option [value]="gameType.Cricket">Cricket</mat-option>
@@ -12,26 +12,28 @@
         <mat-option [value]="gameType.RandomHit">Random Hit</mat-option>
       </mat-select>
     </mat-form-field>
-
-    <button mat-raised-button color="accent" type="submit" [disabled]="!validateGameStart(playerNames)">Start
-    </button>
-    @if (playerNames.length > 0 && !validateGameStart(playerNames)) {
-      <mat-hint class="ms-2 mt-2 text-danger">
-        Mindestens ein menschlicher Spieler wird benötigt.
-      </mat-hint>
-    }
-    <button mat-raised-button class="ms-2 me-2" type="reset">Reset</button>
-    @if (formGroup.get('gameType')?.value === gameType.Highscore || formGroup.get('gameType')?.value === gameType.RandomHit) {
-      <mat-form-field appearance="fill">
+    @if (gameState().gameType === gameType.Highscore || gameState().gameType === gameType.RandomHit) {
+      <mat-form-field appearance="fill" class="me-2">
         <mat-label>Max Rounds</mat-label>
-        <mat-select formControlName="maxRounds">
-          @for (r of roundOptions; track r) {
-            <mat-option [value]="r">{{ r }}</mat-option>
+        <mat-select [formField]="gameForm.maxRounds">
+          @for (round of roundOptions; track round) {
+            <mat-option [value]="round">{{ round }}</mat-option>
           }
         </mat-select>
       </mat-form-field>
     }
-    <div class="d-flex flex-row my-3">
+    @if (gameForm.overviewPlayers().value().length > 0 && !validateGameStart(gameForm.overviewPlayers().value())) {
+      <mat-hint class="ms-2 mt-2 text-danger">
+        Mindestens ein menschlicher Spieler wird benötigt.
+      </mat-hint>
+    }
+    <div class="d-flex flex-row my-3 overview-btn-width mb-5">
+      <button color="accent" mat-raised-button class="start-btn" type="submit"
+              [disabled]="!validateGameStart(gameForm.overviewPlayers().value())">Start
+      </button>
+      <button color="warn" mat-raised-button class="ms-2 me-2 reset-btn text-black" type="reset">Reset</button>
+    </div>
+    <div class="d-flex flex-row my-3 overview-btn-width">
       <button mat-raised-button color="accent" type="button" (click)="addPlayerName()">
         <mat-icon>
           add
@@ -46,45 +48,52 @@
       </button>
     </div>
 
-    <div class="d-flex flex-column" formArrayName="playerNames" cdkDropList (cdkDropListDropped)="drop($event)">
-      @for (playerNameGroup of playerNames.controls; track $index) {
-        <div class="d-flex flex-row rounded-3 player-row shadow m-1" cdkDrag [formGroupName]="$index">
+    <div class="d-flex flex-column" cdkDropList (cdkDropListDropped)="drop($event)">
+      @for (playerField of gameForm.overviewPlayers; track $index) {
+        <div
+          class="d-flex flex-row border justify-content-between border-warning p-3 rounded-3 player-row-width shadow m-1"
+          cdkDrag
+        >
           <mat-form-field appearance="fill">
             <mat-label>Player {{ $index + 1 }}</mat-label>
             <div class="d-flex flex-row">
-              <input #nameInput matInput id="playerName-{{ $index }}" type="text"
-                     formControlName="name">
+
+              <input matInput id="playerName-{{ $index }}" type="text"
+                     [formField]="playerField.name">
+
               <button mat-mini-fab class="ms-2 mb-1" type="button" color="warn" (click)="removePlayerName($index)">
                 <mat-icon>close</mat-icon>
               </button>
             </div>
-            @if (nameInput.value === '') {
+            @if (playerField.name().value() === '') {
               <mat-hint class="text-bg-danger">
                 fill with name please!
               </mat-hint>
             }
           </mat-form-field>
-          @if (playerNameGroup.get('isAI')?.value) {
+
+          <div class="align-content-center text-warning fw-bold p-1">
+            {{ getWins(playerField().value()) }}
+          </div>
+
+          @if (playerField.isAI().value()) {
             <mat-form-field appearance="fill" class="difficulty-select p-3">
               <mat-label>KI-Difficulty</mat-label>
-              <mat-select formControlName="difficulty">
+              <mat-select [formField]="playerField.difficulty">
                 <mat-option [value]="difficulty.Easy">Leicht</mat-option>
                 <mat-option [value]="difficulty.Medium">Mittel</mat-option>
                 <mat-option [value]="difficulty.Hard">Schwer</mat-option>
               </mat-select>
             </mat-form-field>
           }
-          <div class="align-content-center text-warning fw-bold">
-            {{ getWins(playerNameGroup?.value) }}
-          </div>
+
           <button mat-icon-button (click)="$event.preventDefault()">
-            <mat-icon>
-              reorder
-            </mat-icon>
+            <mat-icon>reorder</mat-icon>
           </button>
         </div>
       }
     </div>
+
   </form>
   @if (showScrollTopButton) {
     <button mat-fab color="primary" class="scroll-btn" (click)="scrollToTop()">

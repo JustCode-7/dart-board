@@ -22,10 +22,14 @@
   }
 
   .player-info {
+    cursor: pointer;
+    text-align: center;
+    background-color: green !important;
     flex: 1.0;
+    max-width: 50%;
+    min-width: 40%;
 
     .info-card {
-      width: 100%;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -43,7 +47,7 @@
         padding: 0 0.5rem;
 
         .player-name {
-          font-size: 1.6rem;
+          font-size: 1.4rem;
           opacity: 0.8;
           display: flex;
           align-items: center;

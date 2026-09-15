@@ -1,8 +1,8 @@
-import {ChangeDetectorRef, Component, HostListener, inject, OnInit} from '@angular/core';
-import {AbstractControl, FormArray, FormBuilder, ReactiveFormsModule} from '@angular/forms';
+import {ChangeDetectorRef, Component, HostListener, inject, OnInit, signal} from '@angular/core';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {Router} from "@angular/router";
 import {GameType} from '../../../models/enum/GameType';
-import {Difficulty, OverviewPlayers} from "../../../models/player/player.model";
+import {Difficulty, OverviewPlayer} from "../../../models/player/player.model";
 import {CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray} from "@angular/cdk/drag-drop";
 import {MatButtonModule} from "@angular/material/button";
 import {MatFormFieldModule} from "@angular/material/form-field";
@@ -11,6 +11,13 @@ import {MatInputModule} from "@angular/material/input";
 import {MatIconModule} from "@angular/material/icon";
 import {CommonModule} from "@angular/common";
 import {WebComponentWrapper} from "../../../shared/components/web-component-wrapper/web-component-wrapper";
+import {form, FormField, FormRoot} from "@angular/forms/signals";
+
+interface GameSeclectionState {
+  gameType: GameType;
+  overviewPlayers: OverviewPlayer[];
+  maxRounds: number;
+}
 
 
 @Component({
@@ -28,7 +35,10 @@ import {WebComponentWrapper} from "../../../shared/components/web-component-wrap
     MatIconModule,
     CdkDropList,
     CdkDrag,
-    WebComponentWrapper
+    WebComponentWrapper,
+    FormRoot,
+    FormsModule,
+    FormField,
   ],
 })
 export class GameSelectionComponent implements OnInit {
@@ -36,11 +46,11 @@ export class GameSelectionComponent implements OnInit {
   gameType = GameType;
   difficulty = Difficulty;
 
-  private fb = inject(FormBuilder)
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
   showScrollTopButton = false;
   showScrollBottomButton = false;
+  roundOptions = Array.from({length: 15}, (_, i) => (i + 1) * 3); // 3, 6, 9...45
 
   @HostListener('window:scroll', [])
   onWindowScroll() {
@@ -56,7 +66,7 @@ export class GameSelectionComponent implements OnInit {
     }
 
     // Prüfen ob der letzte Spieler sichtbar ist
-    const playerRows = document.querySelectorAll('.player-row');
+    const playerRows = document.querySelectorAll('.player-row-width');
     if (playerRows.length > 0) {
       const lastPlayer = playerRows[playerRows.length - 1];
       const rect = lastPlayer.getBoundingClientRect();
@@ -75,30 +85,29 @@ export class GameSelectionComponent implements OnInit {
     window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'});
   }
 
-  formGroup = this.fb.group({
-    gameType: this.fb.control<any>(GameType.Simple501),
-    playerNames: this.fb.array<AbstractControl>([
-      this.fb.group({
-        name: this.fb.control('first'),
-        isAI: this.fb.control(false),
-        difficulty: this.fb.control(Difficulty.Medium),
-        wins: 0
-      }),
-      this.fb.group({
-        name: this.fb.control('second'),
-        isAI: this.fb.control(false),
-        difficulty: this.fb.control(Difficulty.Medium),
-        wins: 0
-      }),
-    ]),
-    maxRounds: this.fb.control<number>(3)
+  readonly gameState = signal<GameSeclectionState>({
+    gameType: GameType.Simple501,
+    overviewPlayers: [
+      {name: 'first', isAI: false, difficulty: Difficulty.Medium, wins: 0},
+      {name: 'second', isAI: false, difficulty: Difficulty.Medium, wins: 0}
+    ],
+    maxRounds: 3
   });
 
-  roundOptions = Array.from({length: 15}, (_, i) => (i + 1) * 3); // 3, 6, 9...45
+  readonly gameForm = form(this.gameState, {
+    submission: {
+      action: async (formInstance) => {
+        this.onSubmit()
 
-  private readonly defaultFormState = {
+      },
+      // Verhindert das Absenden, solange interne Validatoren fehlschlagen
+      ignoreValidators: 'none',
+    }
+  });
+
+  private readonly defaultFormState: GameSeclectionState = {
     gameType: GameType.Simple501,
-    playerNames: [
+    overviewPlayers: [
       {name: 'first', isAI: false, difficulty: Difficulty.Medium, wins: 0},
       {name: 'second', isAI: false, difficulty: Difficulty.Medium, wins: 0}
     ],
@@ -110,69 +119,82 @@ export class GameSelectionComponent implements OnInit {
       const savedPlayers = JSON.parse(localStorage.getItem('playerNames')!);
       if (savedPlayers.length > 0 && typeof savedPlayers[0] === 'string') {
         // Migration from old string array to new object array
-        this.formGroup.setControl('playerNames', this.fb.array<AbstractControl>(savedPlayers.map((name: string) => this.fb.group({
-          name: this.fb.control(name),
-          isAI: this.fb.control(false),
-          difficulty: this.fb.control(Difficulty.Medium),
-          wins: 0
-        }))));
+        this.gameState().overviewPlayers = savedPlayers.map((nameAsSting: string) => {
+          return {
+            name: nameAsSting,
+            isAI: false,
+            difficulty: Difficulty.Medium,
+            wins: 0
+          };
+        });
       } else {
-        this.formGroup.setControl('playerNames', this.fb.array<AbstractControl>(savedPlayers.map((p: OverviewPlayers) => this.fb.group({
-          name: this.fb.control(p.name),
-          isAI: this.fb.control(p.isAI || false),
-          difficulty: this.fb.control(p.difficulty || Difficulty.Medium),
-          wins: p.wins
-        }))));
+        this.gameState().overviewPlayers = savedPlayers
       }
     }
     if (localStorage.getItem('gameType')) {
       const gameType = JSON.parse(localStorage.getItem('gameType')!);
-      this.formGroup.controls.gameType.setValue(this.getGameType(gameType));
+      this.gameState().gameType = this.getGameType(gameType);
     }
   }
 
-  get playerNames(): FormArray {
-    return this.formGroup.get('playerNames') as FormArray;
+  get getOverviewPlayers() {
+    return this.gameState().overviewPlayers
   }
 
   addPlayerName() {
-    if (this.playerNames.length < 8) {
-      this.playerNames.push(this.fb.group({
-        name: this.fb.control(''),
-        isAI: this.fb.control(false),
-        difficulty: this.fb.control(Difficulty.Medium),
+    const currentPlayers = this.gameState().overviewPlayers;
+
+    if (currentPlayers.length < 8) {
+      this.gameState.update(state => ({
+        ...state,
+        overviewPlayers: [
+          ...state.overviewPlayers,
+          {
+            name: '',
+            isAI: false,
+            difficulty: Difficulty.Medium,
+            wins: 0
+          }
+        ]
+      }));
+
+      // 3. Scrollbar-Prüfung beibehalten (Signals triggern das Rendering asynchron)
+      setTimeout(() => this.checkScrollVisibility(), 100);
+    }
+  }
+
+  addAIPlayer() {
+    if (this.getOverviewPlayers.length < 8) {
+      let randomNames = ['Borg', 'Data', 'Hal', 'Skynet', 'Jarvis', 'GlaDOS', 'Cortana', 'R2D2'];
+      randomNames = randomNames.filter(value => this.gameForm.overviewPlayers().value().find(formValue => formValue.name === "KI-" + value) === undefined)
+      const randomName = 'KI-' + randomNames[Math.floor(Math.random() * randomNames.length)];
+      const kiPlayer = {
+        name: randomName,
+        isAI: true,
+        difficulty: Difficulty.Medium,
         wins: 0
+      };
+      this.gameState.update(state => ({
+        ...state,
+        overviewPlayers: [
+          ...state.overviewPlayers,
+          kiPlayer
+        ]
       }));
       this.cdr.detectChanges();
       setTimeout(() => this.checkScrollVisibility(), 100);
     }
   }
 
-  addAIPlayer() {
-    if (this.playerNames.length < 8) {
-      const randomNames = ['Borg', 'Data', 'Hal', 'Skynet', 'Jarvis', 'GlaDOS', 'Cortana', 'R2D2'];
-      const randomName = 'KI-' + randomNames[Math.floor(Math.random() * randomNames.length)];
-      const group = this.fb.group({
-        name: this.fb.control(randomName),
-        isAI: this.fb.control(true),
-        difficulty: this.fb.control(Difficulty.Medium),
-        wins: 0
-      });
-      this.playerNames.push(group);
-      this.cdr.detectChanges();
-      setTimeout(() => this.checkScrollVisibility(), 100);
-    }
-  }
-
   removePlayerName(index: number) {
-    this.playerNames.removeAt(index);
+    this.getOverviewPlayers.splice(index, 1);
     setTimeout(() => this.checkScrollVisibility(), 100);
   }
 
   onSubmit() {
-    const players: OverviewPlayers[] = this.formGroup.controls.playerNames.value;
-    const gameType = this.formGroup.value.gameType;
-    const maxRounds = this.formGroup.value.maxRounds;
+    const players: OverviewPlayer[] = this.gameState().overviewPlayers;
+    const gameType = this.gameState().gameType;
+    const maxRounds = this.gameState().maxRounds;
 
     const queryParams = {gameType, players: JSON.stringify(players), maxRounds};
     if (gameType == GameType.Cricket) {
@@ -185,30 +207,22 @@ export class GameSelectionComponent implements OnInit {
   }
 
   onReset(event: Event) {
-    // The reset event fires when a <form> is reset.
-    // Required to prevent the default reset mechanism.
-    // Otherwise, the form would be completely empty.
     event.preventDefault();
-    this.formGroup.reset(this.defaultFormState);
-    this.formGroup.setControl('playerNames', this.fb.array<AbstractControl>(this.defaultFormState.playerNames.map((p: OverviewPlayers) => this.fb.group({
-      name: this.fb.control(p.name),
-      isAI: this.fb.control(p.isAI),
-      difficulty: this.fb.control(p.difficulty),
-      wins: 0
-    }))));
+    // Erstellt eine komplett frische, tiefe Kopie des Standard-Zustands
+    const freshOverviewPlayers = structuredClone(this.defaultFormState.overviewPlayers);
+
+    // Das Signal mit den neuen Objekt-Referenzen füttern
+    this.gameState.set({
+      ...this.defaultFormState,
+      overviewPlayers: freshOverviewPlayers
+    });
   }
 
-  validateGameStart(playerNames: FormArray): boolean {
-    const isMoreThenOnePlayer = playerNames.controls.length > 0;
-    const allPlayersHaveNames = !((playerNames.value as Array<any>).some((val: any) => val.name === '' || val.name === null));
-    const atLeastOneHuman = (playerNames.value as Array<any>).some((val: any) => !val.isAI);
+  validateGameStart(playerNames: OverviewPlayer[]): boolean {
+    const isMoreThenOnePlayer = playerNames.length > 0;
+    const allPlayersHaveNames = !playerNames.some((val: any) => val.name === '' || val.name === null);
+    const atLeastOneHuman = playerNames.some((val: any) => !val.isAI);
     return isMoreThenOnePlayer && allPlayersHaveNames && atLeastOneHuman;
-  }
-
-  protected drop($event: CdkDragDrop<string[]>) {
-    let playerNamesToMove = this.playerNames.getRawValue();
-    moveItemInArray(playerNamesToMove, $event.previousIndex, $event.currentIndex);
-    this.playerNames.setValue(playerNamesToMove);
   }
 
   getGameType(type: string) {
@@ -231,12 +245,12 @@ export class GameSelectionComponent implements OnInit {
     }
   }
 
-  getWins(player: OverviewPlayers) {
+  getWins(player: OverviewPlayer) {
     let savedPlayersEqualActual = false
-    const players: OverviewPlayers[] = this.formGroup.controls.playerNames.value;
+    const players: OverviewPlayer[] = this.gameState().overviewPlayers;
     if (localStorage.getItem('playerNames')) {
-      const savedPlayers: OverviewPlayers[] = JSON.parse(localStorage.getItem('playerNames')!);
-      if (this.playerNames.length === savedPlayers.length) {
+      const savedPlayers: OverviewPlayer[] = JSON.parse(localStorage.getItem('playerNames')!);
+      if (this.getOverviewPlayers.length === savedPlayers.length) {
         const savedNames = savedPlayers.map(value => value.name)
         const currentNames = players.map(value => value.name)
         savedPlayersEqualActual = savedNames.every((value) => currentNames.includes(value))
@@ -246,9 +260,21 @@ export class GameSelectionComponent implements OnInit {
     if (savedPlayersEqualActual) {
       return player.wins
     } else {
-      this.formGroup.controls.playerNames.value.forEach(player => player.wins = 0)
+      players.forEach(player => player.wins = 0)
       localStorage.setItem('playerNames', JSON.stringify(players));
       return 0;
     }
   }
+
+  protected drop($event: CdkDragDrop<string[]>) {
+    const playerNamesToMove = [...this.gameState().overviewPlayers];
+
+    moveItemInArray(playerNamesToMove, $event.previousIndex, $event.currentIndex);
+
+    this.gameState.update(state => ({
+      ...state,
+      overviewPlayers: playerNamesToMove
+    }));
+  }
+
 }

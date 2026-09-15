@@ -14,7 +14,7 @@
       </button>
     }
     <button mat-menu-item (click)="fullscreenService.toggleTabFullScreenModeMenue()">
-      @if (fullscreenService.isFullScreen | async) {
+      @if (fullscreenService.isFullScreen()) {
         <mat-icon>close_fullscreen</mat-icon>
       } @else {
         <mat-icon>fullscreen</mat-icon>

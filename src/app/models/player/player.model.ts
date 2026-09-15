@@ -41,7 +41,7 @@ export const DEFAULT_PLAYER: Player = {
   last3History: [],
 };
 
-export interface OverviewPlayers {
+export interface OverviewPlayer {
   name: string
   isAI: boolean
   difficulty: Difficulty

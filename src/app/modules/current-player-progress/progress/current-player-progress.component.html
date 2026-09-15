@@ -1,20 +1,22 @@
 <div class="progress-container m-1 px-1 py-1 shadow rounded">
-  <!-- Erstes Drittel: Punktzahl des aktuellen Spielers -->
-  <div class="section player-info">
-    <mat-card class="matcardpointer h-100 w-100 d-flex flex-row"
+  <div class="section player-info rounded">
+    <mat-card class="info-card h-100 w-100"
               (click)="currentPlayerService.showHistory(currentPlayerService._currentPlayer.value)">
-      <div class="info-card">
-        <div class="player-name-score-row">
-          <div class="player-name text-wrap text-truncate">
-            <mat-icon *ngIf="currentPlayerService._currentPlayer.value.isAI" class="ai-icon">smart_toy</mat-icon>
+      <div class="player-name-score-row">
+        <div class="player-name">
+          <b
+            class="text-wrap text-truncate">
             {{ currentPlayerService._currentPlayer.value.name || 'Spieler' }}
-          </div>
-          <div
-            class="player-score text-bg-warning rounded">{{ this.currentPlayerService._remainingPointsToDisplay() }}
-          </div>
+            @if (currentPlayerService._currentPlayer.value.isAI) {
+              <mat-icon class="ai-icon">smart_toy</mat-icon>
+            }
+          </b>
         </div>
-        <div class="player-avg small">⌀ {{ currentPlayerService._currentPlayer.value.average }}</div>
+        <div
+          class="player-score text-bg-warning rounded">{{ this.currentPlayerService._remainingPointsToDisplay() }}
+        </div>
       </div>
+      <b class="player-avg small">⌀ {{ currentPlayerService._currentPlayer.value.average }}</b>
     </mat-card>
   </div>
   @if (currentPlayerService.currentGameMode === GameType.RandomHit && currentPlayerService._randomHitTarget()) {
