@@ -30,7 +30,7 @@ import {MiniPlayerOverview} from "../../shared/components/mini-player-overview/m
     .dart-throw-indicator {
       display: flex;
       flex-direction: row;
-      gap: 6px;
+      gap: 20px;
       align-items: center;
       justify-content: center;
       margin: 8px 0;
@@ -38,14 +38,13 @@ import {MiniPlayerOverview} from "../../shared/components/mini-player-overview/m
       .sum-circle {
         background-color: #4caf50 !important;
         color: #fff !important;
-        transform: scale(1.2);
         font-weight: bold;
+        transform: scale(1.4);
       }
 
       .hit-circle {
         background-color: #f44336 !important;
         color: #fff !important;
-        transform: scale(0.9);
         margin: 0;
         font-weight: bold;
       }

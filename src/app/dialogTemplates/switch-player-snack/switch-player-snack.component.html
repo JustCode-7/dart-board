@@ -8,9 +8,13 @@
   <div class="d-flex flex-column">
     <app-mini-player-overview></app-mini-player-overview>
   </div>
-  <div class="dart-throw-indicator">
+  <div class="dart-throw-indicator p-3">
     <button mat-mini-fab class="no-pointer sum-circle">
-      <span>{{ this.currentPlayerService._lastTurnSum }}</span>
+      @if (currentPlayerService.getCurrentGameState().gameType === GameType.Cricket) {
+        <span>{{ this.currentPlayerService.getCurrentGameState().accumulatedPoints }}</span>
+      } @else {
+        <span>{{ this.currentPlayerService._lastTurnSum }}</span>
+      }
     </button>
     <button mat-mini-fab color="warn" class="no-pointer hit-circle">
       <span>{{ this.currentPlayerService._lastTurnHits[0] ?? '➶' }}</span>
