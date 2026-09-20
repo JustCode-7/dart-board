@@ -6,6 +6,7 @@ import {MatButtonModule} from "@angular/material/button";
 import {GameType} from "../../models/enum/GameType";
 import {CurrentPlayerService} from "../../services/current-player.service";
 import {MiniPlayerOverview} from "../../shared/components/mini-player-overview/mini-player-overview";
+import {MatIcon} from "@angular/material/icon";
 
 @Component({
   selector: 'app-hidden-players-dialog',
@@ -14,8 +15,28 @@ import {MiniPlayerOverview} from "../../shared/components/mini-player-overview/m
     MatCardModule,
     MatDialogModule,
     MatButtonModule,
-    MiniPlayerOverview
+    MiniPlayerOverview,
+    MatIcon,
   ],
+  styles: `
+    .dialog-wrapper-width {
+      max-width: 50vw;
+    }
+
+    .cricket-player-overview {
+      app-mini-player-overview {
+        display: inline-flex;
+        flex: fit-content;
+        padding-left: 2px !important;
+        margin-left: 2px !important;
+        padding-right: 2px !important;
+        margin-right: 2px !important;
+        transform: scale(0.8) !important;
+      }
+    }
+
+
+  `,
   standalone: true
 })
 export class HiddenPlayersDialog implements OnInit {
@@ -26,7 +47,7 @@ export class HiddenPlayersDialog implements OnInit {
   }
 
   ngOnInit() {
-    this.dialogRef.updateSize('200%', '50%');
+    this.dialogRef.updateSize('300%', '50%');
   }
 
   getDiff(player: any): number {

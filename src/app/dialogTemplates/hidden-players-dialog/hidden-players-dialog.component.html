@@ -1,7 +1,25 @@
-<mat-dialog-content>
-  <h1 mat-dialog-title>All Players</h1>
-  <app-mini-player-overview></app-mini-player-overview>
-</mat-dialog-content>
-<mat-dialog-actions align="end">
-  <button mat-raised-button mat-dialog-close="" color="accent">OK</button>
-</mat-dialog-actions>
+@if (GameType.Cricket === currentPlayerService.getCurrentGameState().gameType) {
+  <div class="p-2 cricket-player-overview">
+    <div class="dialog-wrapper-width d-flex row justify-content-center">
+      <h1 mat-dialog-title class="justify-content-center text-warning">
+        <mat-icon>groups</mat-icon>
+      </h1>
+      <app-mini-player-overview></app-mini-player-overview>
+    </div>
+    <mat-dialog-actions class="justify-content-center">
+      <button mat-raised-button mat-dialog-close="" color="accent" class="w-25">OK</button>
+    </mat-dialog-actions>
+  </div>
+} @else {
+  <mat-dialog-content>
+    <h1 mat-dialog-title class="justify-content-center text-warning">
+      <mat-icon>groups</mat-icon>
+    </h1>
+    <app-mini-player-overview></app-mini-player-overview>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-raised-button mat-dialog-close="" color="accent">OK</button>
+  </mat-dialog-actions>
+}
+
+
