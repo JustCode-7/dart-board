@@ -19,21 +19,25 @@ import {MatIcon} from "@angular/material/icon";
     MatIcon,
   ],
   styles: `
-    .dialog-wrapper-width {
-      max-width: 50vw;
-    }
 
-    .cricket-player-overview {
-      app-mini-player-overview {
-        display: inline-flex;
-        flex: fit-content;
-        padding-left: 2px !important;
-        margin-left: 2px !important;
-        padding-right: 2px !important;
-        margin-right: 2px !important;
-        transform: scale(0.8) !important;
+    @media screen and (orientation: portrait) {
+      .dialog-wrapper-width {
+        max-width: 50vw;
+      }
+
+      .cricket-player-overview {
+        app-mini-player-overview {
+          display: inline-flex;
+          flex: fit-content;
+          padding-left: 2px !important;
+          margin-left: 2px !important;
+          padding-right: 2px !important;
+          margin-right: 2px !important;
+          transform: scale(0.8) !important;
+        }
       }
     }
+
 
 
   `,
