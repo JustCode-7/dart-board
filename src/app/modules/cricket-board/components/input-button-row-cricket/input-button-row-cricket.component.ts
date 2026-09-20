@@ -31,7 +31,7 @@ import {BullButtonsComponent} from "../../../../shared/components/bull-buttons/b
 export class InputButtonRowCricketComponent implements OnInit {
   protected readonly customRipple = customRipple;
 
-  readonly buttonGroups: number[][] = [[15, 16], [17, 18], [19, 20]];
+  readonly buttonGroups: number[][] = [[15, 16, 17], [18, 19, 20]];
   public readonly border = "border border-5 border-warning"
 
   protected animationService = inject(ExplosionAnimationService)

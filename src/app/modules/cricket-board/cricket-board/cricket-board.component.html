@@ -2,11 +2,13 @@
      [class.ai-active-border]="currentPlayerService.isAITurn() && currentPlayerService.hasThrowsRemaining()">
   <app-current-player-progress></app-current-player-progress>
 
-  <div class="ai-acting-overlay" *ngIf="currentPlayerService.isAITurn() && currentPlayerService.hasThrowsRemaining()">
-    <div class="ai-acting-text">
-      {{ currentPlayerService._currentPlayer.value.name }} is acting ...
+  @if (currentPlayerService.isAITurn() && currentPlayerService.hasThrowsRemaining()) {
+    <div class="ai-acting-overlay">
+      <div class="ai-acting-text">
+        {{ currentPlayerService._currentPlayer.value.name }} is acting ...
+      </div>
     </div>
-  </div>
+  }
 
   <div class="game-content-container">
     <div class="pow-container shadow rounded d-flex flex-row">
@@ -17,7 +19,7 @@
     </div>
 
     <div id="cricket-input" class="d-flex flex-row">
-      <div class="input-container">
+      <div class="cricket-input-container">
         <app-input-button-row-cricket></app-input-button-row-cricket>
       </div>
       <div class="d-flex multiplier-miss flex-column pt-5 me-2">

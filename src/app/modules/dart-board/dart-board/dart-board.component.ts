@@ -32,6 +32,15 @@ import {MatButtonModule} from "@angular/material/button";
     MatIconModule,
     MatButtonModule,
   ],
+  styles: `
+    .input-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+    }`
 })
 export class DartBoardComponent implements OnDestroy, OnInit {
 

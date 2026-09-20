@@ -3,11 +3,12 @@
   <div class="d-flex flex-row flex-wrap w-100 justify-content-center align-items-center">
     <div class="d-flex flex-column mx-3 pt-2 btn-scale">
       <app-bull-buttons
+        class="mt-4"
         (bullClick)="scoreBull()"
         (bullseyeClick)="scoreBullsEye()">
       </app-bull-buttons>
 
-      <div class="d-flex flex-row justify-content-center flex-wrap">
+      <div class="d-flex flex-row justify-content-center flex-wrap mt-4">
         <div *ngFor="let group of buttonGroups" class="d-flex flex-column">
           <div class="d-flex justify-content-center"
                *ngFor="let inputButton of group">

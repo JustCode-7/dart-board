@@ -1,32 +1,3 @@
-/**
- * We want to display six buttons in a single row
- */
-.w-16-percent {
-  width: calc(100% / 6);
-}
-
-.flex-direction {
-  @media screen and (max-width: 600px) {
-    flex-direction: row;
-  }
-
-  @media screen and (min-width: 1200px) {
-    flex-direction: column;
-  }
-}
-
-.mx-2 {
-  @media screen and (min-width: 1200px) {
-    margin-left: 2rem !important;
-    margin-right: 2rem !important;
-  }
-}
-
-.maxBtnWidth {
-  max-width: 15% !important;
-  min-width: 15% !important;
-}
-
 /*
  * Customize the color of the mat-buttons
  *

@@ -34,6 +34,15 @@ import {MatButtonModule} from "@angular/material/button";
     MatIconModule,
     MatButtonModule,
   ],
+  styles: `
+    .cricket-input-container {
+      flex: 1;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      width: 100%;
+    }
+  `
 })
 export class CricketBoardComponent implements OnDestroy, OnInit {
   cricketService = inject(CricketService);

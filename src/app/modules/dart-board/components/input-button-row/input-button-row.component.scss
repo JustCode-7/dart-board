@@ -15,18 +15,6 @@
   }
 }
 
-.input-btn-margin {
-  @media screen and (orientation: landscape) {
-    margin-left: 0.9rem;
-    margin-right: 1.2rem;
-    margin-bottom: 1.2rem;
-  }
-  @media screen and (orientation: portrait) {
-    margin-right: 0.5rem;
-    margin-bottom: 0.8rem;
-  }
-}
-
 .toggle-btn-scale {
   transform: scale(1.2);
   margin: 3%;
