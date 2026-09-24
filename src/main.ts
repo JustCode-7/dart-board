@@ -7,6 +7,7 @@ import {routes} from "./app/app-routing.module";
 import {ServiceWorkerModule} from "@angular/service-worker";
 import {noop} from "./app/shared/utils/util";
 import {provideAnimationsAsync} from "@angular/platform-browser/animations/async";
+import {FullscreenOverlayContainer, OverlayContainer} from "@angular/cdk/overlay";
 
 if (environment.production) {
   enableProdMode();
@@ -14,6 +15,7 @@ if (environment.production) {
 
 bootstrapApplication(AppComponent, {
   providers: [
+    {provide: OverlayContainer, useClass: FullscreenOverlayContainer},
     provideRouter(routes, withComponentInputBinding()),
     provideAnimationsAsync(),
     importProvidersFrom(

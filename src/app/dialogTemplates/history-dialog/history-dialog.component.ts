@@ -25,13 +25,12 @@ export interface HistoryDialogData {
     }
 
     .history-dialog-container {
-      min-width: 30vw;
-      max-height: 90vh;
       display: flex;
       flex-direction: column;
     }
 
     .dart-throw-indicator {
+      font-family: monospace;
       display: flex;
       flex-direction: row;
       gap: 6px;
