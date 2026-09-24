@@ -503,7 +503,6 @@ export class CurrentPlayerService {
     if (data.player.history.length > 0) {
       this.dialog.open(HistoryDialog, {
         data,
-        panelClass: 'full-screen-dialog-mobile'
       });
     }
 

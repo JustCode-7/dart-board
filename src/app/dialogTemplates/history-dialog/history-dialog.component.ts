@@ -1,8 +1,9 @@
 import {Component, inject} from '@angular/core';
 import {Player} from "../../models/player/player.model";
-import {MAT_DIALOG_DATA, MatDialogModule} from "@angular/material/dialog";
+import {MAT_DIALOG_DATA, MatDialogModule, MatDialogRef} from "@angular/material/dialog";
 import {MatButtonModule} from "@angular/material/button";
 import {MatCardModule} from "@angular/material/card";
+import {HiddenPlayersDialog} from "../hidden-players-dialog/hidden-players-dialog.component";
 
 export interface HistoryDialogData {
   player: Player;
@@ -28,11 +29,6 @@ export interface HistoryDialogData {
       max-height: 90vh;
       display: flex;
       flex-direction: column;
-
-      @media screen and (orientation: landscape) and (max-height: 500px) {
-        min-width: 80vw;
-        max-height: 85vh;
-      }
     }
 
     .dart-throw-indicator {
@@ -62,4 +58,8 @@ export interface HistoryDialogData {
 export class HistoryDialog {
 
   public historyData: HistoryDialogData = inject(MAT_DIALOG_DATA)
+
+  constructor(public dialogRef: MatDialogRef<HiddenPlayersDialog>) {
+    this.dialogRef.updateSize('300%', '50%');
+  }
 }
