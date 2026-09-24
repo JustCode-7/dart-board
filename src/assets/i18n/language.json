@@ -1,0 +1,54 @@
+{
+  "en": {
+    "dialogTitles": {
+      "allPlayersTitle": "All Players",
+      "infoDialogTitle": "Information about [Game]",
+      "okButtonText": "OK"
+    },
+    "instructions": {
+      "generalInstruction": "Please note the following instructions:"
+    },
+    "cricketInfo": {
+      "title": "How to win Cricket",
+      "p1": "The player who has thrown all fields and whose score is not lower than an opponent's wins the game.",
+      "p2": "The player with the highest score after the round limit wins the game.",
+      "p3": "In case of a tie, the player with the most thrown fields wins.",
+      "p4": "If the number of thrown fields is also equal, there can be up to 10 possible additional throws to determine the winner.",
+      "bullText": "Bull",
+      "bullseyeText": "Bullseye"
+    },
+    "dartInfo": {
+      "titlePrefix": "How to win ",
+      "elimination301": "The player who first reaches the end score wins, otherwise the one with the most points at the end of the rounds. In case of exactly equal scores, it is reset to 0.",
+      "highscore": "The player with the most points at the end of the rounds wins.",
+      "randomhit": "Hit the specified random field (1-20 Single/Double/Triple, Bull or Bullseye) to score 1 point. The player with the most points at the end of the rounds wins.",
+      "simple501_doubleout501": "The player who first reaches Zero wins, otherwise the one with the fewest points at the end of the rounds."
+    }
+  },
+  "de": {
+    "dialogTitles": {
+      "allPlayersTitle": "Alle Spieler",
+      "infoDialogTitle": "Information zu [Spiel]",
+      "okButtonText": "OK"
+    },
+    "instructions": {
+      "generalInstruction": "Bitte beachten Sie die folgenden Anweisungen:"
+    },
+    "cricketInfo": {
+      "title": "Wie man beim Cricket gewinnt",
+      "p1": "Der Spieler, der alle Felder ausgeworfen hat und dessen Punktzahl nicht geringer als die eines Gegners ist, gewinnt das Spiel.",
+      "p2": "Der Spieler, der die höchste Punktzahl nach dem Rundenlimit hat, gewinnt das Spiel.",
+      "p3": "Bei Punktgleichheit gewinnt der Spieler mit den meisten ausgeworfenen Feldern.",
+      "p4": "Falls die Anzahl der ausgeworfenen Felder ebenfalls gleich ist, dann gibt es bis zu 10 mögliche zusätzliche Würfe, den Gewinner zu ermitteln.",
+      "bullText": "Bull",
+      "bullseyeText": "Bullseye"
+    },
+    "dartInfo": {
+      "titlePrefix": "Wie man gewinnt in ",
+      "elimination301": "Wer zu erst die Endpunktzahl erreicht gewinnt, sonst derjenige der am Ende der Rundenazahl die meisten Punkte hat. Bei exakt der gleichen Punktzahl wird auf 0 zurückgesetzt.",
+      "highscore": "Wer am Ende der Rundenazahl die meisten Punkte hat gewinnt.",
+      "randomhit": "Triff das vorgegebene zufällige Feld (1-20 Single/Double/Triple, Bull oder Bullseye), um 1 Punkt zu erzielen. Wer am Ende der Rundenanzahl die meisten Punkte hat, gewinnt.",
+      "simple501_doubleout501": "Wer zu erst Null hat gewinnt, sonst derjenige der am Ende der Rundenazahl die wenigsten Punkte hat."
+    }
+  }
+}

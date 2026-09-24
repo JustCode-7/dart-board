@@ -4,33 +4,24 @@ import {MatDialogModule} from "@angular/material/dialog";
 import {MatButtonModule} from "@angular/material/button";
 import {GameType} from "../../models/enum/GameType";
 import {CurrentPlayerService} from "../../services/current-player.service";
+import {TranslationService} from "../../services/translation.service";
 
 
 @Component({
   selector: 'app-dart-info-dialog',
   template: `
-    <h1 mat-dialog-title>How to win {{ currentplayerService.currentGameMode }}</h1>
-    <mat-dialog-content #content>
-      @if (currentplayerService.currentGameMode === GameType.Elimination301) {
-        <p> Wer zu erst die Endpunktzahl erreicht gewinnt, sonst derjenige der am Ende der Rundenazahl die meisten
-          Punkte hat. Bei exakt der gleichen Punktzahl wird auf 0 zurückgesetzt.</p>
-      }
-      @if (currentplayerService.currentGameMode === GameType.Highscore) {
-        <p> Wer am Ende der Rundenazahl die meisten Punkte hat gewinnt.</p>
-      }
-      @if (currentplayerService.currentGameMode === GameType.RandomHit) {
-        <p> Triff das vorgegebene zufällige Feld (1-20 Single/Double/Triple, Bull oder Bullseye), um 1 Punkt zu erzielen. Wer am Ende der Rundenanzahl die meisten Punkte hat, gewinnt.</p>
-      }
-      @if (currentplayerService.currentGameMode === GameType.Simple501 || currentplayerService.currentGameMode === GameType.DoubleOut501) {
-        <p> Wer zu erst Null hat gewinnt, sonst derjenige der am Ende der Rundenazahl die wenigsten Punkte hat.</p>
-      }
+    <h1
+      mat-dialog-title>{{ translationService.translate('dartInfo.titlePrefix') }} {{ currentplayerService.currentGameMode }}</h1>
+    <mat-dialog-content>
+      <p>{{ translationService.getGameModeInfo() }}</p>
     </mat-dialog-content>
     <mat-dialog-actions class="justify-content-end">
-      <button mat-button
-              (click)="openTranslation(content.innerText)">
-        translate
+      <button mat-button (click)="toggleLanguage()">
+        {{ translationService.getLanguage() === 'de' ? 'EN' : 'DE' }}
       </button>
-      <button mat-button mat-dialog-close="">close</button>
+      <button mat-raised-button color="accent"
+              mat-dialog-close="">{{ translationService.translate('dialogTitles.okButtonText') }}
+      </button>
     </mat-dialog-actions>
   `,
   standalone: true,
@@ -45,8 +36,10 @@ import {CurrentPlayerService} from "../../services/current-player.service";
 export class DartInfoDialogComponent {
   protected readonly GameType = GameType;
   protected currentplayerService = inject(CurrentPlayerService)
+  protected translationService = inject(TranslationService)
 
-  openTranslation(content: string) {
-    window.open(`https://translate.google.com/?hl=de&sl=de&tl=en&text=${content}&op=translate`);
+  toggleLanguage() {
+    const nextLang = this.translationService.getLanguage() === 'de' ? 'en' : 'de';
+    this.translationService.setLanguage(nextLang);
   }
 }
