@@ -49,7 +49,7 @@
     </div>
 
     <div class="d-flex flex-column" cdkDropList (cdkDropListDropped)="drop($event)">
-      @for (playerField of gameForm.overviewPlayers; track $index) {
+      @for (playerField of gameForm.overviewPlayers; track playerField) {
         <div
           class="d-flex flex-row border justify-content-between border-warning p-3 rounded-3 player-row-width shadow m-1"
           cdkDrag

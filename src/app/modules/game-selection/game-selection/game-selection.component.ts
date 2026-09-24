@@ -187,7 +187,14 @@ export class GameSelectionComponent implements OnInit {
   }
 
   removePlayerName(index: number) {
-    this.getOverviewPlayers.splice(index, 1);
+    this.gameState.update(state => {
+      const newPlayers = [...state.overviewPlayers];
+      newPlayers.splice(index, 1);
+      return {
+        ...state,
+        overviewPlayers: newPlayers
+      };
+    });
     setTimeout(() => this.checkScrollVisibility(), 100);
   }
 
