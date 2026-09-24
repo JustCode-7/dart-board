@@ -3,7 +3,7 @@
   <mat-card class="mb-1 mat-card-width">
     <mat-card-title class="row justify-content-between"><b
       class="text-bg-warning rounded">{{ historyData.player.remainingPoints }}</b>
-      ⌀ {{ historyData.player.average }}
+      <span class="text-warning">⌀ {{ historyData.player.average }}</span>
     </mat-card-title>
     @for (playerhistory of historyData.player.history; track $index) {
       <div class="dart-throw-indicator">

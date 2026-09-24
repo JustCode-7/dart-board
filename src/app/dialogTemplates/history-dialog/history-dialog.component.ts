@@ -30,7 +30,7 @@ export interface HistoryDialogData {
     }
 
     .dart-throw-indicator {
-      font-family: monospace;
+      font-size: 20px;
       display: flex;
       flex-direction: row;
       gap: 6px;
