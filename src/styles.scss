@@ -59,21 +59,6 @@ mat-card {
   background-color: green !important;
 }
 
-.maxHight {
-  padding-top: 0;
-  @media (orientation: landscape) {
-    overflow: clip;
-    max-height: 40vh; // Increased slightly for more room
-
-    @media (max-height: 500px) {
-      overflow: visible;
-      max-height: none;
-    }
-  }
-  @media (orientation: portrait) {
-    overflow: clip;
-  }
-}
 
 .display-always-on-indicator {
   border: 5px solid orange;
@@ -117,22 +102,10 @@ mat-card {
     width: 100% !important;
   }
 
-  .mdc-snackbar__label, .mdc-button__label {
-  }
-
   .mdc-button {
     background-color: #9c27b0 !important;
   }
 
-  /* Ensure the shape-morph snack is top-centered */
-  .mat-mdc-snack-bar-container.app-shape-morph-snack {
-    //margin: auto !important; /* center horizontally */
-  }
-
-  /* Make sure top position class takes effect */
-  //.mat-mdc-snack-bar-top.app-shape-morph-snack {
-  //  top: auto !important;
-  //}
 }
 
 .switch-player-panel {
@@ -290,5 +263,15 @@ mat-card {
 .hide-in-landscape {
   @media screen and (orientation: landscape) {
     display: none !important;
+  }
+}
+
+.full-screen-dialog-mobile {
+  z-index: 3000 !important;
+  position: relative;
+  @media screen and (max-height: 500px) and (orientation: landscape) {
+    .mat-mdc-dialog-container {
+      --mdc-dialog-container-shape: 0;
+    }
   }
 }

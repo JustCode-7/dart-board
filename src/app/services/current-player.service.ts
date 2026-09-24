@@ -497,12 +497,18 @@ export class CurrentPlayerService {
   }
 
   showHistory(player?: Player) {
+    const isMobileLandscape = window.matchMedia('(orientation: landscape) and (max-height: 500px)').matches;
+    if (isMobileLandscape) {
+      return;
+    }
+
     const data: HistoryDialogData = {
       player: this.playerService.getPlayer(player ?? this._currentPlayer.value),
     }
     if (data.player.history.length > 0) {
       this.dialog.open(HistoryDialog, {
         data,
+        panelClass: 'full-screen-dialog-mobile'
       });
     }
 
