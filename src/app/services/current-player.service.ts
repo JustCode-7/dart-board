@@ -503,8 +503,6 @@ export class CurrentPlayerService {
     if (data.player.history.length > 0) {
       this.dialog.open(HistoryDialog, {
         data,
-        maxWidth: '95vw',
-        maxHeight: '95vh',
         panelClass: 'full-screen-dialog-mobile'
       });
     }
