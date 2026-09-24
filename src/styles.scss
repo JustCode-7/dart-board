@@ -287,16 +287,6 @@ mat-card {
   }
 }
 
-.full-screen-dialog-mobile {
-  z-index: 3000 !important;
-  position: relative;
-  @media screen and (max-height: 500px) and (orientation: landscape) {
-    .mat-mdc-dialog-container {
-      --mdc-dialog-container-shape: 0;
-    }
-  }
-}
-
 .hide-in-landscape {
   @media screen and (orientation: landscape) {
     display: none !important;

@@ -1,0 +1,32 @@
+<mat-dialog-content class="flex-grow-1 overflow-x-hidden align-content-center">
+  <div class="history-dialog-container">
+    <h1 mat-dialog-title>Match-History - {{ historyData.player.name }}</h1>
+    <mat-card class="mb-1 mat-card-width">
+      <mat-card-title class="row justify-content-between"><b
+        class="text-bg-warning rounded">{{ historyData.player.remainingPoints }}</b>
+        ⌀ {{ historyData.player.average }}
+      </mat-card-title>
+      @for (playerhistory of historyData.player.history; track $index) {
+        <div class="dart-throw-indicator">
+          <button mat-mini-fab class="no-pointer sum-circle">
+            <span>{{ playerhistory.sum }}</span>
+          </button>
+          <button mat-mini-fab color="warn" class="no-pointer hit-circle">
+            <span>{{ playerhistory.hits[0] ?? '➶' }}</span>
+          </button>
+          <button mat-mini-fab color="warn" class="no-pointer hit-circle">
+            <span>{{ playerhistory.hits[1] ?? '➶' }}</span>
+          </button>
+          <button mat-mini-fab color="warn" class="no-pointer hit-circle">
+            <span>{{ playerhistory.hits[2] ?? '➶' }}</span>
+          </button>
+        </div>
+      }
+    </mat-card>
+  </div>
+  <mat-dialog-actions class="justify-content-end">
+    <button mat-raised-button mat-dialog-close="" color="accent">Close</button>
+  </mat-dialog-actions>
+</mat-dialog-content>
+
+
