@@ -12,9 +12,9 @@ export interface HistoryDialogData {
 @Component({
   selector: 'app-history-dialog',
   template: `
-    <div class="minWith15vw">
+    <div class="history-dialog-container">
       <h1 mat-dialog-title>Match-History - {{ historyData.player.name }}</h1>
-      <mat-dialog-content>
+      <mat-dialog-content class="flex-grow-1 overflow-auto">
         <mat-card class="mb-1">
           <mat-card-title class="row justify-content-between"><b
             class="text-bg-warning rounded">{{ historyData.player.remainingPoints }}</b>
@@ -38,7 +38,7 @@ export interface HistoryDialogData {
           }
         </mat-card>
       </mat-dialog-content>
-      <mat-dialog-actions>
+      <mat-dialog-actions class="justify-content-end">
         <button mat-raised-button mat-dialog-close="" color="accent">Close</button>
       </mat-dialog-actions>
     </div>
@@ -51,8 +51,16 @@ export interface HistoryDialogData {
     MatCardModule,
   ],
   styles: [`
-    .minWith15vw {
+    .history-dialog-container {
       min-width: 30vw;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+
+      @media screen and (orientation: landscape) and (max-height: 500px) {
+        min-width: 80vw;
+        max-height: 85vh;
+      }
     }
 
     .dart-throw-indicator {

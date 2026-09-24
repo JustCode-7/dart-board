@@ -501,7 +501,12 @@ export class CurrentPlayerService {
       player: this.playerService.getPlayer(player ?? this._currentPlayer.value),
     }
     if (data.player.history.length > 0) {
-      this.dialog.open(HistoryDialog, {data});
+      this.dialog.open(HistoryDialog, {
+        data,
+        maxWidth: '95vw',
+        maxHeight: '95vh',
+        panelClass: 'full-screen-dialog-mobile'
+      });
     }
 
   }

@@ -278,3 +278,11 @@ mat-card {
     padding-right: 1.5rem;
   }
 }
+
+.full-screen-dialog-mobile {
+  @media screen and (max-height: 500px) and (orientation: landscape) {
+    .mat-mdc-dialog-container {
+      --mdc-dialog-container-shape: 0;
+    }
+  }
+}

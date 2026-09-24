@@ -20,7 +20,11 @@ import {MatIcon} from "@angular/material/icon";
   ],
   styles: `
 
-    @media screen and (orientation: portrait) {
+    .cricket-player-overview {
+      overflow-x: hidden;
+    }
+
+    @media screen and (max-width: 480px) and (orientation: portrait) {
       .dialog-wrapper-width {
         max-width: 50vw;
       }
