@@ -9,18 +9,19 @@ export class ToggleFullscreenService {
 
   constructor() {
     document.addEventListener("fullscreenchange", () => {
-      if (document.fullscreenElement) {
-        this.isFullScreen.set(true)
-      } else {
-        this.isFullScreen.set(false)
-      }
+      this.updateFullScreenStatus();
     });
+    this.updateFullScreenStatus();
+  }
+
+  private updateFullScreenStatus() {
+    this.isFullScreen.set(!!document.fullscreenElement || this.isInStandaloneMode());
   }
 
   toggleTabFullScreenModeGame() {
     if (document.documentElement.requestFullscreen && !document.fullscreenElement) {
       document.documentElement.requestFullscreen().then(() => {
-        this.isFullScreen.set(true)
+        this.updateFullScreenStatus();
         this.initDisplayAlwaysOnMode().then(() => {
           console.log('full screen and display always on mode requested');
         })
@@ -28,21 +29,32 @@ export class ToggleFullscreenService {
         .catch(reason => {
           console.warn("Fullscreen error: ", reason)
         });
+    } else if (this.isInStandaloneMode()) {
+      this.initDisplayAlwaysOnMode();
     } else {
       console.warn("Fullscreen API is not supported on this browser.");
     }
   }
 
+  private isInStandaloneMode(): boolean {
+    return (window.matchMedia('(display-mode: standalone)').matches) ||
+      (window.navigator as any).standalone ||
+      document.referrer.includes('android-app://');
+  }
+
   toggleTabFullScreenModeMenue() {
     if (document.documentElement.requestFullscreen && !document.fullscreenElement) {
       document.documentElement.requestFullscreen().then(() => {
-        this.isFullScreen.set(true)
+        this.updateFullScreenStatus();
         this.initDisplayAlwaysOnMode().then(() => {
           console.log('full screen and display always on mode requested');
         })
       });
     } else if (document.exitFullscreen && document.fullscreenElement) {
       document.exitFullscreen();
+    } else if (this.isInStandaloneMode()) {
+      // In PWA mode, we might not be in "real" fullscreen, but we want to ensure WakeLock is active
+      this.initDisplayAlwaysOnMode();
     } else {
       console.warn("Fullscreen API is not supported or no element is in fullscreen.");
     }
