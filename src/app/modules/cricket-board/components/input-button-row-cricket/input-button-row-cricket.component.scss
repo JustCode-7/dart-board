@@ -24,3 +24,18 @@
 .material-symbols-outlined {
   font-size: 2.5em;
 }
+
+.cricket-bullbtn-section {
+  flex: fit-content;
+  @media screen and (min-width: 481px) {
+    padding-left: 20px;
+    width: fit-content;
+    @media screen and (orientation: portrait) {
+      padding-left: 35px;
+    }
+  }
+  @media screen and (max-width: 480px) and (orientation: portrait) {
+    padding-left: 3px;
+    width: fit-content;
+  }
+}

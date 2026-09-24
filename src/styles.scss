@@ -213,6 +213,7 @@ mat-card {
       width: 40vw;
       height: 100%;
       flex-direction: column;
+      flex: fit-content;
 
       @media (max-height: 500px) {
         height: auto;
@@ -242,9 +243,16 @@ mat-card {
     margin-right: 1.2rem;
     margin-bottom: 1.2rem;
   }
-  @media screen and (orientation: portrait) {
+
+  @media screen and (max-width: 480px) and (orientation: portrait) {
     margin-right: 0.5rem;
     margin-bottom: 0.8rem;
+  }
+
+  @media screen and (min-width: 481px) and (orientation: portrait) {
+    margin-right: 1.5rem;
+    margin-left: 1.5rem;
+    margin-bottom: 1.5rem;
   }
 }
 
