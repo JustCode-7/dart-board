@@ -294,3 +294,9 @@ mat-card {
     }
   }
 }
+
+.hide-in-landscape {
+  @media screen and (orientation: landscape) {
+    display: none !important;
+  }
+}
